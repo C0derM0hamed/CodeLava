@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, type CSSProperties } from "react";
 import "./volcano.css";
+import { VolcanoMark } from "./mark";
 
 export interface VolcanoProps {
   locale: "en" | "ar";
@@ -9,52 +10,6 @@ export interface VolcanoProps {
   kicker?: string;
   onComplete?: () => void;
   className?: string;
-}
-
-function Mark() {
-  const id = useId();
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 160 80"
-      fill="none"
-      className="cl-volcano-mark"
-    >
-      <defs>
-        <linearGradient
-          id={id}
-          x2="0.8"
-          y2="1"
-          gradientUnits="objectBoundingBox"
-        >
-          <stop stopColor="var(--ember)" />
-          <stop offset=".42" stopColor="var(--lava-400)" />
-          <stop offset="1" stopColor="var(--lava-700)" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M47 12 13 40l26 21"
-        stroke="var(--ash-50)"
-        strokeWidth="9"
-        strokeLinejoin="bevel"
-      />
-      <path
-        d="m112 12 35 28-25 21"
-        stroke="var(--lava-500)"
-        strokeWidth="9"
-        strokeLinejoin="bevel"
-      />
-      <path
-        d="m23 73 29-20 20-29 7 3 6-4 17 26 33 24-37-17-17-23-6 10-15 12Z"
-        fill={`url(#${id})`}
-      />
-      <path
-        d="m77 30-7 18-13 9-8 11m32-33 8 18-3 4 9 11"
-        stroke="var(--lava-300)"
-        strokeWidth="1.8"
-      />
-    </svg>
-  );
 }
 
 function Wordmark() {
@@ -173,7 +128,7 @@ export default function VolcanoExperience({
             <p className="cl-volcano-tag">{line}</p>
           </div>
           <div className="cl-volcano-reveal" aria-hidden="true">
-            <Mark />
+            <VolcanoMark />
             <Wordmark />
             <p className="cl-volcano-tag">{line}</p>
           </div>
@@ -197,7 +152,38 @@ export default function VolcanoExperience({
               </span>
             </div>
           </div>
+          <div className="cl-volcano-ambient" aria-hidden="true">
+            {Array.from({ length: 16 }, (_, i) => (
+              <i
+                key={i}
+                style={
+                  {
+                    left: `${(i * 37 + 7) % 100}%`,
+                    top: `${(i * 23 + 17) % 100}%`,
+                    "--drift": `${((i % 4) - 1.5) * 13}px`,
+                    animationDelay: `${-i * 1.79}s`,
+                    animationDuration: `${5 + (i % 5)}s`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
           <div className="cl-volcano-bleed" />
+          <svg
+            className="cl-volcano-filament-out"
+            aria-hidden="true"
+            viewBox="0 0 1000 1000"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M500 620 C502 735 180 745 180 1000"
+              pathLength="1"
+              fill="none"
+              stroke="var(--lava-400)"
+              strokeWidth="1.4"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
         </div>
       </section>
       <span className="cl-volcano-end" id={endId} tabIndex={-1} />

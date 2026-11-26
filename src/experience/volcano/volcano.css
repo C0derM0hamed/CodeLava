@@ -3,7 +3,7 @@
   --intro: 1;
   --lift: 0px;
   --logo: 0;
-  --rise: 16px;
+  --rise: 0px;
   --bleed: 0;
   --foot: 1;
   position: relative;
@@ -131,17 +131,19 @@
   transform: translate(-50%, calc(-50% + var(--rise)));
   width: 100%;
   text-align: center;
-  opacity: var(--logo);
+  font-size: clamp(4.5rem, 7.8vw, 9rem);
   pointer-events: none;
   display: grid;
   justify-items: center;
 }
 .cl-volcano-mark {
-  width: clamp(110px, 12vw, 195px);
-  margin-bottom: 12px;
+  width: 2.12em;
+  height: auto;
+  margin-bottom: 0.08em;
+  opacity: var(--rock, 0);
 }
 .cl-volcano-reveal .cl-volcano-wordmark {
-  font-size: clamp(4.5rem, 7.8vw, 9rem);
+  font-size: 1em;
 }
 .cl-volcano-reveal .cl-volcano-tag {
   margin-top: 14px;
@@ -271,4 +273,91 @@
 }
 .cl-volcano-skip:focus-visible {
   transform: none;
+}
+.cl-volcano-filament-out,
+.cl-volcano-filament-next {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.cl-volcano-filament-out {
+  inset-block: 0;
+  height: 100%;
+  opacity: var(--thread, 0);
+  clip-path: inset(0 0 calc((1 - var(--thread, 0)) * 39%) 0);
+}
+.cl-volcano-filament-next {
+  top: 0;
+  height: clamp(70px, 12svh, 150px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-volcano-filament-out,
+  .cl-volcano-filament-next {
+    display: none;
+  }
+}
+.cl-volcano-brackets path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--trace, 0));
+}
+.cl-volcano-reveal :is(.cl-volcano-wordmark, .cl-volcano-tag) {
+  opacity: var(--logo);
+}
+.cl-volcano-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--ambient, 0);
+  display: none;
+}
+.cl-volcano-scene[data-active][data-ambient] .cl-volcano-ambient {
+  display: block;
+}
+.cl-volcano-ambient i {
+  position: absolute;
+  width: 2px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--lava-300);
+  box-shadow: 0 0 5px var(--lava-500);
+  animation: cl-volcano-drift 7s linear infinite paused;
+}
+.cl-volcano-ambient i:nth-child(3n) {
+  width: 1px;
+  height: 2px;
+}
+.cl-volcano-scene[data-visible] .cl-volcano-ambient i {
+  animation-play-state: running;
+}
+@keyframes cl-volcano-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 36px);
+  }
+  24% {
+    opacity: 0.68;
+  }
+  75% {
+    opacity: 0.44;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), -46px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-volcano-scene .cl-volcano-reveal {
+    --rock: 1;
+    --trace: 1;
+    --logo: 1;
+  }
+  .cl-volcano-scene .cl-volcano-ambient {
+    display: none;
+  }
+}
+
+.cl-volcano-filament-out:dir(rtl),
+.cl-volcano-filament-next:dir(rtl) {
+  transform: scaleX(-1);
 }

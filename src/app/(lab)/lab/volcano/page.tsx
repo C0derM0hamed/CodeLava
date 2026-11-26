@@ -1,6 +1,7 @@
 import Link from "next/link";
 import VolcanoExperience from "@/experience/volcano/VolcanoExperience";
 import "./lab.css";
+import { HeroFilament } from "@/experience/volcano/HeroFilament";
 
 export default async function VolcanoLab({
   searchParams,
@@ -13,6 +14,7 @@ export default async function VolcanoLab({
     <main dir={ar ? "rtl" : "ltr"} lang={locale}>
       <VolcanoExperience locale={locale} />
       <section className="cl-volcano-handoff">
+        <HeroFilament />
         <div>
           <Link
             href={ar ? "?locale=en" : "?locale=ar"}

@@ -21,3 +21,6 @@
 .cl-volcano-handoff p {
   color: var(--text-muted);
 }
+.cl-volcano-handoff {
+  position: relative;
+}
