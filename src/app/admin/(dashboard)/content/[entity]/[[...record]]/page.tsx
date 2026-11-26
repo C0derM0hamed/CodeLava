@@ -105,7 +105,7 @@ async function ContentList({ entity, user, search }: { entity: Entity; user: Cur
       </select></Label>
       <button className={buttonClass}>Apply filters</button>
     </form>
-    {shown.length ? <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+    {shown.length ? <div className="overflow-x-auto rounded-2xl border border-line bg-surface shadow-card">
       <table className="w-full text-start text-sm">
         <thead className="bg-surface-2 text-start text-xs text-muted"><tr>
           <th scope="col" className={`${cellClass} text-start`}>{translations ? "Key" : "Name"}</th>

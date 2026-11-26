@@ -24,7 +24,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
       <Label title="Action"><input className={inputClass} name="action" defaultValue={action} /></Label>
       <button className={buttonClass}>Filter log</button>
     </form>
-    {events.length ? <div className="overflow-x-auto rounded-lg border border-line bg-surface"><table className="w-full text-sm">
+    {events.length ? <div className="overflow-x-auto rounded-2xl border border-line bg-surface shadow-card"><table className="w-full text-sm">
       <thead className="bg-surface-2 text-muted"><tr>{["Time (UTC)", "Actor", "Action", "Entity", "Details"].map((label) =>
         <th key={label} scope="col" className={`${cellClass} text-start`}>{label}</th>)}</tr></thead>
       <tbody>{events.slice(0, size).map(({ log, actor }) => <tr key={log.id} className={rowClass}>
@@ -32,7 +32,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         <td className={cellClass}>{actor ?? "System / public"}</td>
         <td className={cellClass}><Badge>{log.action.replaceAll("_", " ")}</Badge></td>
         <td className={cellClass}>{log.entity}{log.entityId && <p className="break-all font-mono text-xs text-muted">{log.entityId}</p>}</td>
-        <td className={cellClass}>{log.meta ? <details><summary className="cursor-pointer text-lava-300">View</summary>
+        <td className={cellClass}>{log.meta ? <details><summary className="cursor-pointer text-accent-text">View</summary>
           <pre className="max-w-64 overflow-auto text-xs">{JSON.stringify(log.meta, null, 2)}</pre></details> : "—"}</td>
       </tr>)}</tbody>
     </table></div> : <Empty>No matching activity.</Empty>}

@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 import { SettingsEditor } from "@/components/admin/settings-editor";
 import { PageHeading } from "@/components/admin/ui/frame";
 import { db } from "@/db";
@@ -10,7 +10,7 @@ import { settingFields } from "@/server/content/settings";
 export default async function SettingsPage() {
   const user = await requirePermission("settings:manage");
   const [settings, assets] = await Promise.all([
-    db.select().from(siteSettings),
+    db.select().from(siteSettings).where(inArray(siteSettings.key, ["contact", "socials", "seo", "features"])),
     permits(user.permissions, "media:read") ? db.select({ id: media.id, url: media.url, name: media.originalName, kind: media.kind, folder: media.folder }).from(media).orderBy(desc(media.createdAt)) : [],
   ]);
   const fields = {

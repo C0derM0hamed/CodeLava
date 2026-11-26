@@ -103,7 +103,8 @@ export function SiteFooter({
   const displayYear = year ?? new Date().getFullYear();
 
   const showCta =
-    !hideCta && !hideCtaOn.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+    !hideCta &&
+    !hideCtaOn.some((p) => (p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)));
 
   const contactRows: Array<{ key: string; icon: ReactNode; node: ReactNode }> = [];
   if (contact?.location) {

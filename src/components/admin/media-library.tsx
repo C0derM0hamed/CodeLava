@@ -71,10 +71,10 @@ export function MediaLibrary({ assets, canWrite, canDelete }: { assets: Asset[];
   return <div className="grid gap-5">
     {canWrite && <section className={`${paneClass} grid gap-3`} aria-label="Upload media">
       <div className="grid gap-3 sm:grid-cols-[1fr_13rem]">
-        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-3 text-center text-sm focus-within:outline-2 focus-within:outline-lava-300 ${dragging ? "border-accent bg-surface-2" : "border-line-strong"}`}
+        <label className={`flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-3 text-center text-sm focus-within:outline-2 focus-within:outline-accent-text ${dragging ? "border-accent bg-surface-2" : "border-line-strong"}`}
           onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}
           onDrop={(event) => { event.preventDefault(); setDragging(false); void upload(event.dataTransfer.files); }}>
-          <Upload size={21} className="text-lava-300" aria-hidden />
+          <Upload size={21} className="text-accent-text" aria-hidden />
           <span>Drop files here or choose files</span>
           <span className="text-xs text-muted">JPEG, PNG, WebP, AVIF and PDF up to 15 MB. MP4 and WebM up to 80 MB.</span>
           <input type="file" multiple disabled={pending} aria-label="Upload files" className="sr-only"
@@ -101,7 +101,7 @@ export function MediaLibrary({ assets, canWrite, canDelete }: { assets: Asset[];
     {matches.length ? <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {matches.map((asset) => <article key={asset.id} className={`${paneClass} min-w-0 space-y-2`}>
         <MediaThumbnail asset={asset} className="aspect-[5/3] w-full" />
-        <h2 className="break-all text-sm font-medium"><a href={asset.url} target="_blank" rel="noreferrer" className="hover:text-lava-300">{asset.name}</a></h2>
+        <h2 className="break-all text-sm font-medium"><a href={asset.url} target="_blank" rel="noreferrer" className="hover:text-accent-text">{asset.name}</a></h2>
         <p className="font-mono text-xs text-muted">{asset.folder} · {Math.max(1, Math.round(asset.size / 1024))} KB{asset.width && asset.height ? ` · ${asset.width} × ${asset.height}` : ""}</p>
         {canWrite && <details>
           <summary className={`${buttonClass} cursor-pointer`}>Edit metadata</summary>

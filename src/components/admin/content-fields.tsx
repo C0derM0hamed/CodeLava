@@ -150,7 +150,7 @@ function MarkdownInput({ id, label, value, change, lang, dir }: {
     <button type="button" className={`${buttonClass} justify-self-start`} aria-expanded={preview} onClick={() => setPreview(!preview)}>
       {preview ? "Hide" : "Show"} Markdown preview
     </button>
-    {preview && <div lang={lang} dir={dir} className="min-h-12 overflow-auto rounded border border-line bg-bg p-3 text-sm [&_a]:text-lava-300 [&_h1]:text-xl [&_h2]:text-lg [&_li]:ms-5 [&_li]:list-disc [&_p]:mb-2"
+    {preview && <div lang={lang} dir={dir} className="min-h-12 overflow-auto rounded border border-line bg-bg p-3 text-sm [&_a]:text-accent-text [&_h1]:text-xl [&_h2]:text-lg [&_li]:ms-5 [&_li]:list-disc [&_p]:mb-2"
       dangerouslySetInnerHTML={{ __html: renderMarkdown(value).html }} />}
   </div>;
 }

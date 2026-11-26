@@ -62,6 +62,7 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
                 {children /* each page renders its own <main id="main-content"> */}
               </PageTransition>
               <SiteFooter
+                hideCtaOn={["/", "/quote", "/contact"]}
                 services={services.slice(0, 6).map((s) => ({ label: s.title, href: `/services/${s.slug}` }))}
                 contact={{ email: contact.email, phone: contact.phone, location: contact.address, availability: contact.hours }}
                 socials={socials}

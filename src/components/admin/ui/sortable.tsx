@@ -41,12 +41,13 @@ function SortableRow({ item, children, disabled, onUp, onDown, first, last }: {
   item: SortItem; children: ReactNode; disabled?: boolean; onUp: () => void; onDown: () => void; first: boolean; last: boolean;
 }) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({ id: item.id, disabled });
+  const iconButton = `${buttonClass} size-10 shrink-0 p-0!`;
   return <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }}
     className="relative flex flex-wrap items-center gap-2 rounded-md border border-line bg-bg p-2">
-    <button className={`${buttonClass} touch-none cursor-grab`} type="button" ref={setActivatorNodeRef} {...attributes} {...listeners}
+    <button className={`${iconButton} touch-none cursor-grab`} type="button" ref={setActivatorNodeRef} {...attributes} {...listeners}
       disabled={disabled} aria-label={`Drag ${item.label}`}><GripVertical size={15} /></button>
     <div className="min-w-0 flex-1">{children}</div>
-    <button className={buttonClass} type="button" disabled={disabled || first} onClick={onUp} aria-label={`Move ${item.label} up`}><ArrowUp size={15} /></button>
-    <button className={buttonClass} type="button" disabled={disabled || last} onClick={onDown} aria-label={`Move ${item.label} down`}><ArrowDown size={15} /></button>
+    <button className={iconButton} type="button" disabled={disabled || first} onClick={onUp} aria-label={`Move ${item.label} up`}><ArrowUp size={15} /></button>
+    <button className={iconButton} type="button" disabled={disabled || last} onClick={onDown} aria-label={`Move ${item.label} down`}><ArrowDown size={15} /></button>
   </li>;
 }

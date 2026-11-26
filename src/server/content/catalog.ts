@@ -52,7 +52,7 @@ export const catalog: Record<Entity, Config> = {
     text("name", "Name", 80, true), slugField(80), text("category", "Category", 48, true), visibility,
     local("description", "Description", 1800), asset("iconMediaId", "Icon image"), text("iconSlug", "Simple Icons slug", 80), text("color", "Color", 16),
   ] },
-  testimonials: { table: t.testimonials, label: "Testimonials", title: "authorName", ordered: true, publicPath: "about", fields: [
+  testimonials: { table: t.testimonials, label: "Testimonials", title: "authorName", ordered: true, publicPath: "", fields: [
     text("authorName", "Author name", 120, true), status, featured, local("authorRole", "Author role", 160),
     text("company", "Company"), countryField(), copy("quote", "Quote", true),
     select("quoteLocale", "Original language", ["en", "ar"]), num("rating", "Rating (out of 5)", 0, 5),

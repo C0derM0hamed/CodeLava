@@ -6,6 +6,7 @@ import { pageMeta, pageSections, siteSettings, uiTranslations } from "@/db/schem
 import { defaultSectionsRows } from "@/content/sections";
 import type { AppLocale } from "@/i18n/routing";
 import { t } from "@/lib/i18n-content";
+import { layoutDraftKey, layoutSchema } from "@/server/content/page-builder";
 import { publishedQuery, publicQuery } from "./cache";
 import { mediaView, seoView } from "./shared";
 
@@ -25,29 +26,42 @@ function mergeSection(base: SectionContent, content: unknown): SectionContent {
   return result;
 }
 
-const readSections = publicQuery("public-page-sections", ["page-sections"], async (draft, pageKey: string) => {
+const readSections = publicQuery("public-page-sections-v2", ["page-sections"], async (draft, pageKey: string) => {
   const keys = pageKey === "work" || pageKey === "portfolio" ? ["work", "portfolio"] : [pageKey];
-  return db.select({
+  const rows = await db.select({
     id: pageSections.id, pageKey: pageSections.pageKey, sectionKey: pageSections.sectionKey,
     visible: pageSections.visible, sortOrder: pageSections.sortOrder, content: pageSections.content,
     ...(draft ? { draftContent: pageSections.draftContent } : {}),
   }).from(pageSections).where(inArray(pageSections.pageKey, keys));
-}, []);
+  const [saved] = draft
+    ? await db.select({ value: siteSettings.value }).from(siteSettings).where(eq(siteSettings.key, layoutDraftKey(pageKey === "portfolio" ? "work" : pageKey)))
+    : [];
+  return { rows, layout: layoutSchema.safeParse(saved?.value).data ?? null };
+}, { rows: [], layout: null });
 
 export async function getPageSections(pageKey: string, locale: AppLocale) {
-  const rows = await readSections(pageKey);
+  const { rows = [], layout } = await readSections(pageKey);
   const canonicalKey = pageKey === "portfolio" ? "work" : pageKey;
   const bySection = new Map(rows.filter((row) => row.pageKey !== canonicalKey).map((row) => [row.sectionKey, row]));
   for (const row of rows.filter((row) => row.pageKey === canonicalKey)) bySection.set(row.sectionKey, row);
   const defaults = new Map(defaultRows.filter((row) => row.pageKey === canonicalKey).map((row) => [row.sectionKey, row]));
-  return [...new Set([...defaults.keys(), ...bySection.keys()])].flatMap((sectionKey) => {
+  const keys = [...new Set([...defaults.keys(), ...bySection.keys()])];
+  const liveOrder = (key: string) => bySection.get(key)?.sortOrder ?? defaults.get(key)?.sortOrder ?? 0;
+  const draftOrder = new Map(layout?.filter(({ key }) => defaults.has(key) || bySection.has(key))
+    .map(({ key, visible }, sortOrder) => [key, { sortOrder, visible }]));
+  if (layout) {
+    const rest = keys.filter((key) => !draftOrder.has(key)).sort((a, b) => liveOrder(a) - liveOrder(b) || a.localeCompare(b));
+    for (const key of rest) draftOrder.set(key, { sortOrder: draftOrder.size, visible: bySection.get(key)?.visible ?? true });
+  }
+  return keys.flatMap((sectionKey) => {
     const row = bySection.get(sectionKey);
     const fallback = defaults.get(sectionKey);
-    if (row && !row.visible) return [];
+    const preview = draftOrder.get(sectionKey);
+    if (!(preview?.visible ?? row?.visible ?? true)) return [];
     const base = mergeSection({}, fallback?.content);
     const merged = mergeSection(mergeSection(base, row?.content), row?.draftContent);
     const content = Object.fromEntries(Object.entries(merged).map(([key, value]) => [key, t(value, locale) ?? ""]));
-    return [{ id: row?.id ?? null, pageKey: canonicalKey, sectionKey, sortOrder: row?.sortOrder ?? fallback?.sortOrder ?? 0, content }];
+    return [{ id: row?.id ?? null, pageKey: canonicalKey, sectionKey, sortOrder: preview?.sortOrder ?? liveOrder(sectionKey), content }];
   }).sort((a, b) => a.sortOrder - b.sortOrder || a.sectionKey.localeCompare(b.sectionKey));
 }
 

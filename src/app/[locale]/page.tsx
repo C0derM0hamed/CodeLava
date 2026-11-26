@@ -16,6 +16,7 @@ import {
   HomeTechnologies,
   HomeTestimonials,
 } from "@/components/sections/home";
+import { CtaBanner } from "@/components/site/CtaBanner";
 import { sectionRegistry } from "@/content/sections";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
@@ -42,8 +43,8 @@ type SectionCopy = Record<string, string>;
 
 /**
  * Section keys the homepage knows how to render (page_sections.section_key for page "home").
- * Order and visibility come from the DB via getPageSections (sortOrder asc, hidden excluded);
- * "hero" is always pinned first. "cta" renders nothing: the footer owns the closing CTA banner.
+ * Order, visibility and copy come directly from the DB via getPageSections (sortOrder asc,
+ * hidden excluded), controlled in the Admin Homepage Builder.
  */
 const HOME_SECTION_KEYS = [
   "hero",
@@ -62,24 +63,6 @@ type HomeSectionKey = (typeof HOME_SECTION_KEYS)[number];
 
 function isHomeSectionKey(key: string): key is HomeSectionKey {
   return (HOME_SECTION_KEYS as readonly string[]).includes(key);
-}
-
-/**
- * Until Platform registers "clients" / "about" in sectionRegistry.home, those sections are
- * placed where the reference puts them. Once registered, the DB alone decides (incl. hiding).
- */
-function withUnregisteredSections(entries: { sectionKey: string; content: SectionCopy }[]) {
-  const registered = sectionRegistry.home as Record<string, unknown>;
-  const list = entries.map(({ sectionKey, content }) => ({ sectionKey, content }));
-  const has = (key: string) => list.some((entry) => entry.sectionKey === key);
-  if (!("clients" in registered) && !has("clients")) {
-    list.splice(list[0]?.sectionKey === "hero" ? 1 : 0, 0, { sectionKey: "clients", content: {} });
-  }
-  if (!("about" in registered) && !has("about")) {
-    const before = list.findIndex((entry) => ["insights", "faq", "cta"].includes(entry.sectionKey));
-    list.splice(before === -1 ? list.length : before, 0, { sectionKey: "about", content: {} });
-  }
-  return list;
 }
 
 export async function generateMetadata({ params }: HomeParams): Promise<Metadata> {
@@ -146,11 +129,25 @@ export default async function HomePage({ params }: HomeParams) {
   const project = featured[0] ?? (await getProjects({ limit: 1 }, locale))[0] ?? null;
   const projectDetail = project ? await getProjectBySlug(project.slug, locale) : null;
 
-  const hero = sections.find((s) => s.sectionKey === "hero");
-  const body = withUnregisteredSections(sections.filter((s) => s.sectionKey !== "hero"));
+  const visibleSections = sections.filter((s) => isHomeSectionKey(s.sectionKey));
+  const hasHero = visibleSections.some((s) => s.sectionKey === "hero");
+  const startsWithHero = visibleSections[0]?.sectionKey === "hero";
+  const ctaDefaults = sectionRegistry.home.cta.defaults;
 
-  const renderers: Record<Exclude<HomeSectionKey, "hero">, (copy: SectionCopy) => ReactNode> = {
-    clients: () => <HomeClientStrip label={t("trustedBy")} clients={clientLogos} />,
+  const renderers: Record<HomeSectionKey, (copy: SectionCopy) => ReactNode> = {
+    hero: (copy) => (
+      <HomeHero locale={locale}>
+        <HomeHeroCopy
+          eyebrow={copy.eyebrow || tCommon("tagline")}
+          title={copy.title || t("title")}
+          description={copy.description || t("description")}
+          primaryLabel={copy.ctaLabel || t("startProject")}
+          secondaryLabel={copy.secondaryCtaLabel || t("viewWork")}
+        />
+      </HomeHero>
+    ),
+
+    clients: (copy) => <HomeClientStrip label={copy.eyebrow || t("trustedBy")} clients={clientLogos} />,
 
     services: (copy) => (
       <HomeServices
@@ -258,8 +255,19 @@ export default async function HomePage({ params }: HomeParams) {
       />
     ),
 
-    // The closing CTA banner is rendered by the site footer on every page.
-    cta: () => null,
+    cta: (copy) => {
+      const customTitle = copy.title && copy.title !== ctaDefaults.title[locale] ? copy.title : undefined;
+      const customLead = copy.description && copy.description !== ctaDefaults.description[locale] ? copy.description : undefined;
+      const customPrimary =
+        copy.ctaLabel && copy.ctaLabel !== ctaDefaults.ctaLabel[locale]
+          ? { href: "/quote", label: copy.ctaLabel }
+          : undefined;
+      return (
+        <div className="container-lava relative z-10 py-[clamp(2.5rem,5vw,4.5rem)]">
+          <CtaBanner title={customTitle} lead={customLead} primary={customPrimary} />
+        </div>
+      );
+    },
   };
 
   const sameAs = Object.values(settings.socials).filter(
@@ -278,25 +286,14 @@ export default async function HomePage({ params }: HomeParams) {
       />
       <JsonLd data={websiteJsonLd({ url: localizedPath(locale, "/"), language: [locale] })} />
 
-      {hero ? (
-        <HomeHero locale={locale}>
-          <HomeHeroCopy
-            eyebrow={hero.content.eyebrow || tCommon("tagline")}
-            title={hero.content.title || t("title")}
-            description={hero.content.description || t("description")}
-            primaryLabel={hero.content.ctaLabel || t("startProject")}
-            secondaryLabel={hero.content.secondaryCtaLabel || t("viewWork")}
-          />
-        </HomeHero>
-      ) : (
-        // Hero hidden in the dashboard: clear the fixed header and keep a document title.
+      {!startsWithHero ? (
         <div className="pt-[var(--header-h)]">
-          <h1 className="sr-only">{t("title")}</h1>
+          {!hasHero ? <h1 className="sr-only">{t("title")}</h1> : null}
         </div>
-      )}
+      ) : null}
 
-      {body.map(({ sectionKey, content }) =>
-        isHomeSectionKey(sectionKey) && sectionKey !== "hero" ? (
+      {visibleSections.map(({ sectionKey, content }) =>
+        isHomeSectionKey(sectionKey) ? (
           <Fragment key={sectionKey}>{renderers[sectionKey](content)}</Fragment>
         ) : null,
       )}

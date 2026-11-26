@@ -34,12 +34,12 @@ export function AdminNavigation({ groups }: { groups: AdminNavGroup[] }) {
   const path = usePathname();
   return <nav aria-label="Admin navigation" className="grid gap-5">
     {groups.filter(({ links }) => links.length).map((group) => <section key={group.label}>
-      <h2 className="mb-1 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-muted">{group.label}</h2>
+      <h2 className="mb-1 px-3 text-xs font-semibold text-muted">{group.label}</h2>
       {group.links.map(({ href, label }) => {
-        const selected = href === "/admin" ? path === href : path === href || path.startsWith(href + "/");
+        const selected = href === "/admin" ? path === href : path === href || path.startsWith(href === "/admin/pages/home" ? "/admin/pages/" : href + "/");
         return <Link key={href} href={href} aria-current={selected ? "page" : undefined}
           onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}
-          className={`block rounded-r border-s-2 px-3 py-2 text-sm ${selected ? "border-accent bg-surface-2 font-medium text-lava-300" : "border-transparent text-muted hover:bg-surface-2 hover:text-text"}`}>{label}</Link>;
+          className={`block rounded-lg border-s-2 px-3 py-2 text-sm ${selected ? "border-accent bg-accent-soft font-semibold text-accent-text" : "border-transparent text-muted hover:bg-surface-2 hover:text-text"}`}>{label}</Link>;
       })}
     </section>)}
   </nav>;

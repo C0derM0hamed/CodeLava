@@ -1,0 +1,104 @@
+.dl-stage { --dl-travel: 126svh; position: relative; isolation: isolate; background: var(--bg); }
+.dl-pin {
+  position: relative; display: grid; align-items: center; box-sizing: border-box;
+  min-block-size: min(100svh, 65rem); padding: calc(var(--header-h) + 1rem) 0 4rem;
+  overflow: clip; background: var(--gradient-page-wash);
+}
+.dl-columns {
+  inline-size: min(100%, var(--container)); padding-inline: var(--gutter); margin-inline: auto;
+  display: grid; align-items: center; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+}
+.dl-copy { position: relative; z-index: 1; min-inline-size: 0; }
+.dl-stage .dl-art { inline-size: 123%; margin-inline-start: -9%; }
+.dl-art {
+  position: relative; isolation: isolate; inline-size: 100%; aspect-ratio: 3/2;
+  pointer-events: none; user-select: none; container-type: inline-size;
+}
+.dl-landscape, .dl-terrain, .dl-orbit, .dl-ejecta, .dl-orbit svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dl-landscape { transform: translate3d(var(--dl-ground-x, 0px), var(--dl-ground-y, 0px), 0); }
+.dl-terrain {
+  /* The feathered, nine-slice centre is decorative paint, including before hydration. */
+  border-image: url("/media/hero/daylight.webp") 0 fill / 0;
+}
+.dl-fissures {
+  position: absolute; left: 10%; top: 41.5%; width: 80%; height: 52.5%; opacity: 0;
+}
+.dl-art[data-enhanced] .dl-fissures {
+  border-image: url("/media/hero/daylight-fissures.webp") 0 fill / 0;
+  opacity: var(--dl-heat, .12); animation: dl-breathe 4.8s ease-in-out infinite alternate;
+}
+@keyframes dl-breathe { from { opacity: calc(var(--dl-heat, .12) * .38); } }
+.dl-film { opacity: var(--dl-film, 0); position: absolute; left: 39.068%; top: 22.404%; width: 22.939%; height: 23.256%; }
+.dl-film canvas { display: block; width: 100%; height: 100%; }
+.dl-orbit {
+  opacity: var(--dl-ring, .85); transform-origin: 50% 43%;
+  transform: translate3d(var(--dl-air-x, 0px), var(--dl-air-y, 0px), 0) scale(var(--dl-scale, 1)) rotate(var(--dl-angle, 0deg));
+}
+.dl-inscription, .dl-token { font-family: var(--font-code), ui-monospace, monospace; }
+.dl-packets { opacity: .65; stroke-dashoffset: var(--dl-offset, 0); }
+.dl-art[data-enhanced] .dl-packets { animation: dl-orbit 18s linear infinite; }
+@keyframes dl-orbit { to { stroke-dashoffset: calc(var(--dl-offset, 0) - 300); } }
+.dl-brand {
+  position: absolute; left: 50%; top: 31.4%; width: 16%; display: grid; justify-items: center;
+  transform: translate(-50%, -50%) translate(var(--dl-air-x, 0px), var(--dl-brand-y, 0px));
+  opacity: var(--dl-logo, 1);
+}
+.dl-brackets { width: 100%; overflow: visible; transform: rotate(-7deg); }
+.dl-left { filter: drop-shadow(0 0 5px var(--syntax-cyan)); transform: translateX(var(--dl-split, 0px)); }
+.dl-right { filter: drop-shadow(0 0 5px var(--lava-300)); transform: translateX(calc(0px - var(--dl-split, 0px))); }
+.dl-slash { filter: drop-shadow(0 0 5px var(--lava-100)); }
+.dl-word {
+  position: absolute; top: 97%; font: 700 3.45cqw/1 var(--font-display-latin), sans-serif;
+  letter-spacing: -.055em; color: var(--ink-900); opacity: var(--dl-word, 1);
+  text-shadow: 0 1px 7px var(--lava-100); transform: translateY(var(--dl-word-y, 0px));
+}
+.dl-word > span { color: var(--lava-600); }
+.dl-ejecta { transform: translate(var(--dl-air-x, 0px), var(--dl-air-y, 0px)); }
+.dl-token {
+  position: absolute; left: 0; top: 0; opacity: 0; line-height: 1; white-space: nowrap;
+  font-weight: 550; font-size: clamp(10px, 2.15cqw, 21px); direction: ltr;
+  color: var(--code-blue); text-shadow: 0 1px 3px var(--pearl-50);
+}
+.dl-token:nth-child(4n + 2) { color: var(--accent-text); }
+.dl-token:nth-child(4n + 3) { color: var(--code-cyan); }
+.dl-token:nth-child(4n) { color: color-mix(in oklab, var(--syntax-green), var(--ink-900) 46%); }
+.dl-ember {
+  position: absolute; left: 50%; top: 44%; width: 2px; height: 3px; border-radius: 50%;
+  background: var(--ember); box-shadow: 0 0 3px var(--lava-500); opacity: 0;
+  animation: dl-rise var(--life) ease-out var(--delay) infinite;
+}
+@keyframes dl-rise {
+  0% { transform: translate(0,0); opacity: 0; }
+  12% { opacity: .9; }
+  100% { transform: translate(var(--drift), var(--rise)); opacity: 0; }
+}
+.dl-art:not([data-moving]) * { animation-play-state: paused !important; }
+.dl-cue { display: none; }
+.dl-skip {
+  position: absolute; z-index: 3; inset-inline-start: var(--gutter); inset-block-start: calc(var(--header-h) + 8px);
+  padding: .4rem 1rem; border-radius: var(--radius-pill); color: var(--text); background: var(--surface);
+}
+.dl-skip:not(:focus-visible) { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
+.dl-stage:not([data-story]) .dl-skip { display: none; }
+.dl-end { height: 0; outline: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .dl-stage[data-story] { block-size: calc(var(--dl-pin-height, 100svh) + var(--dl-travel)); }
+  .dl-stage[data-story] .dl-pin { position: sticky; top: min(0px, calc(100svh - var(--dl-pin-height, 100svh))); }
+  .dl-stage[data-story] .dl-cue {
+    position: absolute; bottom: clamp(1.5rem, 4vh, 3.5rem); inset-inline-start: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
+    display: flex; gap: .8rem; align-items: center; color: var(--text-muted); font-size: .78rem; font-weight: 500;
+  }
+  .dl-track { position: relative; inline-size: 3rem; block-size: 2px; background: var(--line-strong); }
+  .dl-track i { display: block; height: 100%; background: var(--accent); transform: scaleX(var(--dl-progress, .07)); transform-origin: left; }
+  [dir="rtl"] .dl-track i { transform-origin: right; }
+}
+@media (max-width: 760px) {
+  .dl-stage { --dl-travel: 80svh; }
+  .dl-pin { padding-block: calc(var(--header-h) + 1.25rem) 3.3rem; }
+  .dl-columns { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
+  .dl-stage .dl-art { inline-size: min(115%, 72svh); margin-inline: 0; justify-self: center; }
+  .dl-stage .dl-cue { bottom: 1.15rem; }
+}
+@media (max-width: 760px), (pointer: coarse) {
+  .dl-terrain { border-image-source: url("/media/hero/daylight-small.webp"); }
+}

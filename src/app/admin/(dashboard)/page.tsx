@@ -37,10 +37,10 @@ export default async function Dashboard() {
   ];
   return <>
     <PageHeading title="Overview" detail={`Signed in as ${user.name}`} />
-    {counts.length > 0 && <section aria-label="Workspace counts" className="mb-5 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3">
-      {counts.map(({ label, value, icon: Icon, href }) => <Link key={label} href={href} className="group relative flex items-start justify-between gap-3 bg-surface p-4 hover:bg-surface-2 sm:p-5">
+    {counts.length > 0 && <section aria-label="Workspace counts" className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {counts.map(({ label, value, icon: Icon, href }) => <Link key={label} href={href} className="flex items-start justify-between gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card hover:border-line-lava sm:p-5">
         <div><span className="block text-sm text-muted">{label}</span><span className="mt-1 block font-display text-4xl font-semibold tabular-nums">{value}</span></div>
-        <Icon size={20} className="mt-1 text-lava-300" aria-hidden />
+        <span className="rounded-xl bg-accent-soft p-2.5 text-accent-text"><Icon size={20} aria-hidden /></span>
       </Link>)}
     </section>}
     <div className="grid items-start gap-4 xl:grid-cols-2">
@@ -58,6 +58,7 @@ export default async function Dashboard() {
     </div>
     <div className="mt-4"><Panel title="Quick links">
       <div className="flex flex-wrap gap-x-5 gap-y-2">
+        {permits(user.permissions, "page_sections:read") && <Link href="/admin/pages/home" className={`${linkClass} inline-flex items-center gap-1 text-sm`}>Edit homepage <ArrowUpRight size={14} aria-hidden /></Link>}
         {permits(user.permissions, "services:write") && <Link href="/admin/content/services/new" className={`${linkClass} inline-flex items-center gap-1 text-sm`}>Add service <ArrowUpRight size={14} aria-hidden /></Link>}
         {permits(user.permissions, "projects:write") && <Link href="/admin/content/projects/new" className={`${linkClass} inline-flex items-center gap-1 text-sm`}>Add project <ArrowUpRight size={14} aria-hidden /></Link>}
         {permits(user.permissions, "services:read") && <Link href="/admin/content/services" className={`${linkClass} inline-flex items-center gap-1 text-sm`}>Browse services <ArrowUpRight size={14} aria-hidden /></Link>}

@@ -30,7 +30,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
       <Label title="Through (UTC)"><input className={inputClass} name="to" type="date" defaultValue={filters.to} /></Label>
       <button className={buttonClass}>Apply filters</button>
     </form>
-    {rows.length ? <div className="overflow-x-auto rounded-lg border border-line bg-surface"><table className="w-full text-sm">
+    {rows.length ? <div className="overflow-x-auto rounded-2xl border border-line bg-surface shadow-card"><table className="w-full text-sm">
       <thead className="bg-surface-2 text-muted"><tr>{["Lead", "Type", "Stage", "Received (UTC)"].map((label) =>
         <th scope="col" key={label} className={`${cellClass} whitespace-nowrap text-start`}>{label}</th>)}</tr></thead>
       <tbody>{rows.slice(0, size).map((lead) => <tr className={rowClass} key={lead.id}>

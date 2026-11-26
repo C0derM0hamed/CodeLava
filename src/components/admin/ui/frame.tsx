@@ -5,7 +5,7 @@ export function PageHeading({ title, detail, actions }: { title: string; detail?
   return (
     <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
       <div>
-        <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
         {detail && <p className="mt-2 max-w-2xl text-sm text-muted">{detail}</p>}
       </div>
       {actions}
@@ -22,7 +22,11 @@ export function Label({ title, children }: { title: string; children: ReactNode 
 }
 
 export function Badge({ children }: { children: ReactNode }) {
-  return <span className="inline-flex rounded border border-line-strong bg-bg px-2 py-1 font-mono text-xs capitalize text-muted">{children}</span>;
+  const status = typeof children === "string" ? children.toLowerCase() : "";
+  const tone = status === "published" || status === "visible" ? "bg-success/10 text-text"
+    : status === "draft" || status.includes("draft") ? "bg-accent-soft text-accent-text"
+      : "bg-surface-2 text-muted";
+  return <span className={`inline-flex rounded-full border border-line px-2.5 py-0.5 text-xs font-medium capitalize ${tone}`}>{children}</span>;
 }
 
 export function Panel({ title, children }: { title: string; children: ReactNode }) {
