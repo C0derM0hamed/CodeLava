@@ -10,19 +10,23 @@ for (const [locale, messages, service, prompt, search] of [
     const index = await page.goto(`/${locale}/services`);
     expect(index?.status()).toBe(200);
     await expect(page).toHaveTitle(new RegExp(messages.services.title));
-    const rows = page.locator(".service-index > li");
-    await expect(rows).toHaveCount(6);
-    const first = rows.first();
+    const tiles = page.locator("a.service-tile");
+    await expect(tiles).toHaveCount(6);
+    const first = tiles.first();
     await expect(first).toContainText(service);
-    await first.locator("summary").focus();
+    await expect(first).toHaveClass(/service-tile--featured/);
+    await expect(first).toHaveAttribute("href", `/${locale}/services/custom-web-platforms`);
+    await first.focus();
     await page.keyboard.press("Enter");
-    await expect(first.locator("details")).toHaveAttribute("open", "");
-    await expect(first.getByText("Next.js", { exact: true })).toBeVisible();
-    await first.getByRole("link", { name: messages.services.viewService, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/services/custom-web-platforms$`));
 
     await expect(page.getByRole("heading", { level: 1, name: service })).toBeVisible();
     await expect(page.getByRole("heading", { name: messages.process.title })).toBeVisible();
-    await expect(page.getByRole("link", { name: messages.common.requestQuote, exact: true }).first()).toHaveAttribute(
+    await expect(page.getByText("Next.js", { exact: true })).toBeVisible();
+    // The closing "talk to us" banner now lives in the shared footer, not in the page body.
+    await expect(page.locator("main").getByRole("heading", { name: messages.common.discussProject })).toHaveCount(0);
+    await expect(page.locator("a.service-tile")).toHaveCount(3);
+    await expect(page.locator("main").getByRole("link", { name: messages.common.requestQuote, exact: true }).first()).toHaveAttribute(
       "href", `/${locale}/quote?service=custom-web-platforms`,
     );
     const structuredData = await page.locator("main script[type='application/ld+json']").allTextContents();

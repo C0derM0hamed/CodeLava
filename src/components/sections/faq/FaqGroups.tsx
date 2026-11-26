@@ -69,30 +69,32 @@ export function FaqGroups({ groups, locale, searchable = true }: { groups: Group
     <div className="faq-browser">
       {searchable && groups.length ? <div className="faq-search">
         <div className="relative min-w-0 flex-1">
-          <TextInput id="faq-search" type="search" label={searchLabel} className="pe-11" autoComplete="off" dir="auto"
+          <TextInput id="faq-search" type="search" label={searchLabel} className="ps-11" autoComplete="off" dir="auto"
             value={query} onChange={(event) => setFilter({ query: event.target.value, hash })} />
-          <Search size={17} aria-hidden="true" className="pointer-events-none absolute bottom-3.5 end-3.5 text-muted" />
+          <Search size={17} aria-hidden="true" className="pointer-events-none absolute bottom-3.5 start-4 text-muted" />
         </div>
         <p className="faq-count" role="status">
           {locale === "ar" ? `عدد الأسئلة: ${new Intl.NumberFormat(locale).format(resultCount)}` :
             `${resultCount} ${resultCount === 1 ? "question" : "questions"}`}
         </p>
       </div> : null}
-      {!resultCount ? <p className="border-y border-line py-5 text-muted">{groups.length ? c("noResults") : t("empty")}</p> : null}
+      {!resultCount ? <p className="rounded-[var(--radius-md)] border border-line bg-surface p-6 text-muted shadow-card">{groups.length ? c("noResults") : t("empty")}</p> : null}
       {visible.map(({ title, id, items }) => (
         <div key={id} className={searchable ? "faq-group" : "faq-group faq-group-inline"} onKeyDownCapture={handleKeys}>
-          {title ? <h2 className="text-display-sm">{title}</h2> : null}
-          <div>
+          {title ? <h2 className="faq-group-title">{title}</h2> : null}
+          <div className="faq-list">
             {items.map(({ id: questionId, question, answerHtml }) => {
               const open = questionId === hash;
               return <div className="faq-question" id={questionId} key={questionId}>
-                <Accordion key={String(open)} className="faq-accordion" numbered={false}
+                <Accordion key={String(open)} variant="cards" className="faq-accordion" numbered={false}
                   defaultOpenIds={open ? [questionId] : []}
                   items={[{ id: questionId, question,
-                    answer: <div className="conversion-prose" dangerouslySetInnerHTML={{ __html: answerHtml }} /> }]} />
-                <a className="faq-permalink" href={`#${questionId}`} aria-label={`${deepLink} · ${question}`}>
-                  <Link2 size={16} aria-hidden="true" />
-                </a>
+                    answer: <>
+                      <div className="conversion-prose" dangerouslySetInnerHTML={{ __html: answerHtml }} />
+                      <a className="faq-permalink" href={`#${questionId}`} aria-label={`${deepLink} · ${question}`}>
+                        <Link2 size={14} aria-hidden="true" />{deepLink}
+                      </a>
+                    </> }]} />
               </div>;
             })}
           </div>

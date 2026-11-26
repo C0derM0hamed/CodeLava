@@ -61,7 +61,7 @@ for (const [locale, messages, sample] of [
     const rateKey = await isolateRateLimit(page);
     const email = newEmail();
     await page.goto(`/${locale}/services/custom-web-platforms`);
-    await page.getByRole("link", { name: messages.common.requestQuote, exact: true }).first().click();
+    await page.locator("main").getByRole("link", { name: messages.common.requestQuote, exact: true }).first().click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/quote\\?service=custom-web-platforms`));
     const quotePath = `/${locale}/quote?service=custom-web-platforms&utm_source=conversion-test`;
     await page.goto(quotePath, { referer: `${new URL(page.url()).origin}/${locale}/services` });

@@ -1,0 +1,289 @@
+/*
+ * Homepage + About section styles (Daylight Magma v2).
+ * Only what the shared kit (components/ui, experience/fx) does not already cover.
+ * Token-only colours; logical properties; reduced motion respected.
+ */
+
+/* ------------------------------------------------------------------ hero */
+
+.home-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.45rem + 3.1vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+}
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .home-hero-title {
+  font-size: clamp(2.2rem, 1.3rem + 2.7vw, 4rem);
+  line-height: 1.24;
+  letter-spacing: 0;
+}
+
+/* Gentle entrance for hero support content (never the H1 — it is the LCP element). */
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-enter {
+    animation: home-rise 820ms var(--ease-out-expo) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+}
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Placeholder hero art: daylight volcano dissolving into the pearl page (no hard frame). */
+.home-hero-art {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 6 / 5;
+}
+.home-hero-art__sky {
+  position: absolute;
+  inset: 4% 2% 10%;
+  z-index: -1;
+  border-radius: 50%;
+  background:
+    radial-gradient(48% 42% at 50% 46%, color-mix(in oklab, var(--lava-300) 34%, transparent) 0%, transparent 72%),
+    radial-gradient(60% 55% at 70% 30%, color-mix(in oklab, var(--code-cyan) 9%, transparent) 0%, transparent 70%);
+  filter: blur(18px);
+}
+.home-hero-art__image {
+  -webkit-mask-image: radial-gradient(72% 68% at 50% 46%, black 58%, transparent 100%);
+  mask-image: radial-gradient(72% 68% at 50% 46%, black 58%, transparent 100%);
+}
+.home-hero-art__ring {
+  position: absolute;
+  inset-inline: 14%;
+  top: 25%;
+  height: 22%;
+  pointer-events: none;
+}
+.home-hero-art__mark {
+  position: absolute;
+  top: 9%;
+  inset-inline: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 24px color-mix(in oklab, var(--lava-500) 38%, transparent));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-art__mark {
+    animation: home-float 7s ease-in-out infinite;
+  }
+}
+@keyframes home-float {
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* ------------------------------------------------------------ trust strip */
+
+.home-clients__item + .home-clients__item {
+  border-inline-start: 1px solid var(--line-strong);
+}
+@media (max-width: 1023.98px) {
+  .home-clients__item + .home-clients__item {
+    border-inline-start: 0;
+  }
+}
+
+/* --------------------------------------------------------------- services */
+
+.home-service {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  block-size: 100%;
+  min-block-size: 11.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 300ms var(--ease-out-expo),
+    box-shadow 300ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo);
+}
+@media (min-width: 640px) {
+  .home-service {
+    padding: 1.5rem;
+    min-block-size: 12.5rem;
+  }
+}
+.home-service:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--line-lava);
+}
+.home-service:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.home-service__icon {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  transition: background-color 250ms ease;
+}
+.home-service:hover .home-service__icon {
+  background: var(--accent-soft-strong);
+}
+.home-service__arrow {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text-faint);
+  transition:
+    color 250ms ease,
+    border-color 250ms ease,
+    background-color 250ms ease;
+}
+.home-service:hover .home-service__arrow {
+  color: var(--accent-text);
+  border-color: var(--line-lava);
+  background: var(--accent-soft);
+}
+
+.home-service--featured {
+  overflow: hidden;
+  border-color: color-mix(in oklab, var(--lava-500) 42%, transparent);
+  background:
+    radial-gradient(90% 80% at 92% 6%, color-mix(in oklab, var(--lava-500) 62%, transparent) 0%, color-mix(in oklab, var(--lava-600) 26%, transparent) 40%, transparent 74%),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+  box-shadow:
+    0 20px 44px -18px color-mix(in oklab, var(--lava-600) 50%, transparent),
+    0 12px 30px -14px color-mix(in oklab, var(--ink-950) 45%, transparent);
+}
+[dir="rtl"] .home-service--featured {
+  background:
+    radial-gradient(90% 80% at 8% 6%, color-mix(in oklab, var(--lava-500) 62%, transparent) 0%, color-mix(in oklab, var(--lava-600) 26%, transparent) 40%, transparent 74%),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+}
+.home-service--featured:hover {
+  border-color: color-mix(in oklab, var(--lava-400) 60%, transparent);
+  box-shadow:
+    0 24px 54px -16px color-mix(in oklab, var(--lava-600) 60%, transparent),
+    0 16px 36px -14px color-mix(in oklab, var(--ink-950) 52%, transparent);
+}
+.home-service--featured .home-service__icon,
+.home-service--featured:hover .home-service__icon {
+  background: color-mix(in oklab, var(--ink-800) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ash-50) 16%, transparent);
+  color: var(--lava-400);
+}
+.home-service--featured .home-service__arrow,
+.home-service--featured:hover .home-service__arrow {
+  border-color: color-mix(in oklab, var(--lava-400) 60%, transparent);
+  background: color-mix(in oklab, var(--lava-500) 24%, transparent);
+  color: var(--lava-100);
+}
+
+/* -------------------------------------------------------- featured project */
+
+.home-project-stage {
+  position: relative;
+  isolation: isolate;
+}
+.home-project-stage::before {
+  content: "";
+  position: absolute;
+  inset: 18% 6% -8%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--lava-400) 30%, transparent), transparent);
+  filter: blur(26px);
+}
+.home-project-plate {
+  background:
+    radial-gradient(70% 90% at 80% 110%, color-mix(in oklab, var(--lava-500) 50%, transparent) 0%, transparent 70%),
+    linear-gradient(150deg, var(--ink-800) 0%, var(--ink-950) 100%);
+}
+
+/* ---------------------------------------------------------------- process */
+
+.home-step__tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--lava-400) 45%, transparent);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--lava-500) 22%, transparent), transparent 70%),
+    var(--ink-800);
+  color: var(--lava-400);
+  box-shadow:
+    0 0 0 6px var(--ink-900),
+    0 0 28px -4px color-mix(in oklab, var(--lava-500) 55%, transparent);
+}
+.home-market__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--lava-400) 45%, transparent);
+  background: color-mix(in oklab, var(--lava-500) 14%, transparent);
+  color: var(--lava-400);
+}
+
+/* ----------------------------------------------------------- testimonials */
+
+.home-quote-mark {
+  font-family: var(--font-display);
+  font-size: 5.5rem;
+  font-weight: 700;
+  line-height: 0.7;
+  background-image: var(--gradient-cta);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.home-carousel {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.home-carousel::-webkit-scrollbar {
+  display: none;
+}
+.home-carousel > * {
+  scroll-snap-align: start;
+}
+
+/* ------------------------------------------------------------ about visual */
+
+.home-key-art {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lift);
+}
+.home-key-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ash-50) 10%, transparent);
+  pointer-events: none;
+}

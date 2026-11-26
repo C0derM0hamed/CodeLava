@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { readNativeLead } from "@/components/sections/forms/native";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { PageTop, Panel, ReassuranceList } from "@/components/sections/forms/page-kit";
 import { QuoteForm } from "@/components/sections/forms/QuoteForm";
 import { campaignQuery, conversionMetadata, formOpenedAt, type SearchParams } from "@/components/sections/forms/page-data";
 import type { AppLocale } from "@/i18n/routing";
@@ -28,26 +29,44 @@ export async function generateMetadata({ params }: Props) {
 export default async function QuotePage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [query, sections, services, t, requestHeaders] = await Promise.all([
+  const [query, sections, services, t, requestHeaders, aside] = await Promise.all([
     searchParams, getPageSections("quote", locale), getServices(locale), getTranslations("quote"), headers(),
+    getTranslations("reassurance"),
   ]);
   const hero = sections.find(({ sectionKey }) => sectionKey === "hero")?.content;
   const intro = sections.find(({ sectionKey }) => sectionKey === "intro")?.content;
   const collator = new Intl.Collator(locale);
   const countries = countryCodes.map((value) => ({ value, label: countryName(value, locale) }))
     .sort((a, b) => collator.compare(a.label, b.label));
+  const reassurance = {
+    title: aside("title"),
+    reply: { title: aside("reply.title"), body: aside("reply.body") },
+    nda: { title: aside("nda.title"), body: aside("nda.body") },
+    bilingual: { title: aside("bilingual.title"), body: aside("bilingual.body") },
+    free: { title: aside("free.title"), body: aside("free.body") },
+  };
 
   return (
-    <main id="main-content" className="conversion-frame quote-frame">
-      <div className="conversion-container quote-page">
+    <main id="main-content" className="relative bg-bg text-text">
+      <PageTop className="!pb-20 sm:!pb-28">
         <SectionHeading as="h1" size="lg" layout="split" kicker={hero?.eyebrow}
           title={hero?.title || t("title")} lead={hero?.description || intro?.description} animated={false} />
-        <QuoteForm key={typeof query.service === "string" ? query.service : ""} locale={locale}
-          preselected={services.find(({ slug }) => slug === query.service)?.id}
-          services={services.map(({ id, title, tagline }) => ({ id, title, tagline }))}
-          countries={countries} campaign={campaignQuery(query)} startedAt={formOpenedAt()}
-            initialReferrer={requestHeaders.get("referer") ?? ""} nativeResult={readNativeLead(query.result, "quote", locale)} />
-      </div>
+        <div className="mt-10 grid items-start gap-6 sm:mt-14 lg:grid-cols-12 lg:gap-8">
+          <div className="min-w-0 lg:col-span-8">
+            <QuoteForm key={typeof query.service === "string" ? query.service : ""} locale={locale}
+              preselected={services.find(({ slug }) => slug === query.service)?.id}
+              services={services.map(({ id, title, tagline, icon }) => ({ id, title, tagline, icon }))}
+              countries={countries} campaign={campaignQuery(query)} startedAt={formOpenedAt()}
+              initialReferrer={requestHeaders.get("referer") ?? ""} nativeResult={readNativeLead(query.result, "quote", locale)} />
+          </div>
+          <aside aria-labelledby="quote-aside-title" className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-4">
+            <Panel className="!p-6 sm:!p-7">
+              <h2 id="quote-aside-title" className="kicker-rule">{reassurance.title}</h2>
+              <ReassuranceList copy={reassurance} className="mt-6" />
+            </Panel>
+          </aside>
+        </div>
+      </PageTop>
     </main>
   );
 }

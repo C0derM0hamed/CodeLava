@@ -1,38 +1,40 @@
-.faq-page {
-  display: grid;
-  grid-template-columns: minmax(0, .83fr) minmax(0, 1.2fr);
-  gap: clamp(2.5rem, 7vw, 7rem);
-  align-items: start;
-}
+/* FAQ: split intro on the left, card accordion on the right. */
 
-.faq-editorial { display: grid; gap: 2rem; }
-.faq-editorial h1 { font-size: var(--text-display-md); max-inline-size: 15ch; }
-.faq-contact { display: grid; justify-items: start; gap: .2rem; }
-.faq-browser { display: grid; gap: clamp(1.3rem, 3vw, 2.75rem); }
+.faq-browser { display: grid; gap: clamp(1.75rem, 3.5vw, 2.75rem); }
 .faq-search { display: flex; align-items: end; gap: 1rem; }
-.faq-count { flex-shrink: 0; color: var(--text-muted); font-size: .8rem; padding-block-end: .6rem; }
-.faq-group { display: grid; gap: .65rem; }
-.faq-question { position: relative; scroll-margin-block-start: calc(var(--header-h) + 1rem); }
-.faq-question:target { background: color-mix(in oklab, var(--lava-900) 25%, var(--bg)); }
-.faq-question + .faq-question { margin-block-start: -1px; }
-.faq-accordion h3 > button { padding-inline-end: 2.65rem; padding-inline-start: .3rem; }
-.faq-question:target .faq-accordion h3 > button,
-.faq-accordion [role="region"] > div { padding-inline-start: .35rem; }
+.faq-count { flex-shrink: 0; color: var(--text-muted); font-size: 0.8125rem; padding-block-end: 0.8rem; }
+.faq-group { display: grid; gap: 1rem; }
+.faq-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+}
+.faq-group-title::before {
+  content: "";
+  inline-size: 1.5rem;
+  block-size: 2px;
+  border-radius: 2px;
+  background: var(--gradient-cta);
+  flex: none;
+}
+.faq-list { display: grid; gap: 0.75rem; }
+.faq-question { scroll-margin-block-start: calc(var(--header-h) + 1rem); }
+.faq-question:target [data-state] { border-color: var(--line-lava-strong); box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-card); }
+.faq-accordion h3 > button { padding-block: 1.15rem; }
+.faq-accordion [role="region"] > div > div { padding-inline-end: 0; }
 .faq-accordion h3:has(> button[aria-expanded="false"]) + [role="region"] { visibility: hidden; }
 .faq-permalink {
-  position: absolute;
-  inset-inline-end: 0;
-  inset-block-start: 1.1rem;
-  display: grid;
-  place-items: center;
-  inline-size: 2.15rem;
-  block-size: 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-block-size: 1.75rem;
+  margin-block-start: 0.5rem;
   color: var(--text-faint);
+  font-size: 0.8125rem;
 }
-.faq-permalink:is(:hover, :focus-visible) { color: var(--lava-300); }
-[dir="rtl"] .faq-page .faq-editorial h1 { font-size: clamp(2.1rem, 1.3rem + 3.1vw, 4.25rem); }
-
-@media (max-width: 55rem) {
-  .faq-page { grid-template-columns: minmax(0, 1fr); }
-  .faq-editorial { gap: 1.25rem; }
-}
+.faq-permalink:is(:hover, :focus-visible) { color: var(--accent-text); text-decoration: underline; text-underline-offset: 0.2em; }

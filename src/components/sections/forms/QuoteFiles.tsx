@@ -49,17 +49,17 @@ export function QuoteFiles({ files, onChange, enhanced, error }: {
             event.target.value = "";
           }} />
         {enhanced ? <label htmlFor="quote-files" className="flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 p-4 text-center text-sm">
-          <Upload size={21} className="text-lava-300" aria-hidden="true" />
-          {t("drop")}
+          <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-accent-soft text-accent-text"><Upload size={19} /></span>
+          <span className="font-semibold text-text">{t("drop")}</span>
         </label> : null}
       </div>
-      {files.length > 0 ? <ul className="grid gap-1" aria-live="polite">
+      {files.length > 0 ? <ul className="mt-1 grid gap-2" aria-live="polite">
         {files.map((file, index) => (
-          <li key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center gap-3 border-b border-line py-1 text-sm">
-            <FileText size={16} aria-hidden="true" className="shrink-0 text-lava-300" />
+          <li key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center gap-3 rounded-[12px] border border-line-strong bg-surface py-1 ps-3.5 pe-1 text-sm shadow-xs">
+            <FileText size={16} aria-hidden="true" className="shrink-0 text-accent-text" />
             <bdi className="min-w-0 flex-1 break-all">{file.name}</bdi>
             <span className="text-muted" dir="ltr">{file.size >= 1024 ** 2 ? `${(file.size / 1024 ** 2).toFixed(1)} MB` : `${Math.ceil(file.size / 1024)} KB`}</span>
-            <button type="button" className="grid size-10 shrink-0 place-items-center text-muted hover:text-text"
+            <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent-text"
               aria-label={t("remove", { name: file.name })} onClick={() => onChange(files.filter((_, item) => item !== index))}>
               <X size={17} aria-hidden="true" />
             </button>

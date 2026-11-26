@@ -7,7 +7,9 @@ import {
   type FormEvent, type ReactNode,
 } from "react";
 import { ActionLink } from "@/components/ui/ActionLink";
+import { ArrowLeftIcon } from "@/components/ui/Icons";
 import { Select, Textarea, TextInput } from "@/components/ui/Field";
+import { ServiceIcon } from "@/components/sections/services/service-icons";
 import type { AppLocale } from "@/i18n/routing";
 import { sendPublicLead } from "./action";
 import { formCopy } from "./copy";
@@ -21,7 +23,7 @@ import { useFormError } from "./use-form-messages";
 import { waitForFormTime } from "./timing";
 import "./conversion.css";
 
-type ServiceChoice = { id: string; title: string; tagline: string };
+type ServiceChoice = { id: string; title: string; tagline: string; icon?: string | null };
 type Props = {
   locale: AppLocale; services: ServiceChoice[]; countries: { value: string; label: string }[];
   preselected?: string; campaign: string; startedAt: number; initialReferrer: string; nativeResult?: LeadState;
@@ -231,6 +233,7 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
     </section>;
   }
 
+  const progressText = `${t("stepCount", { step: step + 1, total: stepTitles.length })} · ${stepTitles[step]}`;
   const serviceList = [...services, { id: unsureValue, title: t("unsure"), tagline: "" }];
   const reviewGroups: [number, ReactNode][] = [
     [0, serviceList.filter(({ id }) => draft.serviceIds.includes(id)).map(({ title }) => title).join(locale === "ar" ? "، " : ", ")],
@@ -256,12 +259,12 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
     [4, <div key="files" className="grid gap-2">
       {files.length ? <ul>{files.map((file) => <li key={`${file.name}-${file.size}-${file.lastModified}`}><bdi>{file.name}</bdi></li>)}</ul> :
         <p>{formCopy(locale, "reviewEmpty")}</p>}
-      <p className="flex items-start gap-2"><Check size={16} aria-hidden="true" className="mt-1 shrink-0 text-lava-300" />{f("consentLabel")}</p>
+      <p className="flex items-start gap-2"><Check size={16} aria-hidden="true" className="mt-1 shrink-0 text-accent-text" />{f("consentLabel")}</p>
     </div>],
   ];
 
   return (
-    <form className="quote-form" data-ready={enhanced && restored} method="post" encType="multipart/form-data" action={`/${locale}/quote/submit`} onSubmit={enhanced ? submit : undefined} noValidate={enhanced}
+    <form className="quote-form rounded-[var(--radius-lg)] border border-line bg-surface p-5 shadow-card sm:p-8 lg:p-10" data-ready={enhanced && restored} method="post" encType="multipart/form-data" action={`/${locale}/quote/submit`} onSubmit={enhanced ? submit : undefined} noValidate={enhanced}
       aria-busy={pending || undefined}>
       <input type="hidden" name="startedAt" value={originTime} />
       <input type="hidden" name="utm" value={attribution.campaign} />
@@ -269,19 +272,26 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
       <div hidden aria-hidden="true"><label htmlFor="quote-website">Website</label>
         <input id="quote-website" name="website" tabIndex={-1} autoComplete="off" /></div>
 
-      <div className="quote-progress" aria-label={stepTitles[step]}>
-        <p className="text-kicker text-lava-300" aria-live="polite">
-          {step === reviewStep ? t("reviewStep") : t("stepCount", { step: step + 1, total: reviewStep })}
-        </p>
-        <ol>
-          {stepTitles.slice(0, reviewStep).map((title, index) => (
-            <li key={index} aria-current={index === step ? "step" : undefined} data-complete={index < step}>
-              <span className="quote-progress-index" aria-hidden="true">{index < step ? <Check size={13} /> : String(index + 1).padStart(2, "0")}</span>
-              <span>{title}</span>
-            </li>
-          ))}
+      <nav className="quote-progress mb-8 border-b border-line pb-8 sm:mb-10 sm:pb-9" aria-label={t("progressLabel")}>
+        <p className="sr-only" role="status" aria-live="polite">{progressText}</p>
+        <p aria-hidden="true" className="mb-4 text-sm font-semibold text-accent-text md:hidden">{progressText}</p>
+        <ol className="quote-steps">
+          {stepTitles.map((title, index) => {
+            const state = index < step ? "done" : index === step ? "current" : "todo";
+            return (
+              <li key={index} data-state={state} aria-current={index === step ? "step" : undefined}>
+                <span className="quote-step-dot" aria-hidden="true">
+                  {state === "done" ? <Check size={15} strokeWidth={2.4} /> : new Intl.NumberFormat(locale).format(index + 1)}
+                </span>
+                <span className="quote-step-label">
+                  {title}
+                  {state === "done" ? <span className="sr-only"> · {t("stepDone")}</span> : null}
+                </span>
+              </li>
+            );
+          })}
         </ol>
-      </div>
+      </nav>
 
       <div className="quote-workspace">
         {errors.form || failure || Object.keys(errors).length ? <div className="conversion-error" role="alert" tabIndex={-1} ref={errorSummary}>
@@ -293,12 +303,14 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
         {panel(0, <>
           <p id="quote-service-help" className="text-sm text-muted">{t("servicesHelp")}</p>
           <fieldset aria-labelledby="quote-step-0" aria-describedby={serviceError ? "quote-service-error quote-service-help" : "quote-service-help"} className="quote-service-grid">
-            {serviceList.map(({ id, title, tagline }, index) => (
-              <label key={id} className="quote-service">
+            {serviceList.map(({ id, title, tagline, icon }) => (
+              <label key={id} className={id === unsureValue ? "quote-service quote-service--unsure" : "quote-service"}>
                 <input type="checkbox" name="serviceIds" value={id} checked={draft.serviceIds.includes(id)}
                   onChange={(event) => selectService(id, event.target.checked)} className="peer sr-only" />
-                <span className="quote-service-number" aria-hidden="true" dir="ltr">{id === unsureValue ? <CircleHelp size={17} /> : String(index + 1).padStart(2, "0")}</span>
-                <span className="quote-service-tick" aria-hidden="true"><Check size={13} /></span>
+                <span className="quote-service-icon" aria-hidden="true">
+                  {id === unsureValue ? <CircleHelp size={22} strokeWidth={1.65} /> : <ServiceIcon name={icon} size={22} />}
+                </span>
+                <span className="quote-service-tick" aria-hidden="true"><Check size={13} strokeWidth={2.6} /></span>
                 <span className="quote-service-title">{title}</span>
                 {tagline ? <span className="quote-service-tagline">{tagline}</span> : null}
               </label>
@@ -316,9 +328,10 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
           <TextInput name="existing" label={formCopy(locale, "existing")} maxLength={2000} dir="auto" optionalLabel={optional}
             value={draft.existing} onChange={(event) => field("existing", event.target.value)} />
           <fieldset className="quote-chips">
-            <legend className="text-sm font-medium text-ash-200">{formCopy(locale, "features")}</legend>
+            <legend className="text-sm font-semibold text-text">{formCopy(locale, "features")}</legend>
             <div className="flex flex-wrap gap-2">
               {features.map((feature) => <label key={feature} className="quote-chip">
+                <Check size={14} strokeWidth={2.4} aria-hidden="true" />
                 <input type="checkbox" name="features" value={feature} checked={draft.features.includes(feature)} className="sr-only"
                   onChange={(event) => field("features", event.target.checked ? [...draft.features, feature] : draft.features.filter((value) => value !== feature))} />
                 <span>{formCopy(locale, feature)}</span>
@@ -362,7 +375,7 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
         </div>)}
 
         {panel(4, <div className="grid gap-6">
-          {hadFiles ? <p className="text-sm text-lava-300">{formCopy(locale, "draftFiles")}</p> : null}
+          {hadFiles ? <p className="text-sm text-accent-text">{formCopy(locale, "draftFiles")}</p> : null}
           <QuoteFiles files={files} enhanced={enhanced} error={error(errors.attachments?.[0] ?? fileErrors[0])} onChange={(next, rejected) => {
             setFiles(next);
             setFileErrors(rejected ?? []);
@@ -376,8 +389,8 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
           {reviewGroups.map(([index, content]) => (
             <div key={index} className="quote-review-row">
               <div className="flex flex-wrap items-center justify-between gap-x-3">
-                <h3 className="font-display text-lg text-text">{stepTitles[index]}</h3>
-                <ActionLink type="button" size="sm" arrow="none" disabled={pending} onClick={() => move(index)}>
+                <h3 className="font-display text-base font-semibold text-text">{stepTitles[index]}</h3>
+                <ActionLink type="button" variant="text" size="sm" arrow="none" disabled={pending} onClick={() => move(index)}>
                   {t("editStep", { step: stepTitles[index] })}
                 </ActionLink>
               </div>
@@ -386,8 +399,10 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
           ))}
         </div>) : null}
 
-        <div className="conversion-form-actions">
-          {enhanced && step > 0 ? <ActionLink type="button" variant="ghost" onClick={() => move(step - 1)} disabled={pending}>{c("back")}</ActionLink> : null}
+        <div className="conversion-form-actions mt-8">
+          {enhanced && step > 0 ? <ActionLink type="button" variant="secondary" arrow="none" onClick={() => move(step - 1)} disabled={pending}>
+            <span className="inline-flex items-center gap-2"><ArrowLeftIcon size={16} />{c("back")}</span>
+          </ActionLink> : null}
           {enhanced ? <ActionLink type="submit" variant="primary" arrow={step < reviewStep ? "right" : "none"}
             loading={pending} className="ms-auto" disabled={!restored}>
             {pending ? f("submitting") : step === reviewStep ? formError ? c("tryAgain") : t("submit")

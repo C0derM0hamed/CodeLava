@@ -92,7 +92,51 @@
     "clientPerspectives": "From our clients",
     "clients": "Clients",
     "achievements": "Milestones",
-    "latestInsights": "Latest insights"
+    "latestInsights": "Latest insights",
+    "startProject": "Start your project",
+    "viewWork": "View our work",
+    "trustedBy": "Teams we’ve had the privilege to build with",
+    "exploreServices": "Explore all services",
+    "moreServices": "More services",
+    "viewCaseStudy": "View case study",
+    "allWork": "All projects",
+    "projectTechnologies": "Technologies used",
+    "achievementsTitle": "Milestones from our work",
+    "seeProcess": "See how we work",
+    "exploreTechnologies": "Explore our stack",
+    "moreTechnologies": "+ {count} more",
+    "testimonialsRegion": "Client testimonials",
+    "rating": "Rated {value} out of 5",
+    "viewReview": "Read the review on {source}",
+    "sources": {
+      "upwork": "Upwork",
+      "mostaql": "Mostaql",
+      "direct": "Direct client",
+      "other": "Verified review"
+    },
+    "allArticles": "View all articles",
+    "allQuestions": "View all questions",
+    "about": {
+      "eyebrow": "About CodeLava",
+      "title": "A software partner\nthat thinks like an owner",
+      "description": "We’re a team of engineers and designers building custom software, digital products and applied AI for businesses in the Gulf, Egypt and beyond — with the care we’d want for our own company.",
+      "cta": "More about us",
+      "imageAlt": "The CodeLava logo: code brackets around a glowing volcano"
+    },
+    "values": {
+      "bilingual": {
+        "title": "Bilingual by design",
+        "body": "Arabic and English, right-to-left and left-to-right, planned from the first screen — never bolted on at the end."
+      },
+      "product": {
+        "title": "Product-minded engineering",
+        "body": "We start from the business outcome, then choose the simplest technology that delivers it well."
+      },
+      "partner": {
+        "title": "A long-term partner",
+        "body": "From discovery to launch and beyond, with a clear handover and support when you need it."
+      }
+    }
   },
   "services": {
     "title": "Services",
@@ -101,7 +145,9 @@
     "features": "What’s included",
     "deliverables": "Deliverables",
     "relatedProjects": "Related work",
-    "empty": "Services will appear here as they’re published."
+    "empty": "Services will appear here as they’re published.",
+    "relatedServices": "More ways we can help",
+    "technologies": "Technologies we use for this service"
   },
   "work": {
     "title": "Our work",
@@ -140,7 +186,55 @@
     "team": "Meet the team",
     "achievements": "Milestones",
     "clients": "Clients",
-    "testimonials": "From our clients"
+    "testimonials": "From our clients",
+    "heroImageAlt": "CodeLava key art: code brackets around a glowing volcano",
+    "storyBody": "CodeLava brings product thinking, design and engineering into one team. We work closely with founders and business owners, ask the questions that shape the right solution, and explain every important decision in plain language — in Arabic or English.",
+    "missionLabel": "Our mission",
+    "mission": "To give ambitious businesses software they can rely on: clear in scope, honest in delivery and built to keep working long after launch.",
+    "visionLabel": "Where we’re headed",
+    "vision": "To be the engineering partner companies across the region turn to first when an idea needs to become a dependable product.",
+    "valuesKicker": "How we work",
+    "valuesTitle": "Principles behind\nevery build",
+    "valuesLead": "The habits that keep projects clear, predictable and easy to own after we hand them over.",
+    "values": {
+      "clarity": {
+        "title": "Clarity before code",
+        "body": "We map real workflows, edge cases and trade-offs before writing production code, so scope stays honest and predictable."
+      },
+      "bilingual": {
+        "title": "Bilingual by architecture",
+        "body": "Arabic and English are engineered in from day one — true RTL layouts, careful typography and content that reads naturally in both."
+      },
+      "ai": {
+        "title": "Applied AI with guardrails",
+        "body": "We use AI where results can be measured on real examples, with human review wherever judgement matters."
+      },
+      "handover": {
+        "title": "Built to hand over",
+        "body": "Maintainable code, documented infrastructure and clear release steps, so your team can run the system with confidence."
+      }
+    },
+    "marketsKicker": "Where we work",
+    "marketsTitle": "Rooted in the region,\nbuilding for the world",
+    "marketsLead": "We partner with businesses across the Gulf and Egypt and with international teams, building products that feel local in language and detail.",
+    "markets": {
+      "gulf": {
+        "title": "The Gulf",
+        "body": "Bilingual products for markets that expect polish, speed and attention to detail."
+      },
+      "egypt": {
+        "title": "Egypt",
+        "body": "Digital products for one of the region’s most dynamic markets, from startups to established businesses."
+      },
+      "international": {
+        "title": "International",
+        "body": "Remote-first collaboration with clear communication and overlap across time zones."
+      }
+    },
+    "teamLead": "The engineers and designers you’ll work with directly, from the first call to launch.",
+    "socialLink": "{name} on {network}",
+    "achievementsTitle": "Milestones from our work",
+    "clientsTitle": "Teams we’ve built with"
   },
   "process": {
     "title": "Our process",
@@ -194,7 +288,8 @@
     "allTopics": "All topics",
     "general": "General",
     "stillHaveQuestions": "Still have a question?",
-    "empty": "Answers will appear here as they’re published."
+    "empty": "Answers will appear here as they’re published.",
+    "stillBody": "Send us a message and our team will answer you personally."
   },
   "contact": {
     "title": "Contact us",
@@ -210,7 +305,9 @@
     "map": "View map",
     "successTitle": "Message received",
     "successDescription": "Thank you for reaching out. We’ll use the contact details you provided to follow up.",
-    "failure": "We couldn’t send your message. Please try again."
+    "failure": "We couldn’t send your message. Please try again.",
+    "quoteCardTitle": "Planning a larger project?",
+    "quoteCardBody": "Share your scope, budget and timeline in a guided brief and we’ll prepare a tailored quote."
   },
   "quote": {
     "title": "Request a quote",
@@ -257,7 +354,9 @@
       "threeToSixMonths": "Within 3–6 months",
       "sixMonthsPlus": "More than 6 months",
       "flexible": "Flexible"
-    }
+    },
+    "progressLabel": "Quote request progress",
+    "stepDone": "completed"
   },
   "forms": {
     "name": "Full name",
@@ -339,5 +438,24 @@
     "imageAlt": "CodeLava. Software & AI Solutions.",
     "privacy": "Privacy policy",
     "notFound": "Page not found"
+  },
+  "reassurance": {
+    "title": "What to expect",
+    "reply": {
+      "title": "A personal reply",
+      "body": "Our team reads every brief and answers by email or your preferred channel, never with an automated message."
+    },
+    "nda": {
+      "title": "NDA on request",
+      "body": "Your idea stays yours. Ask us to sign an NDA before you share sensitive details."
+    },
+    "bilingual": {
+      "title": "Arabic and English",
+      "body": "Work with a team that writes, designs and builds natively in both languages."
+    },
+    "free": {
+      "title": "No obligation",
+      "body": "A quote request starts a conversation. It doesn’t commit you to anything."
+    }
   }
 }
