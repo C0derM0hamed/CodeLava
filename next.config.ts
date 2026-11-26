@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
       "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
   },
+  async rewrites() {
+    // Public uploads: /media/<uuid>.<ext> → storage route. Runs after public/ files, so /media/hero/* stays static.
+    return { beforeFiles: [], afterFiles: [{ source: "/media/:key", destination: "/api/media/:key" }], fallback: [] };
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

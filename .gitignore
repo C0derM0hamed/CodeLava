@@ -41,6 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .env
-storage/
+/storage/
 /test-results
 /playwright-report

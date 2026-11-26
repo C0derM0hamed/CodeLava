@@ -1,6 +1,6 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { draftMode } from "next/headers";
+import { hasDraftPreview } from "@/server/content/preview";
 
 export async function whenTableExists<T>(read: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -32,7 +32,7 @@ export function publicQuery<Args extends unknown[], Result>(
   fallback: Result,
 ) {
   const published = publishedQuery(name, tags, (...args: Args) => read(false, ...args), fallback);
-  return async (...args: Args) => (await draftMode()).isEnabled
+  return async (...args: Args) => (await hasDraftPreview())
     ? whenTableExists(() => read(true, ...args), fallback)
     : published(...args);
 }

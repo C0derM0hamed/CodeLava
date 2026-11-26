@@ -479,3 +479,10 @@ export const leadNotesRelations = relations(leadNotes, ({ one }) => ({
   user: one(users, { fields: [leadNotes.userId], references: [users.id] }),
 }));
 export const leadAttachmentsRelations = relations(leadAttachments, ({ one }) => ({ lead: one(leads, { fields: [leadAttachments.leadId], references: [leads.id] }) }));
+
+/** Shared fixed-window counters for login and public submissions. Keys are HMACs. */
+export const rateLimits = pgTable("rate_limits", {
+  key: varchar("key", { length: 64 }).primaryKey(),
+  count: integer("count").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+}, (t) => [index("rate_limits_expiry_idx").on(t.expiresAt)]);
