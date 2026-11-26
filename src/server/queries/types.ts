@@ -1,0 +1,31 @@
+import "server-only";
+import type { getArticles, getArticleBySlug } from "./articles";
+import type { getAchievements, getClientLogos, getFaqs, getProcessSteps, getTeam, getTestimonials } from "./company";
+import type { getPageSections, getPageMeta, getSiteSettings } from "./settings";
+import type { mediaView, seoView } from "./shared";
+import type { getServices, getServiceBySlug, getProjects, getProjectBySlug, getProjectCategories } from "./work";
+
+export type { ArticleFilters } from "./articles";
+export type { Technology, TechnologyGroup, TestimonialFilters } from "./company";
+export type { SitemapSlug } from "./slugs";
+export type { ProjectFilters } from "./work";
+
+export type MediaView = NonNullable<ReturnType<typeof mediaView>>;
+export type SeoView = ReturnType<typeof seoView>;
+export type Service = Awaited<ReturnType<typeof getServices>>[number];
+export type ServiceDetail = NonNullable<Awaited<ReturnType<typeof getServiceBySlug>>>;
+export type Project = Awaited<ReturnType<typeof getProjects>>[number];
+export type ProjectDetail = NonNullable<Awaited<ReturnType<typeof getProjectBySlug>>>;
+export type ProjectCategory = Awaited<ReturnType<typeof getProjectCategories>>[number];
+export type Testimonial = Awaited<ReturnType<typeof getTestimonials>>[number];
+export type ClientLogo = Awaited<ReturnType<typeof getClientLogos>>[number];
+export type Achievement = Awaited<ReturnType<typeof getAchievements>>[number];
+export type TeamMember = Awaited<ReturnType<typeof getTeam>>[number];
+export type ProcessStep = Awaited<ReturnType<typeof getProcessSteps>>[number];
+export type Faq = Awaited<ReturnType<typeof getFaqs>>[number];
+export type ArticlePage = Awaited<ReturnType<typeof getArticles>>;
+export type Article = ArticlePage["items"][number];
+export type ArticleDetail = NonNullable<Awaited<ReturnType<typeof getArticleBySlug>>>;
+export type PageSection = Awaited<ReturnType<typeof getPageSections>>[number];
+export type PageMeta = NonNullable<Awaited<ReturnType<typeof getPageMeta>>>;
+export type SiteSettings = Awaited<ReturnType<typeof getSiteSettings>>;
