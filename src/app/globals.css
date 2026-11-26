@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/*
+ * CodeLava design tokens — "Obsidian & Magma"
+ * Owner of further visual refinement: Design System lane (see ARCHITECTURE.md).
+ * Rule: components consume tokens, never raw hex values.
+ */
+
+:root {
+  /* Obsidian — layered near-blacks with a warm undertone (never pure #000) */
+  --obsidian-950: #07060a;
+  --obsidian-900: #0c0b10;
+  --obsidian-850: #121117;
+  --obsidian-800: #18161e;
+  --obsidian-700: #24212b;
+  --obsidian-600: #34303d;
+  --obsidian-500: #4a4552;
+
+  /* Ash — warm whites & greys for text */
+  --ash-50: #fbf7f2;   /* warm white — primary text */
+  --ash-200: #e6ddd3;
+  --ash-400: #b3a99f;  /* secondary text */
+  --ash-500: #8c8379;  /* tertiary / meta */
+  --ash-600: #6b635b;
+
+  /* Magma — the brand heat scale (logo orange = --lava-500) */
+  --lava-100: #ffe2c7;
+  --lava-300: #ffb066;
+  --lava-400: #ff8a2a;
+  --lava-500: #ff6a00;
+  --lava-600: #e94e06;
+  --lava-700: #b8360a;
+  --lava-900: #4a1405;
+  --ember: #ffcf4a;    /* hottest highlight, sparks */
+
+  /* Syntax — natural code-highlight accents. Use sparingly, mostly in code motifs. */
+  --syntax-cyan: #5ee7f0;
+  --syntax-blue: #6aa8ff;
+  --syntax-green: #7fe08a;
+  --syntax-yellow: #ffd866;
+  --syntax-pink: #ff7aa8;   /* rare */
+
+  /* Semantic */
+  --bg: var(--obsidian-950);
+  --bg-elevated: var(--obsidian-900);
+  --surface: var(--obsidian-850);
+  --surface-2: var(--obsidian-800);
+  --line: color-mix(in oklab, var(--ash-50) 9%, transparent);
+  --line-strong: color-mix(in oklab, var(--ash-50) 18%, transparent);
+  --text: var(--ash-50);
+  --text-muted: var(--ash-400);
+  --text-faint: var(--ash-500);
+  --accent: var(--lava-500);
+  --accent-hot: var(--lava-400);
+  --focus: var(--lava-300);
+  --danger: #ff5a4f;
+  --success: var(--syntax-green);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-lava: cubic-bezier(0.65, 0.05, 0.36, 1);
+
+  --gutter: clamp(16px, 4vw, 56px);
+  --container: 1360px;
+  --header-h: 72px;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-hot: var(--accent-hot);
+  --color-ember: var(--ember);
+  --color-lava-100: var(--lava-100);
+  --color-lava-300: var(--lava-300);
+  --color-lava-400: var(--lava-400);
+  --color-lava-500: var(--lava-500);
+  --color-lava-600: var(--lava-600);
+  --color-lava-700: var(--lava-700);
+  --color-lava-900: var(--lava-900);
+  --color-obsidian-950: var(--obsidian-950);
+  --color-obsidian-900: var(--obsidian-900);
+  --color-obsidian-850: var(--obsidian-850);
+  --color-obsidian-800: var(--obsidian-800);
+  --color-obsidian-700: var(--obsidian-700);
+  --color-obsidian-600: var(--obsidian-600);
+  --color-ash-50: var(--ash-50);
+  --color-ash-200: var(--ash-200);
+  --color-ash-400: var(--ash-400);
+  --color-ash-500: var(--ash-500);
+  --color-syntax-cyan: var(--syntax-cyan);
+  --color-syntax-blue: var(--syntax-blue);
+  --color-syntax-green: var(--syntax-green);
+  --color-syntax-yellow: var(--syntax-yellow);
+  --color-danger: var(--danger);
+
+  /* Fonts are wired via next/font CSS variables in the root layouts */
+  --font-display: var(--font-display-latin), var(--font-display-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body-latin), var(--font-body-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-code), ui-monospace, SFMono-Regular, monospace;
+
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-lava: var(--ease-lava);
+}
+
+/* Arabic: prefer Arabic faces first so mixed strings shape correctly */
+:root:lang(ar) {
+  --font-display: var(--font-display-arabic), var(--font-display-latin), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body-arabic), var(--font-body-latin), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--lava-500) 55%, transparent);
+  color: var(--ash-50);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

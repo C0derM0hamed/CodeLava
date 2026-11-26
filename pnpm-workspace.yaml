@@ -1,0 +1,9 @@
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+  esbuild: true
+  "@node-rs/argon2": true
+fetchTimeout: 1800000
+fetchRetries: 10
+fetchRetryMintimeout: 5000
+networkConcurrency: 4
