@@ -45,8 +45,11 @@
   --bg-elevated: var(--obsidian-900);
   --surface: var(--obsidian-850);
   --surface-2: var(--obsidian-800);
+  --surface-glass: color-mix(in oklab, var(--obsidian-950) 80%, transparent);
   --line: color-mix(in oklab, var(--ash-50) 9%, transparent);
   --line-strong: color-mix(in oklab, var(--ash-50) 18%, transparent);
+  --line-lava: color-mix(in oklab, var(--lava-500) 34%, transparent);
+  --line-lava-strong: color-mix(in oklab, var(--lava-400) 62%, transparent);
   --text: var(--ash-50);
   --text-muted: var(--ash-400);
   --text-faint: var(--ash-500);
@@ -56,18 +59,65 @@
   --danger: #ff5a4f;
   --success: var(--syntax-green);
 
+  /* Magma radiance & gradients (light, not flat decoration) */
+  --lava-glow-sm: 0 0 18px color-mix(in oklab, var(--lava-500) 24%, transparent);
+  --lava-glow-md: 0 0 42px color-mix(in oklab, var(--lava-500) 20%, transparent),
+    0 0 14px color-mix(in oklab, var(--ember) 14%, transparent);
+  --lava-glow-lg: 0 24px 80px -24px color-mix(in oklab, var(--lava-600) 36%, transparent);
+  --gradient-lava: linear-gradient(125deg, var(--lava-300) 0%, var(--lava-500) 52%, var(--lava-600) 100%);
+  --gradient-lava-wordmark: linear-gradient(
+    135deg,
+    var(--ember) 0%,
+    var(--lava-400) 26%,
+    var(--lava-500) 64%,
+    var(--lava-600) 100%
+  );
+  --gradient-heat-seam: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--lava-900) 14%,
+    var(--lava-600) 36%,
+    var(--lava-400) 48%,
+    var(--ember) 50%,
+    var(--lava-400) 52%,
+    var(--lava-600) 64%,
+    var(--lava-900) 86%,
+    transparent 100%
+  );
+
+  /* Fluid editorial type scale */
+  --text-display-xl: clamp(3.5rem, 1.35rem + 7.6vw, 10.5rem); /* 56px → 168px */
+  --text-display-lg: clamp(2.5rem, 1.25rem + 4.8vw, 6.25rem);  /* 40px → 100px */
+  --text-display-md: clamp(1.9rem, 1.15rem + 2.8vw, 4rem);     /* 30px → 64px  */
+  --text-display-sm: clamp(1.4rem, 1.05rem + 1.4vw, 2.35rem);  /* 22px → 38px  */
+  --text-lead: clamp(1.0625rem, 0.96rem + 0.45vw, 1.375rem);   /* 17px → 22px  */
+  --text-body: clamp(0.95rem, 0.92rem + 0.14vw, 1.0625rem);    /* 15.2px → 17px */
+  --text-meta: 0.75rem;
+
+  /* Radii */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
   --radius-xl: 32px;
 
+  /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-lava: cubic-bezier(0.65, 0.05, 0.36, 1);
 
+  /* Layout & z-index layers */
   --gutter: clamp(16px, 4vw, 56px);
   --container: 1360px;
   --header-h: 72px;
+
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-drawer: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-transition: 80;
+  --z-cursor: 9999;
 
   color-scheme: dark;
 }
@@ -79,6 +129,8 @@
   --color-surface-2: var(--surface-2);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-line-lava: var(--line-lava);
+  --color-line-lava-strong: var(--line-lava-strong);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-faint: var(--text-faint);
@@ -98,15 +150,19 @@
   --color-obsidian-800: var(--obsidian-800);
   --color-obsidian-700: var(--obsidian-700);
   --color-obsidian-600: var(--obsidian-600);
+  --color-obsidian-500: var(--obsidian-500);
   --color-ash-50: var(--ash-50);
   --color-ash-200: var(--ash-200);
   --color-ash-400: var(--ash-400);
   --color-ash-500: var(--ash-500);
+  --color-ash-600: var(--ash-600);
   --color-syntax-cyan: var(--syntax-cyan);
   --color-syntax-blue: var(--syntax-blue);
   --color-syntax-green: var(--syntax-green);
   --color-syntax-yellow: var(--syntax-yellow);
+  --color-syntax-pink: var(--syntax-pink);
   --color-danger: var(--danger);
+  --color-success: var(--success);
 
   /* Fonts are wired via next/font CSS variables in the root layouts */
   --font-display: var(--font-display-latin), var(--font-display-arabic), ui-sans-serif, system-ui, sans-serif;
@@ -114,11 +170,14 @@
   --font-mono: var(--font-code), ui-monospace, SFMono-Regular, monospace;
 
   --ease-out-expo: var(--ease-out-expo);
+  --ease-in-out-quart: var(--ease-in-out-quart);
   --ease-lava: var(--ease-lava);
 }
 
-/* Arabic: prefer Arabic faces first so mixed strings shape correctly */
-:root:lang(ar) {
+/* Arabic: prefer Arabic faces first so mixed strings shape correctly, including scoped RTL containers */
+:root:lang(ar),
+[lang="ar"],
+[dir="rtl"] {
   --font-display: var(--font-display-arabic), var(--font-display-latin), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-body-arabic), var(--font-body-latin), ui-sans-serif, system-ui, sans-serif;
 }
@@ -134,8 +193,17 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+:root:lang(ar) body,
+[lang="ar"],
+[dir="rtl"] {
+  line-height: 1.8;
 }
 
 ::selection {
@@ -147,6 +215,297 @@ body {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* Editorial container */
+.container-lava {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Fluid Typography Utilities */
+.text-display-xl {
+  font-family: var(--font-display);
+  font-size: var(--text-display-xl);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.042em;
+  text-wrap: balance;
+}
+
+.text-display-lg {
+  font-family: var(--font-display);
+  font-size: var(--text-display-lg);
+  font-weight: 500;
+  line-height: 0.99;
+  letter-spacing: -0.036em;
+  text-wrap: balance;
+}
+
+.text-display-md {
+  font-family: var(--font-display);
+  font-size: var(--text-display-md);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+
+.text-display-sm {
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.text-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-lead);
+  font-weight: 400;
+  line-height: 1.58;
+  color: var(--text-muted);
+}
+
+.text-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.68;
+}
+
+.text-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Arabic typography precision — zero letter-spacing, taller optical leading */
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-xl {
+  font-size: clamp(2.85rem, 1.3rem + 5.6vw, 7.25rem);
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-lg {
+  font-size: clamp(2.2rem, 1.15rem + 4vw, 5.1rem);
+  line-height: 1.24;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-md {
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-sm {
+  line-height: 1.36;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-lead {
+  line-height: 1.76;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-body {
+  line-height: 1.84;
+  letter-spacing: 0;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.text-lava-gradient {
+  background-image: var(--gradient-lava-wordmark);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* RTL mirroring helper for directional arrows & chevrons */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Atmospheric obsidian surfaces & film grain */
+.grain-overlay {
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+.heat-haze-radial {
+  background-image: radial-gradient(
+    ellipse 64% 48% at 50% 100%,
+    color-mix(in oklab, var(--lava-600) 20%, transparent) 0%,
+    color-mix(in oklab, var(--lava-900) 12%, transparent) 42%,
+    transparent 74%
+  );
+}
+
+/* Custom flame cursor integration — preserve native I-beam on text inputs */
+html.cursor-flame-active,
+html.cursor-flame-active body,
+html.cursor-flame-active a,
+html.cursor-flame-active button,
+html.cursor-flame-active [role="button"],
+html.cursor-flame-active [role="tab"],
+html.cursor-flame-active summary,
+html.cursor-flame-active label {
+  cursor: none;
+}
+
+html.cursor-flame-active input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="range"]),
+html.cursor-flame-active textarea,
+html.cursor-flame-active [contenteditable="true"] {
+  cursor: text;
+}
+
+html.cursor-flame-active select {
+  cursor: pointer;
+}
+
+/* Keyframes */
+@keyframes lava-breathe {
+  0%, 100% {
+    opacity: 0.78;
+    filter: brightness(0.96);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.18);
+  }
+}
+
+@keyframes lava-ember-rise {
+  0% {
+    transform: translate3d(0, 2px, 0) scale(0.75);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.95;
+  }
+  80% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(var(--ember-dx, 2px), -14px, 0) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes lava-seam-flow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes lava-seam-flow-rtl {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
+}
+
+@keyframes marquee-scroll-ltr {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-scroll-rtl {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(50%, 0, 0);
+  }
+}
+
+@keyframes code-drift-y {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes page-wipe-sweep {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 0.95;
+  }
+  48% {
+    transform: scaleX(1);
+    transform-origin: left center;
+    opacity: 1;
+  }
+  52% {
+    transform: scaleX(1);
+    transform-origin: right center;
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right center;
+    opacity: 0;
+  }
+}
+
+@keyframes toast-shrink {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+.animate-lava-breathe {
+  animation: lava-breathe 3.6s var(--ease-lava) infinite;
+}
+
+.animate-lava-ember {
+  animation: lava-ember-rise var(--ember-dur, 2.8s) var(--ease-out-expo) var(--ember-delay, 0s) infinite;
+}
+
+.animate-lava-seam {
+  animation: lava-seam-flow 5.5s var(--ease-lava) infinite;
+}
+
+[dir="rtl"] .animate-lava-seam {
+  animation-name: lava-seam-flow-rtl;
+}
+
+.animate-code-drift {
+  animation: code-drift-y var(--code-drift-dur, 48s) linear infinite;
+}
+
+.animate-page-wipe {
+  animation: page-wipe-sweep 420ms var(--ease-in-out-quart) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

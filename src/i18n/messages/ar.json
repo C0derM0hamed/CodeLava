@@ -12,7 +12,14 @@
     "quote": "اطلب عرض سعر",
     "language": "اللغة",
     "openMenu": "افتح القائمة",
-    "closeMenu": "أغلق القائمة"
+    "closeMenu": "أغلق القائمة",
+    "startProject": "ابدأ مشروعك",
+    "menuOpen": "فتح قائمة التنقل",
+    "menuClose": "إغلاق قائمة التنقل",
+    "mainLabel": "التنقل الرئيسي",
+    "switchToLocale": "English",
+    "switchLanguageAria": "التبديل إلى اللغة الإنجليزية",
+    "homeAria": "الصفحة الرئيسية لـ CodeLava"
   },
   "footer": {
     "tagline": "ابتكار يتدفق برمجياً",
@@ -21,7 +28,15 @@
     "socials": "تابعنا",
     "privacy": "سياسة الخصوصية",
     "copyright": "© {year} CodeLava. جميع الحقوق محفوظة.",
-    "backToTop": "العودة إلى أعلى الصفحة"
+    "backToTop": "العودة إلى أعلى الصفحة",
+    "closingEyebrow": "جاهزون للانطلاق",
+    "closingTitle": "لنبنِ منتجاً برمجياً يتجاوز التوقعات ويدوم أثره.",
+    "closingCta": "ابدأ مشروعك",
+    "exploreHeading": "استكشف",
+    "resourcesHeading": "المصادر",
+    "contactHeading": "تواصل مباشر",
+    "rights": "جميع الحقوق محفوظة.",
+    "signature": "هندسة متقنة تحت الضغط."
   },
   "common": {
     "brand": "CodeLava",
@@ -45,7 +60,12 @@
     "tryAgain": "حاول مجددًا",
     "optional": "اختياري",
     "required": "مطلوب",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "skipToContent": "انتقل إلى المحتوى الرئيسي",
+    "view": "عرض",
+    "dropFilesTitle": "اسحب الملفات هنا أو اضغط للاختيار",
+    "dropFilesHint": "ملفات PDF أو صور أو مواصفات فنية بحد أقصى {maxSizeMb} ميجابايت",
+    "removeFile": "إزالة {name}"
   },
   "home": {
     "title": "ابنِ ما يدفع أعمالك إلى الأمام.",

@@ -6,6 +6,12 @@ import type { ReactNode } from "react";
 import { fontVariables } from "@/app/fonts";
 import { dirOf, routing } from "@/i18n/routing";
 import { brandIcons, buildMetadata } from "@/lib/seo";
+import { SiteHeader, SiteFooter, SkipLink, PageTransition } from "@/components/site";
+import type { FooterSocialLink } from "@/components/site";
+import { ToastProvider } from "@/components/ui/Toast";
+import { FlameCursor } from "@/experience/cursor";
+import { SmoothScrollProvider } from "@/experience/fx/SmoothScrollProvider";
+import { getSiteSettings } from "@/server/queries";
 import "../globals.css";
 
 type LocaleParams = { params: Promise<{ locale: string }> };
@@ -35,17 +41,36 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const [settings, tc] = await Promise.all([getSiteSettings(locale), getTranslations({ locale, namespace: "common" })]);
+  const { contact } = settings;
+  const socials: FooterSocialLink[] = Object.entries(settings.socials)
+    .filter(([, href]) => typeof href === "string" && /^https?:\/\//.test(href))
+    .map(([key, href]) => ({ label: socialLabels[key] ?? key, href: href as string }));
   return (
     <html lang={locale} dir={dirOf(locale)} className={fontVariables}>
       <body>
         <NextIntlClientProvider>
-          {/* Mount SmoothScrollProvider around the site here. */}
-          {/* Mount SiteHeader here. */}
-          {children}
-          {/* Mount SiteFooter here. */}
-          {/* Mount FlameCursor here. */}
+          <ToastProvider closeLabel={tc("close")}>
+            <SkipLink />
+            <SmoothScrollProvider>
+              <SiteHeader />
+              <PageTransition>
+                {children /* each page renders its own <main id="main-content"> */}
+              </PageTransition>
+              <SiteFooter
+                contact={{ email: contact.email, phone: contact.phone, location: contact.address, availability: contact.hours }}
+                socials={socials}
+              />
+            </SmoothScrollProvider>
+            <FlameCursor viewLabelEn="View" viewLabelAr="عرض" />
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>
   );
 }
+
+const socialLabels: Record<string, string> = {
+  linkedin: "LinkedIn", github: "GitHub", x: "X", behance: "Behance", dribbble: "Dribbble",
+  website: "Website", upwork: "Upwork", mostaql: "Mostaql",
+};

@@ -12,7 +12,14 @@
     "quote": "Request a quote",
     "language": "Language",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "startProject": "Start a project",
+    "menuOpen": "Open navigation menu",
+    "menuClose": "Close navigation menu",
+    "mainLabel": "Primary navigation",
+    "switchToLocale": "العربية",
+    "switchLanguageAria": "Switch language to Arabic",
+    "homeAria": "CodeLava home"
   },
   "footer": {
     "tagline": "Software & AI Solutions",
@@ -21,7 +28,15 @@
     "socials": "Follow us",
     "privacy": "Privacy policy",
     "copyright": "© {year} CodeLava. All rights reserved.",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "closingEyebrow": "Ready when you are",
+    "closingTitle": "Let’s engineer something that outlasts the hype.",
+    "closingCta": "Start a project",
+    "exploreHeading": "Explore",
+    "resourcesHeading": "Resources",
+    "contactHeading": "Direct",
+    "rights": "All rights reserved.",
+    "signature": "Engineered under pressure."
   },
   "common": {
     "brand": "CodeLava",
@@ -45,7 +60,12 @@
     "tryAgain": "Try again",
     "optional": "Optional",
     "required": "Required",
-    "close": "Close"
+    "close": "Close",
+    "skipToContent": "Skip to main content",
+    "view": "View",
+    "dropFilesTitle": "Drop files here or click to browse",
+    "dropFilesHint": "PDF, images, or technical specs up to {maxSizeMb} MB",
+    "removeFile": "Remove {name}"
   },
   "home": {
     "title": "Build what moves your business forward.",
