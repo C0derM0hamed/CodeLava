@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { FilterChips, type FilterChipOption } from "@/components/ui/Tabs";
+import { FilterPills, type FilterPillOption } from "@/components/sections/process/kit";
 import {
   WorkEmptyState,
   WorkFeaturedSpotlight,
@@ -99,17 +99,17 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
     (cat) => cat.count > 0 || cat.slug === activeCategory,
   );
 
-  const filterOptions: FilterChipOption[] = [
+  const filterOptions: FilterPillOption[] = [
     {
       value: "",
       label: tWork("allCategories"),
-      count: allProjects.length,
+      count: formatNumber(allProjects.length, locale, { useGrouping: false }),
       href: "/work",
     },
     ...visibleCategories.map((cat) => ({
       value: cat.slug,
       label: cat.name,
-      count: cat.count,
+      count: formatNumber(cat.count, locale, { useGrouping: false }),
       href: `/work?category=${encodeURIComponent(cat.slug)}`,
     })),
   ];
@@ -124,11 +124,11 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
 
   const isRtl = locale === "ar";
   const showingText = isRtl
-    ? `عرض ${formatNumber(enrichedProjects.length, locale, { minimumIntegerDigits: 2 })} من ${formatNumber(allProjects.length, locale, { minimumIntegerDigits: 2 })}`
-    : `SHOWING ${formatNumber(enrichedProjects.length, locale, { minimumIntegerDigits: 2 })} / ${formatNumber(allProjects.length, locale, { minimumIntegerDigits: 2 })}`;
+    ? `عرض ${formatNumber(enrichedProjects.length, locale, { useGrouping: false })} من ${formatNumber(allProjects.length, locale, { useGrouping: false })}`
+    : `Showing ${formatNumber(enrichedProjects.length, locale)} of ${formatNumber(allProjects.length, locale)}`;
 
   return (
-    <main id="main-content" className="relative bg-bg text-text">
+    <main id="main-content" className="relative bg-bg pb-16 text-text sm:pb-24">
       <WorkHero
         locale={locale}
         hero={heroContent}
@@ -155,20 +155,10 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
         <>
           {/* Category Filters Bar */}
           {visibleCategories.length > 0 ? (
-            <section
-              aria-label={tWork("filterByCategory")}
-              className="border-b border-line bg-bg/95 py-6 backdrop-blur-sm"
-            >
+            <section className="pb-4 sm:pb-6">
               <div className="container-lava flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <nav aria-label={tWork("filterByCategory")}>
-                  <FilterChips
-                    options={filterOptions}
-                    value={activeCategory}
-                    ariaLabel={tWork("filterByCategory")}
-                  />
-                </nav>
-
-                <p className="shrink-0 font-mono text-xs tracking-[0.08em] text-faint tabular-nums rtl:font-sans rtl:tracking-normal">
+                <FilterPills options={filterOptions} value={activeCategory} ariaLabel={tWork("filterByCategory")} />
+                <p role="status" className="shrink-0 text-sm text-faint tabular-nums">
                   {showingText}
                 </p>
               </div>
@@ -199,24 +189,23 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
               <WorkLedger
                 locale={locale}
                 projects={ledgerProjects}
-                sectionIndex={featuredFlagships.length > 0 ? "03" : "02"}
                 headingKicker={
                   activeCategory
                     ? visibleCategories.find((c) => c.slug === activeCategory)?.name
                     : isRtl
-                      ? "سجل المشاريع"
-                      : "Project Index"
+                      ? "جميع المشاريع"
+                      : "All projects"
                 }
                 headingTitle={
                   activeCategory
                     ? tWork("title")
                     : featuredFlagships.length > 0
                       ? isRtl
-                        ? "الأرشيف الهندسي الكامل."
-                        : "Selected engineering ledger."
+                        ? "المزيد من أعمالنا."
+                        : "More of our work."
                       : isRtl
                         ? "جميع دراسات الحالة."
-                        : "Case study archive."
+                        : "All case studies."
                 }
                 openLabel={tWork("openCaseStudy")}
               />

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HeatEdge } from "@/experience/fx/LavaDivider";
 import type { MediaView } from "@/server/queries";
 import { cn } from "@/components/ui/cn";
 
@@ -115,11 +114,11 @@ export function CaseStudyMediaFrame({
   return (
     <div
       ref={frameRef}
-      className="relative overflow-hidden rounded-[var(--radius-lg)] border border-line-strong bg-bg-elevated shadow-[0_28px_80px_-28px_rgba(0,0,0,0.85)]"
+      className="relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-2 shadow-lift sm:p-3"
     >
       <div
         ref={mediaInnerRef}
-        className="relative aspect-[16/9] w-full overflow-hidden will-change-transform sm:aspect-[16/9]"
+        className="relative aspect-[16/9] w-full overflow-hidden rounded-[calc(var(--radius-xl)-10px)] bg-pearl-300 will-change-transform"
       >
         {/* Poster / Cover Image (always rendered as LCP anchor & reduced-motion fallback) */}
         {cover ? (
@@ -154,10 +153,6 @@ export function CaseStudyMediaFrame({
           />
         ) : null}
 
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian-950/60 via-transparent to-obsidian-950/15"
-        />
       </div>
 
       {video && !reducedMotion ? (
@@ -166,20 +161,19 @@ export function CaseStudyMediaFrame({
           onClick={togglePlayback}
           aria-label={isPlaying ? pauseLabel : playLabel}
           data-cursor="pointer"
-          className="absolute end-4 bottom-4 z-10 inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-line-strong bg-obsidian-950/85 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-text backdrop-blur-md transition-colors hover:border-line-lava-strong hover:text-lava-100"
+          className="absolute end-6 bottom-6 z-10 inline-flex h-10 items-center gap-2 rounded-pill border border-line bg-white/90 px-4 text-sm font-semibold text-text shadow-card backdrop-blur-md transition-colors hover:border-line-lava-strong"
         >
           <span
             aria-hidden="true"
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              isPlaying ? "bg-accent shadow-[0_0_8px_var(--lava-500)]" : "bg-ash-500",
+              isPlaying ? "bg-accent" : "bg-ink-400",
             )}
           />
           <span>{isPlaying ? pauseLabel : playLabel}</span>
         </button>
       ) : null}
 
-      <HeatEdge position="bottom" intensity="medium" />
     </div>
   );
 }

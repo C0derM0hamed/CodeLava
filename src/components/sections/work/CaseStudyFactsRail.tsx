@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { ActionLink } from "@/components/ui/ActionLink";
-import { Tag } from "@/components/ui/Tag";
+import { Chip, TextLink } from "../process/kit";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
 import type { ProjectDetail } from "@/server/queries";
@@ -66,19 +65,19 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
   return (
     <section aria-label={labels.overview} className="py-8 sm:py-10">
       <div className="container-lava">
-        <div className="rounded-[var(--radius-lg)] border border-line bg-bg-elevated/85 p-6 sm:p-8 lg:p-10">
+        <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card sm:p-8 lg:p-10">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Core facts columns */}
             {facts.length > 0 ? (
               <dl className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:col-span-7 lg:grid-cols-3">
                 {facts.map((fact) => (
                   <div key={fact.label} className="space-y-1.5 border-s border-line ps-4">
-                    <dt className="text-kicker text-faint">{fact.label}</dt>
+                    <dt className="text-xs font-semibold text-faint">{fact.label}</dt>
                     <dd
                       className={
                         fact.mono
-                          ? "font-mono text-base font-medium text-text tabular-nums"
-                          : "text-sm font-medium text-text sm:text-base"
+                          ? "text-base font-semibold text-text tabular-nums"
+                          : "text-sm font-semibold text-text sm:text-base"
                       }
                     >
                       {fact.value}
@@ -99,14 +98,14 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
               <div className="space-y-5">
                 {project.services.length > 0 ? (
                   <div className="space-y-2.5">
-                    <h2 className="text-kicker text-faint">{labels.services}</h2>
+                    <h2 className="text-xs font-semibold text-faint">{labels.services}</h2>
                     <div className="flex flex-wrap gap-2">
                       {project.services.map((service) => (
                         <Link
                           key={service.id}
                           href={`/services/${service.slug}`}
                           data-cursor="pointer"
-                          className="inline-flex items-center rounded-[var(--radius-sm)] border border-line-strong bg-surface px-3 py-1.5 text-xs font-medium text-ash-200 transition-colors hover:border-line-lava-strong hover:text-lava-100"
+                          className="inline-flex items-center rounded-pill border border-line-strong bg-surface px-3.5 py-1.5 text-xs font-medium text-text transition-colors hover:border-line-lava-strong hover:text-accent-text"
                         >
                           {service.title}
                         </Link>
@@ -117,11 +116,11 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
 
                 {project.technologies.length > 0 ? (
                   <div className="space-y-2.5">
-                    <h2 className="text-kicker text-faint">{labels.technologies}</h2>
+                    <h2 className="text-xs font-semibold text-faint">{labels.technologies}</h2>
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map((tech) => (
-                        <Tag key={tech.slug} tone="outline" dir="ltr" className="font-mono">
-                          <span className="inline-flex items-center gap-1.5">
+                        <Chip key={tech.slug}>
+                          <span dir="ltr" className="inline-flex items-center gap-1.5">
                             {tech.icon ? (
                               <Image
                                 src={tech.icon.url}
@@ -133,7 +132,7 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
                             ) : null}
                             <span>{tech.name}</span>
                           </span>
-                        </Tag>
+                        </Chip>
                       ))}
                     </div>
                   </div>
@@ -142,22 +141,19 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
 
               {externalLinks.length > 0 ? (
                 <div className="space-y-2.5 border-t border-line pt-5">
-                  <span className="text-kicker text-faint">
+                  <span className="text-xs font-semibold text-faint">
                     {isRtl ? "روابط مباشرة" : "Live links"}
                   </span>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                     {externalLinks.map((link) => (
-                      <ActionLink
+                      <TextLink
                         key={link.href}
                         href={link.href}
-                        external
-                        variant="molten"
-                        size="sm"
-                        arrow="up-right"
+                        icon="up-right"
                         aria-label={`${link.label} (${labels.openInNewTab})`}
                       >
                         {link.label}
-                      </ActionLink>
+                      </TextLink>
                     ))}
                   </div>
                 </div>

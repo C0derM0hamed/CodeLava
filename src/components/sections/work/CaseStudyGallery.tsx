@@ -3,13 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Dialog } from "@/components/ui/Dialog";
-import { ArrowRightIcon } from "@/components/ui/Icons";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Tag } from "@/components/ui/Tag";
-import { LavaDivider } from "@/experience/fx/LavaDivider";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
+import { Chip, Kicker } from "../process/kit";
 import type { CaseStudyGalleryItem } from "./types";
 
 export interface CaseStudyGalleryProps {
@@ -47,7 +45,6 @@ export function CaseStudyGallery({
   projectTitle,
   gallery,
   headingTitle,
-  sectionIndex = "05",
   labels,
 }: CaseStudyGalleryProps) {
   const isRtl = locale === "ar";
@@ -105,14 +102,10 @@ export function CaseStudyGallery({
       className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-12 sm:py-16"
     >
       <div className="container-lava space-y-10">
-        <LavaDivider variant="seam" />
-
-        <SectionHeading
-          index={sectionIndex}
-          kicker={isRtl ? "لقطات ونماذج" : "Visuals & Mockups"}
-          title={headingTitle}
-          size="md"
-        />
+        <div className="flex flex-col items-start gap-4">
+          <Kicker>{isRtl ? "لقطات ونماذج" : "Visuals & mockups"}</Kicker>
+          <h2 className="text-display-md text-text">{headingTitle}</h2>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {gallery.map((item, idx) => {
@@ -128,9 +121,9 @@ export function CaseStudyGallery({
                   onClick={() => setActiveIndex(idx)}
                   data-cursor="view"
                   aria-label={`${altText} — ${numLabel}`}
-                  className="group relative block w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-bg-elevated text-start transition-colors duration-300 hover:border-line-lava-strong"
+                  className="group relative block w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface p-1.5 text-start shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift"
                 >
-                  <div className={cn("relative w-full overflow-hidden", aspectClass)}>
+                  <div className={cn("relative w-full overflow-hidden rounded-[calc(var(--radius-md)-6px)]", aspectClass)}>
                     <Image
                       src={item.media.url}
                       alt={altText}
@@ -145,19 +138,13 @@ export function CaseStudyGallery({
                       blurDataURL={item.media.blurDataUrl ?? undefined}
                       className="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
                     />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian-950/60 via-transparent to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-45"
-                    />
                   </div>
 
-                  <div className="pointer-events-none absolute inset-x-3.5 top-3.5 flex items-center justify-between gap-2">
-                    <Tag tone="default" className="bg-obsidian-950/85 backdrop-blur-sm">
-                      {roleText}
-                    </Tag>
+                  <div className="pointer-events-none absolute inset-x-4 top-4 flex items-center justify-between gap-2">
+                    <Chip className="bg-white/90 backdrop-blur-sm">{roleText}</Chip>
                     <span
                       dir="ltr"
-                      className="rounded-[var(--radius-sm)] border border-line bg-obsidian-950/85 px-2 py-0.5 font-mono text-[11px] text-ash-200 tabular-nums backdrop-blur-sm"
+                      className="rounded-pill border border-line bg-white/90 px-2.5 py-0.5 text-[11px] font-medium text-muted tabular-nums backdrop-blur-sm"
                     >
                       {numLabel}
                     </span>
@@ -205,7 +192,7 @@ export function CaseStudyGallery({
                       className={cn(
                         "relative h-10 w-16 overflow-hidden rounded-[var(--radius-sm)] border transition-all",
                         selected
-                          ? "border-line-lava-strong ring-1 ring-accent"
+                          ? "border-accent ring-1 ring-accent"
                           : "border-line opacity-60 hover:opacity-100",
                       )}
                     >
@@ -228,20 +215,18 @@ export function CaseStudyGallery({
                   onClick={goPrev}
                   aria-label={labels.previousSlide}
                   data-cursor="pointer"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] border border-line-strong bg-bg-elevated text-text transition-colors hover:border-line-lava-strong hover:text-lava-100"
+                  className="inline-flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface text-text transition-colors hover:border-line-lava-strong hover:text-accent-text"
                 >
-                  <span className="inline-flex rotate-180">
-                    <ArrowRightIcon size={15} />
-                  </span>
+                  <ArrowLeft aria-hidden="true" className="rtl-flip size-4" />
                 </button>
                 <button
                   type="button"
                   onClick={goNext}
                   aria-label={labels.nextSlide}
                   data-cursor="pointer"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] border border-line-strong bg-bg-elevated text-text transition-colors hover:border-line-lava-strong hover:text-lava-100"
+                  className="inline-flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface text-text transition-colors hover:border-line-lava-strong hover:text-accent-text"
                 >
-                  <ArrowRightIcon size={15} />
+                  <ArrowRight aria-hidden="true" className="rtl-flip size-4" />
                 </button>
               </div>
             </div>
@@ -249,7 +234,7 @@ export function CaseStudyGallery({
         }
       >
         {activeItem ? (
-          <div className="relative overflow-hidden rounded-[var(--radius-md)] border border-line bg-obsidian-950">
+          <div className="relative overflow-hidden rounded-[var(--radius-md)] border border-line bg-pearl-300">
             <Image
               src={activeItem.media.url}
               alt={activeItem.media.alt || activeItem.caption || projectTitle}

@@ -5,13 +5,11 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/navigation";
-import { ArrowUpRightIcon } from "@/components/ui/Icons";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Tag } from "@/components/ui/Tag";
-import { HeatEdge } from "@/experience/fx/LavaDivider";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
+import { Chip, Kicker } from "../process/kit";
 import type { WorkIndexItem } from "./types";
 
 export interface WorkFeaturedSpotlightProps {
@@ -63,192 +61,134 @@ export function WorkFeaturedSpotlight({
 
   return (
     <section ref={rootRef} className="py-12 sm:py-16">
-      <div className="container-lava space-y-12 sm:space-y-16">
-        <SectionHeading
-          index="02"
-          kicker={isRtl ? "دراسات مميزة" : "Featured Flagships"}
-          title={isRtl ? "مشاريع محورية بأثر ملموس." : "Flagship engineering."}
-          size="md"
-          layout="split"
-          lead={
-            isRtl
-              ? "تحول تقني مصمّم لقطاعات عالية المتطلبات في الخليج والمنطقة."
-              : "High-stakes platforms, AI architectures, and bilingual products built to endure."
-          }
-        />
+      <div className="container-lava space-y-12 sm:space-y-14">
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-12">
+          <div className="flex flex-col items-start gap-4 lg:col-span-7">
+            <Kicker>{isRtl ? "دراسات مميزة" : "Featured projects"}</Kicker>
+            <h2 className="text-display-md text-text">
+              {isRtl ? "مشاريع محورية بأثر ملموس." : "Flagship work, in depth."}
+            </h2>
+          </div>
+          <p className="text-body text-muted lg:col-span-5">
+            {isRtl
+              ? "منصات وحلول ذكاء اصطناعي ومنتجات ثنائية اللغة بُنيت لتدوم."
+              : "Platforms, AI systems and bilingual products built to last."}
+          </p>
+        </div>
 
-        <div className="space-y-14 sm:space-y-24">
+        <ul className="space-y-8 sm:space-y-10">
           {projects.map((project, idx) => {
             const isFlipped = idx % 2 === 1;
-            const indexCode = formatNumber(idx + 1, locale, { minimumIntegerDigits: 2 });
-            const yearText = project.year
-              ? formatNumber(project.year, locale, { useGrouping: false })
-              : null;
+            const yearText = project.year ? formatNumber(project.year, locale, { useGrouping: false }) : null;
             const highlightMetric = project.metrics?.[0];
+            const meta = [yearText, project.clientCountryName, project.industry].filter(Boolean);
 
             return (
-              <article key={project.id} className="group relative">
-                <Link
-                  href={`/work/${project.slug}`}
-                  data-cursor="view"
-                  className="grid grid-cols-1 gap-7 rounded-[var(--radius-lg)] border border-line bg-bg-elevated/70 p-4 transition-colors duration-400 hover:border-line-lava-strong hover:bg-bg-elevated sm:p-6 lg:grid-cols-12 lg:items-center lg:gap-12 lg:p-8"
-                >
-                  {/* Visual cover frame — 7 cols */}
-                  <div
-                    className={cn(
-                      "relative overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface lg:col-span-7",
-                      isFlipped ? "lg:order-2" : "lg:order-1",
-                    )}
+              <li key={project.id}>
+                <article className="group relative">
+                  <Link
+                    href={`/work/${project.slug}`}
+                    data-cursor="view"
+                    className="grid grid-cols-1 gap-7 rounded-[var(--radius-xl)] border border-line bg-surface p-3 shadow-card transition-shadow duration-300 hover:shadow-lift sm:p-4 lg:grid-cols-12 lg:items-center lg:gap-12"
                   >
-                    <div className="relative aspect-[16/10] w-full overflow-hidden">
-                      {project.cover ? (
-                        <div data-work-parallax className="h-full w-full will-change-transform">
-                          <Image
-                            src={project.cover.url}
-                            alt={project.cover.alt || project.title}
-                            width={project.cover.width ?? 1600}
-                            height={project.cover.height ?? 1000}
-                            sizes="(max-width: 1024px) 100vw, 56vw"
-                            priority={idx === 0}
-                            placeholder={project.cover.blurDataUrl ? "blur" : "empty"}
-                            blurDataURL={project.cover.blurDataUrl ?? undefined}
-                            className="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-obsidian-900">
-                          <span dir="ltr" className="font-mono text-xs text-faint">
-                            {project.slug}
-                          </span>
-                        </div>
+                    <div
+                      className={cn(
+                        "relative overflow-hidden rounded-[calc(var(--radius-xl)-8px)] bg-pearl-300 lg:col-span-7",
+                        isFlipped ? "lg:order-2" : "lg:order-1",
                       )}
-
-                      {/* Subtle obsidian vignette + molten hover sheen */}
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian-950/75 via-transparent to-obsidian-950/20 opacity-80 transition-opacity duration-500 group-hover:opacity-65"
-                      />
-                      <HeatEdge
-                        position="bottom"
-                        intensity="subtle"
-                        className="opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                      />
-
-                      {/* Corner category & featured badges */}
-                      <div className="pointer-events-none absolute inset-x-4 top-4 flex flex-wrap items-center justify-between gap-2">
-                        <Tag tone="lava" dot>
-                          {isRtl ? "مشروع مميز" : "Featured"}
-                        </Tag>
-                        {project.category ? (
-                          <Tag tone="default" className="bg-obsidian-950/85 backdrop-blur-sm">
-                            {project.category.name}
-                          </Tag>
-                        ) : null}
-                      </div>
-
-                      {highlightMetric ? (
-                        <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-end justify-between gap-4">
-                          <div className="rounded-[var(--radius-sm)] border border-line-strong bg-obsidian-950/85 px-3.5 py-2 backdrop-blur-md">
-                            <p
-                              dir="ltr"
-                              className="font-display text-xl font-medium text-lava-300 tabular-nums sm:text-2xl"
-                            >
-                              {highlightMetric.value}
-                            </p>
-                            <p className="text-[11px] text-ash-200">{highlightMetric.label}</p>
+                    >
+                      <div className="relative aspect-[16/10] w-full overflow-hidden">
+                        {project.cover ? (
+                          <div data-work-parallax className="h-full w-full will-change-transform">
+                            <Image
+                              src={project.cover.url}
+                              alt={project.cover.alt || project.title}
+                              width={project.cover.width ?? 1600}
+                              height={project.cover.height ?? 1000}
+                              sizes="(max-width: 1024px) 100vw, 56vw"
+                              priority={idx === 0}
+                              placeholder={project.cover.blurDataUrl ? "blur" : "empty"}
+                              blurDataURL={project.cover.blurDataUrl ?? undefined}
+                              className="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
+                            />
                           </div>
+                        ) : (
+                          <div className="grid h-full w-full place-items-center">
+                            <span dir="ltr" className="font-mono text-xs text-faint">
+                              {project.slug}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="pointer-events-none absolute inset-x-4 top-4 flex flex-wrap items-center justify-between gap-2">
+                          <Chip tone="ink">{isRtl ? "مشروع مميز" : "Featured"}</Chip>
+                          {project.category ? (
+                            <Chip className="bg-white/90 backdrop-blur-sm">{project.category.name}</Chip>
+                          ) : null}
                         </div>
-                      ) : null}
-                    </div>
-                  </div>
 
-                  {/* Narrative summary & metadata — 5 cols */}
-                  <div
-                    className={cn(
-                      "flex flex-col justify-between gap-6 lg:col-span-5",
-                      isFlipped ? "lg:order-1 lg:pe-4" : "lg:order-2 lg:ps-4",
-                    )}
-                  >
-                    <div className="space-y-4">
-                      {/* Meta strip */}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-xs text-faint rtl:font-sans">
-                        <span dir="ltr" className="font-mono text-accent tabular-nums">
-                          {indexCode}
-                        </span>
-                        {yearText ? (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span className="tabular-nums">{yearText}</span>
-                          </>
-                        ) : null}
-                        {project.clientCountryName ? (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span>{project.clientCountryName}</span>
-                          </>
-                        ) : null}
-                        {project.industry ? (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span className="text-muted">{project.industry}</span>
-                          </>
+                        {highlightMetric ? (
+                          <div className="pointer-events-none absolute start-4 bottom-4">
+                            <div className="rounded-[var(--radius-md)] border border-line bg-white/92 px-4 py-2.5 shadow-card backdrop-blur-md">
+                              <p dir="ltr" className="font-display text-xl font-bold text-accent-text tabular-nums sm:text-2xl">
+                                {highlightMetric.value}
+                              </p>
+                              <p className="text-[11px] text-muted">{highlightMetric.label}</p>
+                            </div>
+                          </div>
                         ) : null}
                       </div>
-
-                      <h3 className="text-display-md text-text transition-colors duration-300 group-hover:text-lava-100">
-                        {project.title}
-                      </h3>
-
-                      {project.clientName ? (
-                        <p className="font-mono text-xs uppercase tracking-[0.1em] text-ash-400 rtl:font-sans rtl:tracking-normal rtl:normal-case">
-                          {project.clientName}
-                        </p>
-                      ) : null}
-
-                      <p className="text-body text-muted">{project.summary}</p>
                     </div>
 
-                    {/* Technologies mono tags */}
-                    {project.technologies && project.technologies.length > 0 ? (
-                      <div className="flex flex-wrap items-center gap-2">
-                        {project.technologies.slice(0, 5).map((tech) => (
-                          <Tag key={tech.slug} tone="outline" dir="ltr" className="font-mono">
-                            {tech.name}
-                          </Tag>
-                        ))}
-                      </div>
-                    ) : null}
+                    <div
+                      className={cn(
+                        "flex flex-col justify-between gap-6 px-2 pb-3 lg:col-span-5 lg:py-4",
+                        isFlipped ? "lg:order-1 lg:ps-6" : "lg:order-2 lg:pe-6",
+                      )}
+                    >
+                      <div className="space-y-4">
+                        {meta.length > 0 ? (
+                          <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm font-semibold text-accent-text">
+                            {meta.map((item, i) => (
+                              <span key={`${item}-${i}`} className="inline-flex items-center gap-2.5">
+                                {i > 0 ? <span aria-hidden="true" className="text-faint">·</span> : null}
+                                <span className="tabular-nums">{item}</span>
+                              </span>
+                            ))}
+                          </p>
+                        ) : null}
 
-                    {/* Molten underline action cue (inside single outer link) */}
-                    <div className="pt-1">
-                      <span className="relative inline-flex items-center gap-3 pb-2 text-sm font-medium text-text transition-colors duration-300 group-hover:text-lava-100">
-                        <span>{openLabel}</span>
-                        <span
-                          aria-hidden="true"
-                          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-line-strong text-accent transition-all duration-300 ease-[var(--ease-out-expo)] group-hover:border-line-lava-strong group-hover:bg-accent/15 group-hover:text-ember"
-                        >
-                          <ArrowUpRightIcon
-                            size={15}
-                            className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
-                          />
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-line-strong"
-                        />
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-x-0 bottom-0 h-[1.5px] origin-left rtl:origin-right scale-x-0 transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100"
-                          style={{ background: "var(--gradient-lava)" }}
-                        />
+                        <h3 className="text-display-md text-text transition-colors duration-300 group-hover:text-accent-text">
+                          {project.title}
+                        </h3>
+
+                        {project.clientName ? <p className="text-sm font-semibold text-faint">{project.clientName}</p> : null}
+                        <p className="text-body text-muted">{project.summary}</p>
+                      </div>
+
+                      {project.technologies && project.technologies.length > 0 ? (
+                        <ul className="flex flex-wrap items-center gap-2">
+                          {project.technologies.slice(0, 5).map((tech) => (
+                            <li key={tech.slug}>
+                              <Chip>
+                                <span dir="ltr">{tech.name}</span>
+                              </Chip>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+
+                      <span className="inline-flex items-center gap-2 text-[0.95rem] font-semibold text-accent-text transition-[gap] duration-300 group-hover:gap-3">
+                        {openLabel}
+                        <ArrowUpRight aria-hidden="true" className="rtl-flip size-4" />
                       </span>
                     </div>
-                  </div>
-                </Link>
-              </article>
+                  </Link>
+                </article>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

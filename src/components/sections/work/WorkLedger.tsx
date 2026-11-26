@@ -5,12 +5,11 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/navigation";
-import { ArrowUpRightIcon } from "@/components/ui/Icons";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Tag } from "@/components/ui/Tag";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
+import { Chip, Kicker } from "../process/kit";
 import type { WorkIndexItem } from "./types";
 
 export interface WorkLedgerProps {
@@ -28,7 +27,6 @@ const PREVIEW_HEIGHT = 264;
 export function WorkLedger({
   locale,
   projects,
-  sectionIndex = "03",
   headingKicker,
   headingTitle,
   openLabel,
@@ -237,17 +235,15 @@ export function WorkLedger({
 
       <div className="container-lava space-y-10">
         {headingTitle ? (
-          <SectionHeading
-            index={sectionIndex}
-            kicker={headingKicker}
-            title={headingTitle}
-            size="md"
-          />
+          <div className="flex flex-col items-start gap-4">
+            {headingKicker ? <Kicker>{headingKicker}</Kicker> : null}
+            <h2 className="text-display-md text-text">{headingTitle}</h2>
+          </div>
         ) : null}
 
         <div
           onPointerLeave={handleListPointerLeave}
-          className="divide-y divide-line border-y border-line"
+          className="divide-y divide-line overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface shadow-card"
         >
           {projects.map((project, idx) => {
             const isHovered = hoveredSlug === project.slug;
@@ -265,15 +261,15 @@ export function WorkLedger({
                   onPointerEnter={(e) => handleRowPointerEnter(project.slug, e)}
                   onPointerMove={handleRowPointerMove}
                   className={cn(
-                    "group relative grid grid-cols-1 gap-6 py-7 transition-colors duration-300 sm:py-9 lg:grid-cols-12 lg:items-center lg:gap-8",
-                    "hover:bg-obsidian-900/55 focus-visible:bg-obsidian-900/70",
+                    "group relative grid grid-cols-1 gap-6 px-4 py-7 transition-colors duration-300 sm:px-6 sm:py-9 lg:grid-cols-12 lg:items-center lg:gap-8",
+                    "hover:bg-[color-mix(in_oklab,var(--lava-100)_22%,white)] focus-visible:bg-[color-mix(in_oklab,var(--lava-100)_30%,white)]",
                   )}
                 >
                   {/* Hover molten start-edge seam */}
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "pointer-events-none absolute inset-y-3 start-0 w-[2px] origin-top transition-transform duration-300 ease-[var(--ease-out-expo)]",
+                      "pointer-events-none absolute inset-y-0 start-0 w-[3px] origin-top transition-transform duration-300 ease-[var(--ease-out-expo)]",
                       isHovered ? "scale-y-100" : "scale-y-0 group-hover:scale-y-100 group-focus-visible:scale-y-100",
                     )}
                     style={{ background: "var(--gradient-lava)" }}
@@ -281,7 +277,7 @@ export function WorkLedger({
 
                   {/* Touch / Mobile / Coarse-pointer inline cover */}
                   {project.cover ? (
-                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface lg:hidden">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-pearl-300 lg:hidden">
                       <Image
                         src={project.cover.url}
                         alt={project.cover.alt || project.title}
@@ -292,10 +288,6 @@ export function WorkLedger({
                         blurDataURL={project.cover.blurDataUrl ?? undefined}
                         className="h-full w-full object-cover"
                       />
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian-950/60 via-transparent to-transparent"
-                      />
                     </div>
                   ) : null}
 
@@ -303,7 +295,7 @@ export function WorkLedger({
                   <div className="flex items-start gap-4 ps-3 sm:gap-6 sm:ps-4 lg:col-span-7">
                     <span
                       dir="ltr"
-                      className="mt-1.5 shrink-0 font-mono text-xs text-accent tabular-nums"
+                      className="mt-2 shrink-0 text-xs font-semibold text-accent-text tabular-nums"
                     >
                       {rowNo}
                     </span>
@@ -313,21 +305,19 @@ export function WorkLedger({
                         <h3
                           className={cn(
                             project.featured ? "text-display-md" : "text-display-sm",
-                            "text-text transition-colors duration-300 group-hover:text-lava-100",
+                            "text-text transition-colors duration-300 group-hover:text-accent-text",
                           )}
                         >
                           {project.title}
                         </h3>
                         {project.featured ? (
-                          <Tag tone="lava" dot>
-                            {isRtl ? "مميز" : "Featured"}
-                          </Tag>
+                          <Chip tone="accent">{isRtl ? "مميز" : "Featured"}</Chip>
                         ) : null}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs text-faint rtl:font-sans">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-faint">
                         {project.clientName ? (
-                          <span className="text-ash-200">{project.clientName}</span>
+                          <span className="font-semibold text-text">{project.clientName}</span>
                         ) : null}
                         {project.industry ? (
                           <>
@@ -360,13 +350,11 @@ export function WorkLedger({
                   {/* Category + Mono Tech Tags + Arrow */}
                   <div className="flex flex-wrap items-center justify-between gap-4 ps-3 sm:ps-4 lg:col-span-5 lg:justify-end lg:ps-0 lg:pe-4">
                     <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-                      {project.category ? (
-                        <Tag tone="default">{project.category.name}</Tag>
-                      ) : null}
+                      {project.category ? <Chip tone="accent">{project.category.name}</Chip> : null}
                       {project.technologies?.slice(0, 3).map((tech) => (
-                        <Tag key={tech.slug} tone="outline" dir="ltr" className="font-mono">
-                          {tech.name}
-                        </Tag>
+                        <Chip key={tech.slug}>
+                          <span dir="ltr">{tech.name}</span>
+                        </Chip>
                       ))}
                     </div>
 
@@ -374,11 +362,11 @@ export function WorkLedger({
                       <span className="sr-only">{openLabel}</span>
                       <span
                         aria-hidden="true"
-                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-strong bg-bg-elevated text-muted transition-all duration-300 ease-[var(--ease-out-expo)] group-hover:border-line-lava-strong group-hover:bg-accent/15 group-hover:text-ember group-hover:shadow-[var(--lava-glow-sm)]"
+                        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-muted transition-all duration-300 ease-[var(--ease-out-expo)] group-hover:border-transparent group-hover:bg-[image:var(--gradient-cta)] group-hover:text-white group-hover:shadow-lava"
                       >
-                        <ArrowUpRightIcon
-                          size={16}
-                          className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
+                        <ArrowUpRight
+                          aria-hidden="true"
+                          className="rtl-flip size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
                         />
                       </span>
                     </div>
@@ -405,17 +393,8 @@ export function WorkLedger({
           )}
           style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
         >
-          {/* Ambient magma halo behind preview frame */}
-          <div
-            className="absolute -inset-4 rounded-[var(--radius-lg)] opacity-55 blur-2xl"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 65%, color-mix(in oklab, var(--lava-500) 42%, transparent), transparent 72%)",
-            }}
-          />
-
           {/* Framed cover / video with lava-tinted heat distortion */}
-          <div className="relative h-full w-full overflow-hidden rounded-[var(--radius-md)] border border-line-lava-strong bg-obsidian-950 shadow-[var(--lava-glow-lg)]">
+          <div className="relative h-full w-full overflow-hidden rounded-[var(--radius-lg)] border-[6px] border-white bg-pearl-300 shadow-lift">
             {projects.map((item) => {
               const isCurrent = activeProject?.slug === item.slug;
               if (!item.cover && !item.video) return null;
@@ -454,18 +433,10 @@ export function WorkLedger({
                     />
                   ) : null}
 
-                  {/* Lava heat tint overlay */}
-                  <div
-                    className="absolute inset-0 mix-blend-screen opacity-25"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse 85% 65% at 50% 100%, var(--lava-500) 0%, transparent 72%)",
-                    }}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-obsidian-950/90 via-obsidian-950/45 to-transparent px-4 py-3">
-                    <span className="truncate text-xs font-medium text-text">{item.title}</span>
+                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-ink-900/80 via-ink-900/35 to-transparent px-4 py-3 text-white">
+                    <span className="truncate text-xs font-semibold text-white">{item.title}</span>
                     {item.category ? (
-                      <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-lava-300 rtl:font-sans rtl:tracking-normal rtl:normal-case">
+                      <span className="shrink-0 text-[11px] font-semibold text-lava-300">
                         {item.category.name}
                       </span>
                     ) : null}
