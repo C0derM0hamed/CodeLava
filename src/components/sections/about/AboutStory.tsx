@@ -19,7 +19,7 @@ export function AboutStory({
     <section aria-labelledby="about-story-title" className="section-y">
       <div className="container-lava grid gap-10 lg:grid-cols-12 lg:gap-14">
         <div className="lg:col-span-5">
-          <SectionHeading layout="intro" size="lg" kicker={eyebrow} title={title} lead={lead} titleId="about-story-title" />
+          <SectionHeading layout="intro" size="md" kicker={eyebrow} title={title} lead={lead} titleId="about-story-title" />
         </div>
         <div className="grid gap-8 lg:col-span-7 lg:pt-10">
           <Reveal as="p" mode="block" className="text-lead max-w-[60ch] text-text">
