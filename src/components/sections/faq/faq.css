@@ -1,0 +1,38 @@
+.faq-page {
+  display: grid;
+  grid-template-columns: minmax(0, .83fr) minmax(0, 1.2fr);
+  gap: clamp(2.5rem, 7vw, 7rem);
+  align-items: start;
+}
+
+.faq-editorial { display: grid; gap: 2rem; }
+.faq-editorial h1 { font-size: var(--text-display-md); max-inline-size: 15ch; }
+.faq-contact { display: grid; justify-items: start; gap: .2rem; }
+.faq-browser { display: grid; gap: clamp(1.3rem, 3vw, 2.75rem); }
+.faq-search { display: flex; align-items: end; gap: 1rem; }
+.faq-count { flex-shrink: 0; color: var(--text-muted); font-size: .8rem; padding-block-end: .6rem; }
+.faq-group { display: grid; gap: .65rem; }
+.faq-question { position: relative; scroll-margin-block-start: calc(var(--header-h) + 1rem); }
+.faq-question:target { background: color-mix(in oklab, var(--lava-900) 25%, var(--bg)); }
+.faq-question + .faq-question { margin-block-start: -1px; }
+.faq-accordion h3 > button { padding-inline-end: 2.65rem; padding-inline-start: .3rem; }
+.faq-question:target .faq-accordion h3 > button,
+.faq-accordion [role="region"] > div { padding-inline-start: .35rem; }
+.faq-accordion h3:has(> button[aria-expanded="false"]) + [role="region"] { visibility: hidden; }
+.faq-permalink {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 1.1rem;
+  display: grid;
+  place-items: center;
+  inline-size: 2.15rem;
+  block-size: 2.6rem;
+  color: var(--text-faint);
+}
+.faq-permalink:is(:hover, :focus-visible) { color: var(--lava-300); }
+[dir="rtl"] .faq-page .faq-editorial h1 { font-size: clamp(2.1rem, 1.3rem + 3.1vw, 4.25rem); }
+
+@media (max-width: 55rem) {
+  .faq-page { grid-template-columns: minmax(0, 1fr); }
+  .faq-editorial { gap: 1.25rem; }
+}
