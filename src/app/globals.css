@@ -40,24 +40,54 @@
   --syntax-yellow: #ffd866;
   --syntax-pink: #ff7aa8;   /* rare */
 
-  /* Semantic */
-  --bg: var(--obsidian-950);
-  --bg-elevated: var(--obsidian-900);
-  --surface: var(--obsidian-850);
-  --surface-2: var(--obsidian-800);
-  --surface-glass: color-mix(in oklab, var(--obsidian-950) 80%, transparent);
-  --line: color-mix(in oklab, var(--ash-50) 9%, transparent);
-  --line-strong: color-mix(in oklab, var(--ash-50) 18%, transparent);
-  --line-lava: color-mix(in oklab, var(--lava-500) 34%, transparent);
-  --line-lava-strong: color-mix(in oklab, var(--lava-400) 62%, transparent);
-  --text: var(--ash-50);
-  --text-muted: var(--ash-400);
-  --text-faint: var(--ash-500);
+  /* Daylight surfaces (v2 direction — light, premium, airy; see DESIGN-REFERENCE.md) */
+  --pearl-50: #ffffff;
+  --pearl-100: #fbfaf8;   /* raised surface */
+  --pearl-200: #f6f5f3;   /* page background — warm pearl */
+  --pearl-300: #efedea;   /* sunken / hover */
+  --mist: #eeedf3;        /* cool lavender-grey mist used in atmospheric washes */
+  --ink-950: #0f1320;
+  --ink-900: #151a29;     /* dark bands: process, CTA, footer */
+  --ink-800: #1d2334;
+  --ink-700: #2a3144;
+  --ink-600: #4a5165;     /* body copy on light */
+  --ink-500: #6a7083;     /* meta on light */
+  --ink-400: #9298a8;
+
+  /* Semantic — LIGHT by default. Dark bands opt in with .surface-dark (or data-surface="dark"). */
+  --bg: var(--pearl-200);
+  --bg-elevated: var(--pearl-100);
+  --surface: var(--pearl-50);
+  --surface-2: var(--pearl-100);
+  --surface-glass: color-mix(in oklab, var(--pearl-50) 82%, transparent);
+  --line: color-mix(in oklab, var(--ink-900) 8%, transparent);
+  --line-strong: color-mix(in oklab, var(--ink-900) 15%, transparent);
+  --line-lava: color-mix(in oklab, var(--lava-500) 30%, transparent);
+  --line-lava-strong: color-mix(in oklab, var(--lava-500) 60%, transparent);
+  --text: var(--ink-900);
+  --text-muted: var(--ink-600);
+  --text-faint: var(--ink-500);
   --accent: var(--lava-500);
   --accent-hot: var(--lava-400);
-  --focus: var(--lava-300);
-  --danger: #ff5a4f;
-  --success: var(--syntax-green);
+  --accent-text: #c2470a;  /* orange that passes AA (4.6:1) as text on light surfaces */
+  --on-accent: #ffffff;
+  --focus: var(--lava-600);
+  --danger: #d4372c;
+  --success: #1f9d55;
+  --code-cyan: #0aa5c2;    /* syntax accents tuned for light backgrounds */
+  --code-blue: #2f6bff;
+
+  /* Elevation — soft, diffuse, slightly cool shadows (reference: floating white tiles) */
+  --shadow-xs: 0 1px 2px color-mix(in oklab, var(--ink-900) 6%, transparent);
+  --shadow-card: 0 1px 2px color-mix(in oklab, var(--ink-900) 4%, transparent),
+    0 14px 36px -14px color-mix(in oklab, var(--ink-900) 16%, transparent);
+  --shadow-lift: 0 2px 4px color-mix(in oklab, var(--ink-900) 5%, transparent),
+    0 24px 56px -18px color-mix(in oklab, var(--ink-900) 22%, transparent);
+  --shadow-lava: 0 10px 28px -10px color-mix(in oklab, var(--lava-600) 55%, transparent);
+  --gradient-cta: linear-gradient(135deg, #f7802b 0%, #ee5d10 48%, #d9480a 100%);
+  --gradient-code: linear-gradient(135deg, #28d7f0 0%, #2f8bff 100%);
+  --gradient-page-wash: radial-gradient(120% 60% at 85% 0%, color-mix(in oklab, var(--lava-100) 55%, transparent) 0%, transparent 60%),
+    radial-gradient(90% 50% at 0% 10%, color-mix(in oklab, var(--mist) 90%, transparent) 0%, transparent 70%);
 
   /* Magma radiance & gradients (light, not flat decoration) */
   --lava-glow-sm: 0 0 18px color-mix(in oklab, var(--lava-500) 24%, transparent);
@@ -65,13 +95,7 @@
     0 0 14px color-mix(in oklab, var(--ember) 14%, transparent);
   --lava-glow-lg: 0 24px 80px -24px color-mix(in oklab, var(--lava-600) 36%, transparent);
   --gradient-lava: linear-gradient(125deg, var(--lava-300) 0%, var(--lava-500) 52%, var(--lava-600) 100%);
-  --gradient-lava-wordmark: linear-gradient(
-    135deg,
-    var(--ember) 0%,
-    var(--lava-400) 26%,
-    var(--lava-500) 64%,
-    var(--lava-600) 100%
-  );
+  --gradient-lava-wordmark: linear-gradient(100deg, #ff8a2a 0%, #f26a12 45%, #d9480a 100%);
   --gradient-heat-seam: linear-gradient(
     90deg,
     transparent 0%,
@@ -86,19 +110,20 @@
   );
 
   /* Fluid editorial type scale */
-  --text-display-xl: clamp(3.5rem, 1.35rem + 7.6vw, 10.5rem); /* 56px → 168px */
-  --text-display-lg: clamp(2.5rem, 1.25rem + 4.8vw, 6.25rem);  /* 40px → 100px */
-  --text-display-md: clamp(1.9rem, 1.15rem + 2.8vw, 4rem);     /* 30px → 64px  */
-  --text-display-sm: clamp(1.4rem, 1.05rem + 1.4vw, 2.35rem);  /* 22px → 38px  */
-  --text-lead: clamp(1.0625rem, 0.96rem + 0.45vw, 1.375rem);   /* 17px → 22px  */
+  --text-display-xl: clamp(2.6rem, 1.4rem + 4.2vw, 5.25rem);  /* 42px → 84px — hero */
+  --text-display-lg: clamp(2.2rem, 1.3rem + 3vw, 4rem);        /* 35px → 64px  */
+  --text-display-md: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);  /* 28px → 44px — section titles */
+  --text-display-sm: clamp(1.25rem, 1.05rem + 0.7vw, 1.6rem);  /* 20px → 26px — card titles */
+  --text-lead: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);       /* 17px → 20px  */
   --text-body: clamp(0.95rem, 0.92rem + 0.14vw, 1.0625rem);    /* 15.2px → 17px */
   --text-meta: 0.75rem;
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 32px;
+  --radius-sm: 8px;
+  --radius-md: 14px;   /* cards, tiles */
+  --radius-lg: 20px;   /* feature panels */
+  --radius-xl: 28px;   /* bands, CTA banner */
+  --radius-pill: 999px;
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -119,7 +144,30 @@
   --z-transition: 80;
   --z-cursor: 9999;
 
+  color-scheme: light;
+}
+
+/* Dark band scope — the reference uses deep ink bands (process, CTA banner, footer) for rhythm. */
+.surface-dark,
+[data-surface="dark"] {
+  --bg: var(--ink-900);
+  --bg-elevated: var(--ink-800);
+  --surface: var(--ink-800);
+  --surface-2: var(--ink-700);
+  --surface-glass: color-mix(in oklab, var(--ink-900) 80%, transparent);
+  --line: color-mix(in oklab, var(--ash-50) 10%, transparent);
+  --line-strong: color-mix(in oklab, var(--ash-50) 20%, transparent);
+  --text: var(--ash-50);
+  --text-muted: #b9bcc8;
+  --text-faint: #8d92a3;
+  --accent-text: var(--lava-400);
+  --focus: var(--lava-300);
+  --code-cyan: var(--syntax-cyan);
+  --code-blue: var(--syntax-blue);
+  --shadow-card: 0 18px 40px -18px rgb(0 0 0 / 0.6);
   color-scheme: dark;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 @theme inline {
@@ -161,6 +209,27 @@
   --color-syntax-green: var(--syntax-green);
   --color-syntax-yellow: var(--syntax-yellow);
   --color-syntax-pink: var(--syntax-pink);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-code-cyan: var(--code-cyan);
+  --color-code-blue: var(--code-blue);
+  --color-pearl-50: var(--pearl-50);
+  --color-pearl-100: var(--pearl-100);
+  --color-pearl-200: var(--pearl-200);
+  --color-pearl-300: var(--pearl-300);
+  --color-mist: var(--mist);
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-ink-400: var(--ink-400);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+  --shadow-lava: var(--shadow-lava);
+  --radius-pill: var(--radius-pill);
   --color-danger: var(--danger);
   --color-success: var(--success);
 
@@ -207,8 +276,8 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--lava-500) 55%, transparent);
-  color: var(--ash-50);
+  background: color-mix(in oklab, var(--lava-400) 35%, transparent);
+  color: var(--text);
 }
 
 :focus-visible {
@@ -229,36 +298,36 @@ body {
 .text-display-xl {
   font-family: var(--font-display);
   font-size: var(--text-display-xl);
-  font-weight: 500;
-  line-height: 0.94;
-  letter-spacing: -0.042em;
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
 .text-display-lg {
   font-family: var(--font-display);
   font-size: var(--text-display-lg);
-  font-weight: 500;
-  line-height: 0.99;
-  letter-spacing: -0.036em;
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.026em;
   text-wrap: balance;
 }
 
 .text-display-md {
   font-family: var(--font-display);
   font-size: var(--text-display-md);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.028em;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .text-display-sm {
   font-family: var(--font-display);
   font-size: var(--text-display-sm);
-  font-weight: 500;
-  line-height: 1.14;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
   text-wrap: balance;
 }
 
@@ -287,14 +356,14 @@ body {
 
 /* Arabic typography precision — zero letter-spacing, taller optical leading */
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-xl {
-  font-size: clamp(2.85rem, 1.3rem + 5.6vw, 7.25rem);
-  line-height: 1.18;
+  font-size: clamp(2.3rem, 1.3rem + 3.6vw, 4.6rem);
+  line-height: 1.22;
   letter-spacing: 0;
 }
 
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .text-display-lg {
-  font-size: clamp(2.2rem, 1.15rem + 4vw, 5.1rem);
-  line-height: 1.24;
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.5rem);
+  line-height: 1.28;
   letter-spacing: 0;
 }
 
@@ -339,6 +408,28 @@ body {
 }
 
 /* Atmospheric obsidian surfaces & film grain */
+/* Section kicker from the reference: short orange rule + label ("— Our Services") */
+.kicker-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--accent-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.kicker-rule::before {
+  content: "";
+  inline-size: 1.75rem;
+  block-size: 2px;
+  border-radius: 2px;
+  background: var(--gradient-cta);
+}
+
+/* Atmospheric page wash (very soft warm/cool light, replaces heavy dark haze) */
+.page-wash {
+  background-image: var(--gradient-page-wash);
+}
+
 .grain-overlay {
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");

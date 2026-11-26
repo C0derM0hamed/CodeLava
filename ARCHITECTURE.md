@@ -1,6 +1,6 @@
 # CodeLava — Architecture & Team Contract
 
-Read this fully before touching code. Lead architect & reviewer: **Claude**. Several agents work **in the same checkout at the same time** — respect file ownership.
+Read this fully before touching code. **Visual direction v2: read `DESIGN-REFERENCE.md` + `docs/design-reference.png` — it overrides the dark "Obsidian" look described below (light pearl surfaces, pill CTAs, dark ink bands only for process/CTA/footer).** Lead architect & reviewer: **Claude**. Several agents work **in the same checkout at the same time** — respect file ownership.
 
 ## Product
 Premium bilingual (EN / AR, LTR / RTL) website + admin dashboard for **CodeLava** (`.codelava`), a software & AI engineering company targeting the Gulf (KSA, UAE, Kuwait, Qatar), Egypt and international clients. Tagline: *"Software & AI Solutions"* — Arabic: *"ابتكار يتدفق برمجياً"* (innovation flowing through code).
