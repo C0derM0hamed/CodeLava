@@ -50,12 +50,15 @@ export const sectionRegistry = {
     hero: section("Home hero", {
       ...block(
         copy("Software & AI Solutions", "ابتكار يتدفق برمجياً"),
-        copy("Build what moves your business forward.", "ابنِ ما يدفع أعمالك إلى الأمام."),
+        copy("We turn ideas into\nreal digital products.", "نحوّل الأفكار\nإلى منتجات رقمية حقيقية."),
         copy("CodeLava designs and engineers digital products, custom software and AI solutions around the way your business works.",
           "نصمّم ونطوّر في CodeLava منتجات رقمية وبرمجيات مخصّصة وحلول ذكاء اصطناعي تنسجم مع طريقة عملك."),
       ),
-      ctaLabel: copy("Discuss your project", "ناقش مشروعك معنا"),
-      secondaryCtaLabel: copy("Explore our work", "اكتشف أعمالنا"),
+      ctaLabel: copy("Start your project", "ابدأ مشروعك"),
+      secondaryCtaLabel: copy("View our work", "شاهد أعمالنا"),
+    }),
+    clients: section("Client logos", {
+      eyebrow: copy("Trusted by teams across the Gulf and beyond", "شركاء نجاح في الخليج وخارجه"),
     }),
     services: section("Services", block(
       copy("Services", "خدماتنا"), copy("Engineering for the way you work.", "هندسة برمجية تنسجم مع طريقة عملك."),
@@ -67,10 +70,6 @@ export const sectionRegistry = {
       copy("Explore the challenges, trade-offs and engineering choices behind our work.",
         "تعرّف على التحديات والمفاضلات والخيارات الهندسية التي شكّلت أعمالنا."),
     )),
-    proof: section("Testimonials, clients and achievements", block(
-      copy("Working together", "العمل المشترك"), copy("From the people we build with.", "من شركائنا في العمل."),
-      copy("Client perspectives and milestones from our work together.", "آراء عملائنا ومحطات من أعمالنا المشتركة."),
-    )),
     process: section("Process", block(
       copy("Process", "منهجية العمل"), copy("Know what happens next.", "وضوح في كل خطوة."),
       copy("We make the important decisions visible, from discovery to release and beyond.",
@@ -81,6 +80,19 @@ export const sectionRegistry = {
       copy("We choose a stack your team can operate, maintain and extend as the product evolves.",
         "نختار تقنيات يسهل على فريقك تشغيلها وصيانتها وتوسيعها مع تطوّر المنتج."),
     )),
+    proof: section("Testimonials, clients and achievements", block(
+      copy("Working together", "العمل المشترك"), copy("From the people we build with.", "من شركائنا في العمل."),
+      copy("Client perspectives and milestones from our work together.", "آراء عملائنا ومحطات من أعمالنا المشتركة."),
+    )),
+    about: section("About teaser", {
+      ...block(
+        copy("About CodeLava", "عن CodeLava"),
+        copy("A software partner\nthat thinks like an owner", "شريك تقني\nيهتم بمشروعك كأنه مشروعه"),
+        copy("We’re a team of engineers and designers building custom software, digital products and applied AI for businesses in the Gulf, Egypt and beyond — with the care we’d want for our own company.",
+          "نحن فريق من المهندسين والمصمّمين نبني برمجيات مخصّصة ومنتجات رقمية وحلول ذكاء اصطناعي للشركات في الخليج ومصر وخارجهما، بالعناية نفسها التي نريدها لشركتنا."),
+      ),
+      ctaLabel: copy("More about us", "تعرّف علينا أكثر"),
+    }),
     insights: section("Insights", block(
       copy("Insights", "رؤى ومقالات"), copy("Notes from the work.", "أفكار من واقع العمل."),
       copy("Perspectives on software, product design and applied AI.", "رؤى في البرمجيات وتصميم المنتجات والذكاء الاصطناعي التطبيقي."),

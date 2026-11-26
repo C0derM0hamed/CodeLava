@@ -48,7 +48,7 @@ The client supplied `docs/design-reference.png` (open it — it is the benchmark
 **Motion (restrained)**
 - Reveal on scroll: 16–24 px rise + fade, 600–800 ms expo-out, light stagger.
 - Hover: lift + shadow; arrows nudge; tiles tilt subtly at most.
-- Hero: the volcano art is alive (lava glow breathing, slow ribbon ring orbit, a few embers), scroll adds a gentle eruption/parallax — no 380vh pinned film, no heavy smoke.
+- **Hero (client requirement, essential): scroll-pinned volcano story using the real video frames, reversible — calm volcano → erupts colorful code → code forms the orbit ribbon ring → `</>` CodeLava logo appears → seamless handoff into content.** Composited in the daylight look of the reference (sunset sky, clouds, mist into the pearl page). No audio. Reduced motion → final composed still.
 - Flame cursor: kept, tuned for light backgrounds (smaller, warmer, lower opacity).
 - Everything respects `prefers-reduced-motion`.
 
