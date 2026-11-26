@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { PlusIcon } from "./Icons";
 import { cn } from "./cn";
 
 export interface AccordionItemData {
@@ -17,8 +16,10 @@ export interface AccordionProps {
   type?: "single" | "multiple";
   /** Initial open item IDs. */
   defaultOpenIds?: string[];
-  /** Display editorial mono index numbers (01, 02...). Default true. */
+  /** Display mono index numbers (01, 02...). Default true. */
   numbered?: boolean;
+  /** "lines": hairline-divided list (default). "cards": each item is a white rounded card. */
+  variant?: "lines" | "cards";
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export function Accordion({
   type = "single",
   defaultOpenIds = [],
   numbered = true,
+  variant = "lines",
   className,
 }: AccordionProps) {
   const uid = useId();
@@ -64,25 +66,35 @@ export function Accordion({
     }
   };
 
+  const isCards = variant === "cards";
+
   return (
-    <div className={cn("divide-y divide-line border-y border-line", className)}>
+    <div
+      className={cn(
+        isCards ? "flex flex-col gap-3" : "divide-y divide-line-strong border-y border-line-strong",
+        className,
+      )}
+    >
       {items.map((item, idx) => {
         const isOpen = openIds.includes(item.id);
         const buttonId = `${uid}-trigger-${item.id}`;
         const panelId = `${uid}-panel-${item.id}`;
 
         return (
-          <div key={item.id} className="relative">
-            {/* Molten top highlight when open */}
-            <span
-              aria-hidden="true"
-              className={cn(
-                "pointer-events-none absolute inset-x-0 top-0 h-px transition-opacity duration-400",
-                isOpen ? "opacity-100" : "opacity-0",
-              )}
-              style={{ background: "var(--gradient-heat-seam)" }}
-            />
-
+          <div
+            key={item.id}
+            data-state={isOpen ? "open" : "closed"}
+            className={cn(
+              "relative transition-[box-shadow,border-color,background-color] duration-300",
+              isCards &&
+                cn(
+                  "rounded-[var(--radius-md)] border bg-surface px-5 sm:px-6",
+                  isOpen
+                    ? "border-line-lava shadow-[var(--shadow-card)]"
+                    : "border-line shadow-[var(--shadow-xs)] hover:border-line-strong",
+                ),
+            )}
+          >
             <h3>
               <button
                 ref={(el) => {
@@ -95,15 +107,19 @@ export function Accordion({
                 onClick={() => toggle(item.id)}
                 onKeyDown={(e) => onKeyDown(e, idx)}
                 data-cursor="pointer"
-                className="group flex w-full items-center justify-between gap-5 py-6 text-start transition-colors"
+                className={cn(
+                  "group flex w-full items-center justify-between gap-5 text-start",
+                  "focus-visible:outline-offset-4",
+                  isCards ? "py-5" : "py-6",
+                )}
               >
-                <span className="flex items-baseline gap-4 sm:gap-6">
+                <span className="flex items-baseline gap-4 sm:gap-5">
                   {numbered ? (
                     <span
                       dir="ltr"
                       className={cn(
-                        "shrink-0 font-mono text-xs tabular-nums transition-colors duration-250",
-                        isOpen ? "text-accent" : "text-faint group-hover:text-muted",
+                        "shrink-0 font-mono text-xs font-medium tabular-nums transition-colors duration-250",
+                        isOpen ? "text-accent-text" : "text-faint",
                       )}
                     >
                       {String(idx + 1).padStart(2, "0")}
@@ -112,30 +128,33 @@ export function Accordion({
                   <span className="flex flex-col gap-1">
                     <span
                       className={cn(
-                        "font-display text-lg font-medium transition-colors duration-250 sm:text-xl",
-                        isOpen ? "text-lava-100" : "text-text group-hover:text-lava-100",
+                        "font-display text-[1.0625rem] font-semibold leading-snug transition-colors duration-250 sm:text-lg",
+                        isOpen ? "text-text" : "text-text group-hover:text-accent-text",
                       )}
                     >
                       {item.question}
                     </span>
-                    {item.meta ? (
-                      <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-faint rtl:font-sans rtl:tracking-normal rtl:normal-case">
-                        {item.meta}
-                      </span>
-                    ) : null}
+                    {item.meta ? <span className="text-xs text-faint">{item.meta}</span> : null}
                   </span>
                 </span>
 
+                {/* plus → minus */}
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-[var(--ease-out-expo)]",
+                    "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] duration-300 ease-[var(--ease-out-expo)]",
                     isOpen
-                      ? "rotate-45 border-line-lava-strong bg-accent/12 text-ember"
-                      : "border-line-strong text-muted group-hover:border-line-lava group-hover:text-text",
+                      ? "border-transparent text-on-accent [background-image:var(--gradient-cta)] shadow-[var(--shadow-lava)]"
+                      : "border-line-strong bg-surface text-text group-hover:border-line-lava group-hover:text-accent-text",
                   )}
                 >
-                  <PlusIcon size={15} />
+                  <span className="absolute h-[1.75px] w-3.5 rounded-full bg-current" />
+                  <span
+                    className={cn(
+                      "absolute h-3.5 w-[1.75px] rounded-full bg-current transition-transform duration-300 ease-[var(--ease-out-expo)]",
+                      isOpen ? "scale-y-0" : "scale-y-100",
+                    )}
+                  />
                 </span>
               </button>
             </h3>
@@ -150,12 +169,12 @@ export function Accordion({
                 opacity: isOpen ? 1 : 0,
               }}
             >
-              <div className="overflow-hidden">
+              <div className="overflow-hidden" inert={!isOpen}>
                 <div
                   className={cn(
-                    "pb-6 text-sm leading-relaxed text-muted sm:text-[0.98rem]",
-                    numbered ? "ps-8 sm:ps-11" : "",
-                    "pe-10 max-w-3xl",
+                    "max-w-3xl pe-12 text-[0.9375rem] leading-relaxed text-muted",
+                    isCards ? "pb-5" : "pb-6",
+                    numbered ? "ps-8 sm:ps-9" : "",
                   )}
                 >
                   {item.answer}

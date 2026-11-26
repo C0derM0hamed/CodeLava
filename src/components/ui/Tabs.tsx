@@ -74,7 +74,7 @@ export function Tabs({
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className="flex flex-wrap items-center gap-1 border-b border-line"
+        className="flex flex-wrap items-center gap-x-2 border-b border-line-strong"
       >
         {items.map((item, idx) => {
           const isActive = item.id === activeId;
@@ -94,8 +94,8 @@ export function Tabs({
               onKeyDown={(e) => onKeyDown(e, idx)}
               data-cursor="pointer"
               className={cn(
-                "relative inline-flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-200",
-                isActive ? "text-text" : "text-muted hover:text-ash-200",
+                "relative inline-flex min-h-11 items-center gap-2 px-3 text-[0.9375rem] font-semibold transition-colors duration-200",
+                isActive ? "text-accent-text" : "text-muted hover:text-text",
               )}
             >
               <span>{item.label}</span>
@@ -104,10 +104,10 @@ export function Tabs({
                   dir="ltr"
                   className={cn(
                     "font-mono text-[11px] tabular-nums",
-                    isActive ? "text-accent" : "text-faint",
+                    isActive ? "text-accent-text" : "text-faint",
                   )}
                 >
-                  {String(item.count).padStart(2, "0")}
+                  {item.count}
                 </span>
               ) : null}
 
@@ -115,10 +115,10 @@ export function Tabs({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-x-1 -bottom-px h-[2px] transition-all duration-300 ease-[var(--ease-out-expo)]",
+                  "pointer-events-none absolute inset-x-2 -bottom-px h-[2px] rounded-full transition-all duration-300 ease-[var(--ease-out-expo)]",
                   isActive ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0",
                 )}
-                style={{ background: "var(--gradient-lava)" }}
+                style={{ background: "var(--gradient-cta)" }}
               />
             </button>
           );
@@ -180,27 +180,24 @@ export function FilterChips({
       {options.map((opt) => {
         const active = opt.value === value;
         const classes = cn(
-          "relative inline-flex items-center gap-2 rounded-[var(--radius-sm)] border px-3.5 py-2 text-xs font-medium transition-all duration-200",
+          "relative inline-flex min-h-10 items-center gap-2 rounded-[var(--radius-pill)] border px-4 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200",
           active
-            ? "border-line-lava-strong bg-lava-900/30 text-lava-100 shadow-[var(--lava-glow-sm)]"
-            : "border-line bg-bg-elevated text-muted hover:border-line-strong hover:bg-surface hover:text-text",
+            ? "border-transparent bg-text text-bg shadow-[var(--shadow-card)]"
+            : "border-line-strong bg-surface text-muted shadow-[var(--shadow-xs)] hover:border-line-lava hover:text-text",
         );
 
         const inner = (
           <>
             {active ? (
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full bg-ember shadow-[0_0_8px_var(--lava-500)]"
-              />
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
             ) : null}
             <span>{opt.label}</span>
             {typeof opt.count === "number" ? (
               <span
                 dir="ltr"
                 className={cn(
-                  "font-mono text-[11px] tabular-nums",
-                  active ? "text-lava-300" : "text-faint",
+                  "rounded-full px-1.5 text-xs tabular-nums",
+                  active ? "bg-[color-mix(in_oklab,var(--bg)_16%,transparent)] text-bg" : "bg-surface-2 text-faint",
                 )}
               >
                 {opt.count}

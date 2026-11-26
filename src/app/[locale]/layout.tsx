@@ -11,7 +11,7 @@ import type { FooterSocialLink } from "@/components/site";
 import { ToastProvider } from "@/components/ui/Toast";
 import { FlameCursor } from "@/experience/cursor";
 import { SmoothScrollProvider } from "@/experience/fx/SmoothScrollProvider";
-import { getSiteSettings } from "@/server/queries";
+import { getServices, getSiteSettings } from "@/server/queries";
 import "../globals.css";
 
 type LocaleParams = { params: Promise<{ locale: string }> };
@@ -20,7 +20,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const viewport: Viewport = { themeColor: "#07060a" };
+export const viewport: Viewport = { themeColor: "#f6f5f3" };
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
   const { locale } = await params;
@@ -41,7 +41,11 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const [settings, tc] = await Promise.all([getSiteSettings(locale), getTranslations({ locale, namespace: "common" })]);
+  const [settings, tc, services] = await Promise.all([
+    getSiteSettings(locale),
+    getTranslations({ locale, namespace: "common" }),
+    getServices(locale),
+  ]);
   const { contact } = settings;
   const socials: FooterSocialLink[] = Object.entries(settings.socials)
     .filter(([, href]) => typeof href === "string" && /^https?:\/\//.test(href))
@@ -58,6 +62,7 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
                 {children /* each page renders its own <main id="main-content"> */}
               </PageTransition>
               <SiteFooter
+                services={services.slice(0, 6).map((s) => ({ label: s.title, href: `/services/${s.slug}` }))}
                 contact={{ email: contact.email, phone: contact.phone, location: contact.address, availability: contact.hours }}
                 socials={socials}
               />

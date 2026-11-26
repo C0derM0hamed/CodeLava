@@ -19,6 +19,8 @@ interface Particle {
   size: number;
   phase: number;
   isSmoke: boolean;
+  /** Spawned over a dark band → additive "incandescent" rendering; otherwise warm source-over embers. */
+  onDark: boolean;
 }
 
 export interface FlameCursorProps {
@@ -30,7 +32,8 @@ export interface FlameCursorProps {
   disabled?: boolean;
 }
 
-const POOL_SIZE = 88;
+const POOL_SIZE = 72;
+const DARK_SURFACE_SELECTOR = '.surface-dark, [data-surface="dark"]';
 
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], [role="tab"], summary, label[for], [data-cursor="pointer"], [data-cursor="magnetic"]';
@@ -73,9 +76,10 @@ function lerpRgb(a: Rgb, b: Rgb, t: number): Rgb {
 }
 
 /**
- * CodeLava signature Flame Cursor.
- * Keeps a crisp, familiar arrow pointer (warm-white with molten lava rim) that
- * emits pooled 2D canvas embers & rising heat wisps from its tip and trail.
+ * CodeLava signature Flame Cursor (v2, light-first).
+ * A crisp, familiar arrow (ink blade + white rim on light, inverted on dark bands, molten on hover)
+ * trailing a few small warm embers. Over `.surface-dark` bands the embers turn incandescent
+ * (additive blend + faint smoke). Fine pointers only; disabled under reduced motion.
  * Zero React state updates per frame; fine-pointer only; disabled for reduced motion.
  */
 export function FlameCursor({
@@ -115,6 +119,7 @@ export function FlameCursor({
     const cLava = parseCssColor(styles.getPropertyValue("--lava-500"), { r: 255, g: 106, b: 0 });
     const cCooling = parseCssColor(styles.getPropertyValue("--lava-700"), { r: 184, g: 54, b: 10 });
     const cAsh = parseCssColor(styles.getPropertyValue("--ash-500"), { r: 140, g: 131, b: 121 });
+    const cDeep = parseCssColor(styles.getPropertyValue("--lava-600"), { r: 233, g: 78, b: 6 });
 
     // Pre-allocated particle pool (zero GC churn)
     const pool: Particle[] = Array.from({ length: POOL_SIZE }, () => ({
@@ -128,6 +133,7 @@ export function FlameCursor({
       size: 2,
       phase: 0,
       isSmoke: false,
+      onDark: false,
     }));
     let cursorPoolIdx = 0;
 
@@ -159,6 +165,7 @@ export function FlameCursor({
     let isView = false;
     let isPressed = false;
     let isRtlContext = document.documentElement.dir === "rtl";
+    let isDarkSurface = false;
     let currentScale = 1;
     let currentRotate = 0;
     let spawnCarry = 0;
@@ -191,8 +198,9 @@ export function FlameCursor({
       cursorPoolIdx = (cursorPoolIdx + 1) % POOL_SIZE;
       if (!p.active) activeCount++;
 
-      const spread = (Math.random() - 0.5) * (smoke ? 26 : 18 + intensity * 14);
+      const spread = (Math.random() - 0.5) * (smoke ? 26 : 16 + intensity * 12);
       p.active = true;
+      p.onDark = isDarkSurface;
       p.x = px + (Math.random() - 0.5) * 3.5;
       p.y = py + (Math.random() - 0.5) * 3.5;
       p.vx = spread - boostX * 0.16;
@@ -203,7 +211,9 @@ export function FlameCursor({
         : 0.3 + Math.random() * (0.34 + intensity * 0.22);
       p.size = smoke
         ? 2.4 + Math.random() * 2.5
-        : 1.25 + Math.random() * (2.0 + intensity * 1.25);
+        : isDarkSurface
+          ? 1.1 + Math.random() * (1.7 + intensity * 1.1)
+          : 0.8 + Math.random() * (1.1 + intensity * 0.7);
       p.phase = Math.random() * Math.PI * 2;
       p.isSmoke = smoke;
     };
@@ -216,6 +226,9 @@ export function FlameCursor({
         badgeEl.style.opacity = "0";
         return;
       }
+
+      isDarkSurface = Boolean(target.closest(DARK_SURFACE_SELECTOR));
+      pointerEl.dataset.surface = isDarkSurface ? "dark" : "light";
 
       const dirHost = target.closest("[dir]");
       isRtlContext = (dirHost?.getAttribute("dir") ?? document.documentElement.dir) === "rtl";
@@ -292,18 +305,18 @@ export function FlameCursor({
       if (showArrow) {
         pointerEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
-        const targetScale = isPressed ? 0.9 : isView ? 1.16 : isHover ? 1.11 : 1;
-        const targetRotate = Math.max(-14, Math.min(14, dx * 0.45));
+        const targetScale = isPressed ? 0.9 : isView ? 1.12 : isHover ? 1.08 : 1;
+        const targetRotate = Math.max(-10, Math.min(10, dx * 0.35));
         currentScale += (targetScale - currentScale) * Math.min(1, dt * 18);
         currentRotate += (targetRotate - currentRotate) * Math.min(1, dt * 14);
         arrowWrapEl.style.transform = `scale(${currentScale.toFixed(3)}) rotate(${currentRotate.toFixed(2)}deg)`;
-        arrowWrapEl.dataset.hot = isHover || speedNorm > 0.35 ? "1" : "0";
+        arrowWrapEl.dataset.hot = isHover ? "1" : "0";
       }
 
       // Emit particles when visible and not over native text inputs
       if (showArrow) {
-        // Idle = subtle smoulder (~10/sec); movement/hover ramps smoothly up to ~75/sec
-        const rate = 11 + intensity * 62;
+        // Light surfaces: a few warm embers (idle ~3/s → ~30/s fast). Dark bands: livelier (~8 → ~60/s).
+        const rate = isDarkSurface ? 8 + intensity * 52 : 3 + intensity * 26;
         spawnCarry += rate * dt;
 
         const count = Math.min(4, Math.floor(spawnCarry));
@@ -317,7 +330,8 @@ export function FlameCursor({
           const sx = tipX - dx * frac * 0.65;
           const sy = tipY - dy * frac * 0.65;
           spawnParticle(sx, sy, dx, dy, intensity, false);
-          if (Math.random() < 0.24) {
+          // Grey smoke reads as dirt on white — only on dark bands.
+          if (isDarkSurface && Math.random() < 0.2) {
             spawnParticle(sx + 2, sy + 4, dx * 0.4, dy * 0.4, intensity * 0.5, true);
           }
         }
@@ -350,13 +364,16 @@ export function FlameCursor({
 
         // Subtle incandescent aura directly at the arrow tip when flaring or moving fast
         if (showArrow && (isHover || speedNorm > 0.12)) {
-          const auraR = 14 + intensity * 14;
+          const auraR = (isDarkSurface ? 14 : 10) + intensity * (isDarkSurface ? 14 : 8);
           const aura = ctx.createRadialGradient(x + 3, y + 4, 0, x + 3, y + 4, auraR);
-          const auraAlpha = Math.min(0.32, 0.1 + intensity * 0.18);
-          aura.addColorStop(0, `rgba(${cEmber.r},${cEmber.g},${cEmber.b},${auraAlpha})`);
+          const auraAlpha = isDarkSurface
+            ? Math.min(0.3, 0.1 + intensity * 0.16)
+            : Math.min(0.14, 0.05 + intensity * 0.08);
+          const auraCore = isDarkSurface ? cEmber : cLavaHot;
+          aura.addColorStop(0, `rgba(${auraCore.r},${auraCore.g},${auraCore.b},${auraAlpha})`);
           aura.addColorStop(0.5, `rgba(${cLava.r},${cLava.g},${cLava.b},${auraAlpha * 0.45})`);
           aura.addColorStop(1, `rgba(${cLava.r},${cLava.g},${cLava.b},0)`);
-          ctx.globalCompositeOperation = "lighter";
+          ctx.globalCompositeOperation = isDarkSurface ? "lighter" : "source-over";
           ctx.fillStyle = aura;
           ctx.beginPath();
           ctx.arc(x + 3, y + 4, auraR, 0, Math.PI * 2);
@@ -397,11 +414,26 @@ export function FlameCursor({
           }
         }
 
-        // Pass 2: Hot embers & fire core (additive blend for crisp volcanic light)
+        // Pass 2a: embers over light surfaces — warm, saturated, normal blend (additive vanishes on white)
+        for (let i = 0; i < POOL_SIZE; i++) {
+          const p = pool[i];
+          if (!p.active || p.isSmoke || p.onDark) continue;
+          const t = p.age / p.life;
+          const col = t < 0.45 ? lerpRgb(cLavaHot, cLava, t / 0.45) : lerpRgb(cLava, cDeep, (t - 0.45) / 0.55);
+          const alpha = (1 - t) * (1 - t * 0.3) * 0.62;
+          const rad = Math.max(0.4, p.size * (1 - t * 0.6));
+          ctx.fillStyle = `rgba(${col.r},${col.g},${col.b},${alpha.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+          ctx.fill();
+          markDirty(p.x, p.y, rad + 1);
+        }
+
+        // Pass 2b: hot embers over dark bands (additive blend for incandescent light)
         ctx.globalCompositeOperation = "lighter";
         for (let i = 0; i < POOL_SIZE; i++) {
           const p = pool[i];
-          if (!p.active || p.isSmoke) continue;
+          if (!p.active || p.isSmoke || !p.onDark) continue;
 
           const t = p.age / p.life;
           let col: Rgb;
@@ -415,7 +447,7 @@ export function FlameCursor({
             col = lerpRgb(cLava, cCooling, (t - 0.8) / 0.2);
           }
 
-          const alpha = (1 - t) * (1 - t * 0.45) * 0.88;
+          const alpha = (1 - t) * (1 - t * 0.45) * 0.8;
           const rad = Math.max(0.45, p.size * (1 - t * 0.72));
 
           ctx.fillStyle = `rgba(${col.r},${col.g},${col.b},${alpha.toFixed(3)})`;
@@ -463,8 +495,9 @@ export function FlameCursor({
       if (e.pointerType !== "mouse" && e.pointerType !== "pen") return;
       isPressed = true;
       if (visible && !isNativeMode) {
-        for (let i = 0; i < 8; i++) {
-          const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.4;
+        const burst = isDarkSurface ? 8 : 5;
+        for (let i = 0; i < burst; i++) {
+          const angle = (Math.PI * 2 * i) / burst + Math.random() * 0.4;
           spawnParticle(
             e.clientX + 3,
             e.clientY + 4,
@@ -552,38 +585,32 @@ export function FlameCursor({
       >
         <div
           ref={arrowWrapRef}
-          className="origin-[2px_2px] will-change-transform [&[data-hot='1']_svg]:drop-shadow-[0_0_8px_var(--lava-500)]"
+          className="group/arrow origin-[2px_2px] will-change-transform"
         >
           <svg
-            width="23"
-            height="27"
+            width="20"
+            height="24"
             viewBox="0 0 23 27"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="block overflow-visible"
+            className="block overflow-visible drop-shadow-[0_2px_3px_rgb(21_26_41/0.25)] transition-[filter] duration-200 group-data-[hot='1']/arrow:drop-shadow-[0_0_6px_var(--lava-400)]"
           >
-            {/* Outer molten lava edge */}
+            {/* Classic arrow: ink blade + white rim on light; inverted on dark bands; molten on hover */}
             <path
               d="M2.2 1.8L20.4 15.1L12.1 16.4L15.7 23.6L12.7 25.1L9.1 17.8L3.4 22.7L2.2 1.8Z"
-              fill="var(--obsidian-950)"
-              stroke="var(--lava-500)"
-              strokeWidth="2.1"
+              strokeWidth="1.6"
               strokeLinejoin="round"
+              className="fill-ink-900 stroke-pearl-50 transition-[fill,stroke] duration-200 group-data-[hot='1']/arrow:fill-lava-600 [[data-surface='dark']_&]:fill-pearl-50 [[data-surface='dark']_&]:stroke-ink-900 [[data-surface='dark']_&]:group-data-[hot='1']/arrow:fill-lava-400"
             />
-            {/* Warm-white core arrow blade */}
-            <path
-              d="M3.1 3.4L18.4 14.6L11.1 15.7L14.5 22.6L13.1 23.3L9.6 16.3L4.4 20.8L3.1 3.4Z"
-              fill="var(--ash-50)"
-            />
-            {/* Hot incandescent glint at the pointer tip */}
-            <circle cx="3.2" cy="3.5" r="1.45" fill="var(--ember)" />
+            {/* Ember glint at the tip */}
+            <circle cx="3.6" cy="4.4" r="1.35" fill="var(--lava-400)" />
           </svg>
         </div>
 
         {/* Floating contextual label for [data-cursor="view"] */}
         <div
           ref={badgeRef}
-          className="absolute left-0 top-0 whitespace-nowrap rounded-[var(--radius-sm)] border border-line-lava-strong bg-obsidian-950/92 px-2.5 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ash-50 opacity-0 shadow-[var(--lava-glow-sm)] backdrop-blur-md will-change-transform rtl:font-sans rtl:tracking-normal rtl:normal-case"
+          className="absolute left-0 top-0 whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-1.5 text-xs font-semibold text-pearl-50 opacity-0 shadow-[var(--shadow-lava)] will-change-transform [background-image:var(--gradient-cta)]"
           style={{
             transition: "opacity 160ms var(--ease-out-expo), transform 180ms var(--ease-out-expo)",
           }}

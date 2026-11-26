@@ -19,7 +19,9 @@
     "mainLabel": "التنقل الرئيسي",
     "switchToLocale": "English",
     "switchLanguageAria": "التبديل إلى اللغة الإنجليزية",
-    "homeAria": "الصفحة الرئيسية لـ CodeLava"
+    "homeAria": "الصفحة الرئيسية لـ CodeLava",
+    "getQuote": "اطلب عرض سعر",
+    "menuTitle": "القائمة"
   },
   "footer": {
     "tagline": "ابتكار يتدفق برمجياً",
@@ -36,7 +38,22 @@
     "resourcesHeading": "المصادر",
     "contactHeading": "تواصل مباشر",
     "rights": "جميع الحقوق محفوظة.",
-    "signature": "هندسة متقنة تحت الضغط."
+    "signature": "هندسة متقنة تحت الضغط.",
+    "ctaTitle": "هل لديك <hl>مشروع</hl> في ذهنك؟",
+    "ctaLead": "لنناقش فكرتك ونحوّلها معاً إلى منتج رقمي ناجح يحقق أهدافك.",
+    "ctaPrimary": "اطلب عرض سعر",
+    "ctaSecondary": "تواصل معنا",
+    "blurb": "حلول برمجية مخصّصة للويب والجوال والذكاء الاصطناعي، للشركات الطموحة في الخليج ومصر وحول العالم.",
+    "quickLinksHeading": "روابط سريعة",
+    "servicesHeading": "خدماتنا",
+    "companyHeading": "الشركة",
+    "contactInfoHeading": "معلومات التواصل",
+    "startHeading": "ابدأ مشروعك",
+    "startLead": "شاركنا فكرتك ومتطلباتك، وسنعود إليك بنطاق عمل واضح وتقدير مبدئي للتكلفة.",
+    "startCta": "اطلب عرضاً مفصّلاً",
+    "socialsLabel": "حسابات CodeLava على مواقع التواصل",
+    "followOn": "CodeLava على {network}",
+    "legalLabel": "روابط قانونية"
   },
   "common": {
     "brand": "CodeLava",
@@ -129,7 +146,10 @@
     "title": "منهجية العمل",
     "step": "الخطوة {step}",
     "duration": "المدة المتوقّعة",
-    "empty": "ستظهر تفاصيل منهجية العمل هنا عند توفّرها."
+    "empty": "ستظهر تفاصيل منهجية العمل هنا عند توفّرها.",
+    "seeStages": "استعرض المراحل",
+    "glance": "نظرة سريعة",
+    "allQuestions": "تصفّح جميع الأسئلة"
   },
   "technologies": {
     "title": "التقنيات",
@@ -141,7 +161,11 @@
     "database": "قواعد البيانات",
     "design": "التصميم",
     "other": "تقنيات أخرى",
-    "empty": "ستظهر التقنيات هنا عند نشرها."
+    "empty": "ستظهر التقنيات هنا عند نشرها.",
+    "filterByCategory": "التصفية حسب الفئة",
+    "count": "{count, plural, one {تقنية واحدة} two {تقنيتان} few {{formatted} تقنيات} many {{formatted} تقنية} other {{formatted} تقنية}}",
+    "showing": "يُعرض {count, plural, one {تقنية واحدة} two {تقنيتان} few {{formatted} تقنيات} many {{formatted} تقنية} other {{formatted} تقنية}}",
+    "whyKicker": "لماذا هذه التقنيات"
   },
   "blog": {
     "title": "رؤى ومقالات",
@@ -157,7 +181,13 @@
     "related": "مقالات ذات صلة",
     "page": "الصفحة {page} من {total}",
     "empty": "ستظهر المقالات هنا عند نشرها.",
-    "noResults": "لا توجد مقالات مطابقة لهذا الموضوع."
+    "noResults": "لا توجد مقالات مطابقة لهذا الموضوع.",
+    "emptyLead": "نعمل على إعداد مقالاتنا الأولى. وفي الأثناء، يسعدنا أن نسمع عمّا تعمل على بنائه.",
+    "featured": "مقال مميّز",
+    "share": "شارك المقال",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "draftPreview": "معاينة مسودة"
   },
   "faq": {
     "title": "الأسئلة الشائعة",

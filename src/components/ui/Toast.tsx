@@ -45,19 +45,19 @@ const TONE_META: Record<
   { border: string; iconColor: string; barStyle: string; icon: typeof InfoCircleIcon }
 > = {
   default: {
-    border: "border-line-strong",
-    iconColor: "text-ash-200",
+    border: "border-line",
+    iconColor: "text-code-blue",
     barStyle: "var(--line-strong)",
     icon: InfoCircleIcon,
   },
   lava: {
     border: "border-line-lava-strong",
-    iconColor: "text-accent",
+    iconColor: "text-accent-text",
     barStyle: "var(--gradient-lava)",
     icon: InfoCircleIcon,
   },
   success: {
-    border: "border-syntax-green/35",
+    border: "border-success/35",
     iconColor: "text-success",
     barStyle: "var(--success)",
     icon: CheckCircleIcon,
@@ -121,7 +121,7 @@ function ToastCard({
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
       className={cn(
-        "pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-[var(--radius-md)] border bg-bg-elevated/96 px-4 py-3.5 shadow-[0_18px_48px_rgba(0,0,0,0.6)] backdrop-blur-md",
+        "pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-[var(--radius-md)] border bg-surface px-4 py-3.5 shadow-[var(--shadow-lift)]",
         meta.border,
       )}
     >
@@ -137,7 +137,7 @@ function ToastCard({
         aria-label={closeLabel}
         onClick={() => onDismiss(item.id)}
         data-cursor="pointer"
-        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-faint transition-colors hover:bg-surface hover:text-text"
+        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-faint transition-colors hover:bg-surface-2 hover:text-text"
       >
         <CloseIcon size={13} />
       </button>

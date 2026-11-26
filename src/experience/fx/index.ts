@@ -12,3 +12,5 @@ export { Counter } from "./Counter";
 export type { CounterProps } from "./Counter";
 export { Marquee } from "./Marquee";
 export type { MarqueeProps } from "./Marquee";
+export { WaveBand } from "./WaveBand";
+export type { WaveBandProps } from "./WaveBand";

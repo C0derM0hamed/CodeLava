@@ -6,26 +6,37 @@ import { Link, usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { Logo } from "@/components/brand/Logo";
 import { ActionLink } from "@/components/ui/ActionLink";
+import { MenuIcon } from "@/components/ui/Icons";
 import { cn } from "@/components/ui/cn";
 import { LocaleSwitch } from "./LocaleSwitch";
 import { MobileMenu, type NavItem } from "./MobileMenu";
 
 export const PRIMARY_NAV_ITEMS: readonly NavItem[] = [
+  { key: "home", href: "/" },
   { key: "services", href: "/services" },
   { key: "work", href: "/work" },
-  { key: "about", href: "/about" },
   { key: "process", href: "/process" },
+  { key: "about", href: "/about" },
   { key: "blog", href: "/blog" },
   { key: "contact", href: "/contact" },
 ] as const;
 
+export function isNavActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/" || pathname === "";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export interface SiteHeaderProps {
   /** Defaults to "fixed". Use "sticky" or "static" for embedded previews. */
   position?: "fixed" | "sticky" | "static";
-  /** Starts transparent over the hero and transitions to obsidian blur on scroll. Default true. */
+  /** Transparent at the very top (over the hero wash), white glass once scrolled. Default true. */
   transparentOverHero?: boolean;
-  /** Hides smoothly when scrolling down and reveals on scroll up. Default true. */
+  /** Slides away when scrolling down, returns on scroll up. Default true. */
   hideOnScrollDown?: boolean;
+  /** Force the scrolled (white glass) look — used by the design lab. */
+  forceElevated?: boolean;
+  /** Nav items override (defaults to PRIMARY_NAV_ITEMS). */
+  navItems?: readonly NavItem[];
   /** Optional override for lab/showcase locale toggling. */
   onLocaleChange?: (nextLocale: AppLocale) => void;
   /** Optional hook called when a nav item is clicked. */
@@ -34,15 +45,16 @@ export interface SiteHeaderProps {
 }
 
 /**
- * Primary CodeLava site header.
- * Features the brand lockup, 6 core routes, EN/AR path-preserving language switch,
- * signature molten "Start a project" CTA, scroll-aware hide/reveal + obsidian glass blur,
- * and a full-screen editorial mobile drawer.
+ * Light sticky site header (v2): logo start · centred nav with orange active underline ·
+ * globe language switch + "Get a quote" pill at the end. Transparent over the hero, then
+ * white glass + hairline + soft shadow on scroll. Below lg → burger + full-height light sheet.
  */
 export function SiteHeader({
   position = "fixed",
   transparentOverHero = true,
   hideOnScrollDown = true,
+  forceElevated = false,
+  navItems = PRIMARY_NAV_ITEMS,
   onLocaleChange,
   onNavigate,
   className,
@@ -62,19 +74,15 @@ export function SiteHeader({
 
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 28);
+      setScrolled(y > 12);
 
       if (hideOnScrollDown && !menuOpen) {
         const delta = y - lastScrollY.current;
-        if (y > 140 && delta > 8) {
-          setHidden(true);
-        } else if (delta < -6 || y <= 80) {
-          setHidden(false);
-        }
+        if (y > 220 && delta > 8) setHidden(true);
+        else if (delta < -6 || y <= 120) setHidden(false);
       } else {
         setHidden(false);
       }
-
       lastScrollY.current = y;
     };
 
@@ -88,84 +96,75 @@ export function SiteHeader({
     requestAnimationFrame(() => menuTriggerRef.current?.focus());
   };
 
-  const isElevated = scrolled || !transparentOverHero || position === "static";
+  const isElevated = forceElevated || scrolled || !transparentOverHero;
 
   return (
     <>
       <header
+        data-elevated={isElevated ? "true" : "false"}
         aria-hidden={menuOpen || undefined}
+        inert={menuOpen || undefined}
         className={cn(
-          position === "fixed"
-            ? "fixed inset-x-0 top-0"
-            : position === "sticky"
-              ? "sticky top-0"
-              : "relative",
-          "z-[var(--z-header)] transition-[transform,background-color,border-color,backdrop-filter] duration-400 ease-[var(--ease-out-expo)]",
+          position === "fixed" ? "fixed inset-x-0 top-0" : position === "sticky" ? "sticky top-0" : "relative",
+          "z-[var(--z-header)] border-b transition-[transform,background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-[var(--ease-out-expo)]",
           "focus-within:translate-y-0",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
           isElevated
-            ? "border-b border-line bg-obsidian-950/82 backdrop-blur-md"
-            : "border-b border-transparent bg-gradient-to-b from-obsidian-950/70 via-obsidian-950/25 to-transparent",
+            ? "border-line bg-surface-glass shadow-[var(--shadow-header)] backdrop-blur-xl backdrop-saturate-150"
+            : "border-transparent bg-transparent",
           className,
         )}
       >
-        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-4">
-          {/* Brand lockup */}
+        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-6">
           <Link
             href="/"
             aria-label={t("homeAria")}
             data-cursor="pointer"
             onClick={() => onNavigate?.("/")}
-            className="shrink-0 transition-opacity hover:opacity-95"
+            className="shrink-0 rounded-md"
           >
-            <Logo size="md" />
+            <Logo size="md" tone="light" />
           </Link>
 
-          {/* Desktop navigation */}
-          <nav aria-label={t("mainLabel")} className="hidden items-center gap-1 lg:flex">
-            {PRIMARY_NAV_ITEMS.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/" && pathname.startsWith(`${item.href}/`));
-
-              return (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  data-cursor="pointer"
-                  onClick={() => onNavigate?.(item.href)}
-                  className={cn(
-                    "group relative px-3.5 py-2 text-sm font-medium transition-colors duration-200",
-                    isActive ? "text-text" : "text-muted hover:text-text",
-                  )}
-                >
-                  <span>{t(item.key)}</span>
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "pointer-events-none absolute inset-x-3.5 bottom-0.5 h-px origin-left rtl:origin-right transition-transform duration-300 ease-[var(--ease-out-expo)]",
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                    )}
-                    style={{ background: "var(--gradient-lava)" }}
-                  />
-                </Link>
-              );
-            })}
+          <nav aria-label={t("mainLabel")} className="hidden lg:block">
+            <ul className="flex items-center gap-0.5 xl:gap-1.5">
+              {navItems.map((item) => {
+                const active = isNavActive(pathname, item.href);
+                return (
+                  <li key={item.key}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      data-cursor="pointer"
+                      onClick={() => onNavigate?.(item.href)}
+                      className={cn(
+                        "group relative inline-flex h-11 items-center rounded-md px-2.5 text-[0.9rem] font-medium transition-colors duration-200 xl:px-3",
+                        active ? "text-accent-text" : "text-text/80 hover:text-text",
+                      )}
+                    >
+                      <span>{t(item.key)}</span>
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "pointer-events-none absolute inset-x-2.5 bottom-1 h-[2px] origin-center rounded-full transition-transform duration-300 ease-[var(--ease-out-expo)] xl:inset-x-3",
+                          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-60",
+                        )}
+                        style={{ background: "var(--gradient-cta)" }}
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Trailing actions: locale toggle + signature CTA + mobile menu trigger */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="hidden items-center gap-3 md:flex md:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden sm:block">
               <LocaleSwitch onLocaleChange={onLocaleChange} />
-
-              <ActionLink
-                href="/quote"
-                variant="molten"
-                size="sm"
-                onClick={() => onNavigate?.("/quote")}
-              >
-                {t("startProject")}
+            </div>
+            <div className="hidden md:block">
+              <ActionLink href="/quote" variant="primary" size="sm" onClick={() => onNavigate?.("/quote")}>
+                {t("getQuote")}
               </ActionLink>
             </div>
 
@@ -177,22 +176,9 @@ export function SiteHeader({
               aria-label={t("menuOpen")}
               onClick={() => setMenuOpen((v) => !v)}
               data-cursor="pointer"
-              className="inline-flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-line-strong bg-bg-elevated/80 text-text transition-colors hover:border-line-lava-strong hover:bg-surface lg:hidden"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-text shadow-[var(--shadow-xs)] transition-colors hover:border-line-lava hover:text-accent-text lg:hidden"
             >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "h-[1.5px] w-4.5 rounded-full bg-current transition-transform duration-300",
-                  menuOpen && "translate-y-[3.75px] rotate-45",
-                )}
-              />
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "h-[1.5px] w-4.5 rounded-full bg-current transition-transform duration-300",
-                  menuOpen && "-translate-y-[3.75px] -rotate-45",
-                )}
-              />
+              <MenuIcon size={20} />
             </button>
           </div>
         </div>
@@ -201,7 +187,7 @@ export function SiteHeader({
       <MobileMenu
         open={menuOpen}
         onClose={closeMenu}
-        navItems={PRIMARY_NAV_ITEMS}
+        navItems={navItems}
         activePath={pathname}
         onLocaleChange={onLocaleChange}
         onNavigate={onNavigate}

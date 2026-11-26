@@ -29,25 +29,19 @@ export function LocaleSwitch({
   const nextLocale: AppLocale = locale === "ar" ? "en" : "ar";
 
   const classes = cn(
-    "group inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-line bg-bg-elevated/70 text-ash-200 transition-all duration-250",
-    "hover:border-line-lava-strong hover:bg-surface hover:text-text",
-    size === "sm" ? "h-9 px-3 text-xs" : "h-11 px-4 text-sm",
+    "group inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-transparent font-medium text-text/85 transition-[background-color,border-color,color] duration-200",
+    "hover:border-line-strong hover:bg-surface hover:text-text",
+    size === "sm" ? "h-10 px-3 text-sm" : "h-12 px-4 text-[0.9375rem]",
     className,
   );
 
   const inner = (
     <>
       <GlobeIcon
-        size={size === "sm" ? 14 : 16}
-        className="text-muted transition-colors group-hover:text-accent"
+        size={size === "sm" ? 17 : 18}
+        className="text-muted transition-colors group-hover:text-accent-text"
       />
-      <span
-        lang={nextLocale}
-        className={cn(
-          "font-medium leading-none",
-          nextLocale === "ar" ? "font-sans tracking-normal" : "font-mono tracking-[0.04em]",
-        )}
-      >
+      <span lang={nextLocale} className="leading-none">
         {t("switchToLocale")}
       </span>
     </>

@@ -13,6 +13,8 @@ export interface DialogProps {
   /** Accessible label for the close button (localized). */
   closeLabel?: string;
   size?: "sm" | "md" | "lg";
+  /** "light" (default) white panel; "dark" ink panel for media lightboxes — same chrome, tokens flip. */
+  tone?: "light" | "dark";
   children: ReactNode;
   footer?: ReactNode;
   className?: string;
@@ -28,7 +30,7 @@ const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /**
- * Accessible obsidian modal Dialog.
+ * Accessible modal Dialog (light by default; `tone="dark"` for media lightboxes).
  * Traps keyboard focus, closes on Escape or backdrop click, pauses Lenis smooth scroll
  * while open, and restores focus to the triggering element on close.
  */
@@ -39,6 +41,7 @@ export function Dialog({
   description,
   closeLabel = "Close",
   size = "md",
+  tone = "light",
   children,
   footer,
   className,
@@ -110,11 +113,11 @@ export function Dialog({
       className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 sm:p-6"
       role="presentation"
     >
-      {/* Obsidian scrim */}
+      {/* Ink scrim */}
       <div
         aria-hidden="true"
         onClick={onClose}
-        className="fixed inset-0 bg-obsidian-950/82 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-ink-900/45 backdrop-blur-[6px] transition-opacity"
       />
 
       {/* Dialog panel */}
@@ -126,21 +129,15 @@ export function Dialog({
         aria-describedby={descId}
         tabIndex={-1}
         className={cn(
-          "relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line-strong bg-bg-elevated shadow-[0_32px_96px_rgba(0,0,0,0.75)] focus:outline-none",
+          "relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface shadow-[var(--shadow-pop)] focus:outline-none",
           SIZE_CLASSES[size],
+          tone === "dark" && "surface-dark border-[color-mix(in_oklab,var(--ash-50)_10%,transparent)]",
           className,
         )}
       >
-        {/* Top molten hairline */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px"
-          style={{ background: "var(--gradient-heat-seam)" }}
-        />
-
-        <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
+        <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-4 sm:px-7">
           <div className="space-y-1">
-            <h2 id={titleId} className="font-display text-xl font-medium text-text sm:text-2xl">
+            <h2 id={titleId} className="font-display text-xl font-bold tracking-[-0.01em] text-text sm:text-2xl rtl:tracking-normal">
               {title}
             </h2>
             {description ? (
@@ -155,18 +152,18 @@ export function Dialog({
             aria-label={closeLabel}
             onClick={onClose}
             data-cursor="pointer"
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-line text-muted transition-colors hover:border-line-lava-strong hover:bg-surface hover:text-text"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-muted transition-colors hover:border-line-lava hover:text-accent-text"
           >
-            <CloseIcon size={15} />
+            <CloseIcon size={16} />
           </button>
         </div>
 
-        <div className="overflow-y-auto px-6 py-5 text-sm leading-relaxed text-ash-200">
+        <div className="overflow-y-auto px-6 pb-6 text-[0.9375rem] leading-relaxed text-muted sm:px-7">
           {children}
         </div>
 
         {footer ? (
-          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line bg-surface/50 px-6 py-4">
+          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line bg-surface-2 px-6 py-4 sm:px-7">
             {footer}
           </div>
         ) : null}

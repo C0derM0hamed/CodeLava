@@ -44,18 +44,16 @@ export function FieldWrapper({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium text-ash-200">
+        <label htmlFor={id} className="text-sm font-semibold text-text">
           {label}
           {required ? (
-            <span aria-hidden="true" className="ms-1 text-accent">
+            <span aria-hidden="true" className="ms-1 text-accent-text">
               *
             </span>
           ) : null}
         </label>
         {!required && optionalLabel ? (
-          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-faint rtl:font-sans rtl:tracking-normal rtl:normal-case">
-            {optionalLabel}
-          </span>
+          <span className="text-xs text-faint">{optionalLabel}</span>
         ) : null}
       </div>
 
@@ -66,13 +64,13 @@ export function FieldWrapper({
           id={errorId}
           role="alert"
           aria-live="polite"
-          className="inline-flex items-center gap-1.5 text-xs text-danger"
+          className="inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-danger"
         >
           <AlertCircleIcon size={14} />
           <span>{error}</span>
         </p>
       ) : hint ? (
-        <p id={hintId} className="text-xs text-faint">
+        <p id={hintId} className="text-[0.8125rem] text-faint">
           {hint}
         </p>
       ) : null}
@@ -80,13 +78,15 @@ export function FieldWrapper({
   );
 }
 
+/* White field, 12px radius, 3:1 hairline border, orange focus ring (border + 4px soft halo). */
 const INPUT_BASE = cn(
-  "w-full rounded-[var(--radius-sm)] border bg-bg-elevated px-3.5 text-sm text-text placeholder:text-faint/75",
+  "w-full rounded-[12px] border border-line-input bg-surface px-4 text-[0.9375rem] text-text shadow-[var(--shadow-xs)] placeholder:text-faint",
   "transition-[border-color,box-shadow,background-color] duration-200",
-  "border-line-strong hover:border-ash-500/45",
-  "focus:border-accent focus:bg-surface focus:outline-none focus:ring-1 focus:ring-accent/45",
-  "disabled:cursor-not-allowed disabled:opacity-45",
+  "hover:border-text/45",
+  "focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/18",
+  "disabled:cursor-not-allowed disabled:bg-surface-2 disabled:opacity-60",
 );
+const INPUT_ERROR = "border-danger hover:border-danger focus:border-danger focus:ring-danger/15";
 
 /* -------------------------------------------------------------------------- */
 /* TextInput                                                                  */
@@ -136,17 +136,11 @@ export function TextInput({
           aria-describedby={describedBy || undefined}
           className={cn(
             INPUT_BASE,
-            "h-11",
-            error && "border-danger/70 focus:border-danger focus:ring-danger/40",
+            "h-12",
+            error && INPUT_ERROR,
             className,
           )}
           {...props}
-        />
-        {/* Subtle bottom molten edge when focused */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-3 bottom-0 h-px scale-x-0 opacity-0 transition-all duration-300 group-focus-within/input:scale-x-100 group-focus-within/input:opacity-100"
-          style={{ background: "var(--gradient-heat-seam)" }}
         />
       </div>
     </FieldWrapper>
@@ -203,16 +197,11 @@ export function Textarea({
           aria-describedby={describedBy || undefined}
           className={cn(
             INPUT_BASE,
-            "min-h-[112px] py-3 leading-relaxed resize-y",
-            error && "border-danger/70 focus:border-danger focus:ring-danger/40",
+            "min-h-[132px] py-3 leading-relaxed resize-y",
+            error && INPUT_ERROR,
             className,
           )}
           {...props}
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-3 bottom-1.5 h-px scale-x-0 opacity-0 transition-all duration-300 group-focus-within/input:scale-x-100 group-focus-within/input:opacity-100"
-          style={{ background: "var(--gradient-heat-seam)" }}
         />
       </div>
     </FieldWrapper>
@@ -277,14 +266,14 @@ export function Select({
           aria-describedby={describedBy || undefined}
           className={cn(
             INPUT_BASE,
-            "h-11 appearance-none pe-10",
-            error && "border-danger/70 focus:border-danger focus:ring-danger/40",
+            "h-12 appearance-none pe-11",
+            error && INPUT_ERROR,
             className,
           )}
           {...props}
         >
           {placeholder ? (
-            <option value="" disabled={required} className="bg-obsidian-900 text-muted">
+            <option value="" disabled={required}>
               {placeholder}
             </option>
           ) : null}
@@ -293,7 +282,6 @@ export function Select({
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
-              className="bg-obsidian-900 text-text"
             >
               {opt.label}
             </option>
@@ -301,7 +289,7 @@ export function Select({
         </select>
         <ChevronDownIcon
           size={16}
-          className="pointer-events-none absolute top-1/2 end-3.5 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute top-1/2 end-4 -translate-y-1/2 text-muted"
         />
       </div>
     </FieldWrapper>
@@ -344,10 +332,10 @@ export function Checkbox({
           <span
             aria-hidden="true"
             className={cn(
-              "flex h-5 w-5 items-center justify-center rounded-[4px] border border-line-strong bg-bg-elevated transition-all duration-200",
-              "group-hover:border-line-lava-strong",
+              "flex h-5 w-5 items-center justify-center rounded-[6px] border border-line-input bg-surface text-on-accent transition-all duration-200",
+              "group-hover:border-accent",
               "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus",
-              "peer-checked:border-accent peer-checked:bg-accent peer-checked:text-obsidian-950",
+              "peer-checked:border-transparent peer-checked:[background-image:var(--gradient-cta)]",
               "peer-disabled:opacity-45",
               error && "border-danger",
             )}
@@ -358,7 +346,7 @@ export function Checkbox({
             />
           </span>
         </span>
-        <span className="flex flex-col gap-0.5 text-sm leading-snug text-ash-200">
+        <span className="flex flex-col gap-0.5 text-sm leading-snug text-text">
           <span>{label}</span>
           {description ? <span className="text-xs text-faint">{description}</span> : null}
         </span>
@@ -424,11 +412,11 @@ export function RadioCards({
         : "grid-cols-1 sm:grid-cols-2";
 
   return (
-    <fieldset className={cn("flex flex-col gap-3", className)}>
-      <legend className="text-sm font-medium text-ash-200">
+    <fieldset className={cn("flex flex-col", className)}>
+      <legend className="mb-3 text-sm font-semibold text-text">
         {legend}
         {required ? (
-          <span aria-hidden="true" className="ms-1 text-accent">
+          <span aria-hidden="true" className="ms-1 text-accent-text">
             *
           </span>
         ) : null}
@@ -442,11 +430,11 @@ export function RadioCards({
               key={opt.value}
               data-cursor="pointer"
               className={cn(
-                "group relative flex cursor-pointer flex-col justify-between gap-2 overflow-hidden rounded-[var(--radius-md)] border p-4 text-start transition-all duration-250",
+                "group relative flex cursor-pointer flex-col gap-2 rounded-[var(--radius-md)] border bg-surface p-4 text-start transition-[border-color,box-shadow,transform] duration-250",
                 "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus",
                 isChecked
-                  ? "border-line-lava-strong bg-surface shadow-[var(--lava-glow-sm)]"
-                  : "border-line bg-bg-elevated hover:border-line-strong hover:bg-surface/65",
+                  ? "border-accent shadow-[0_0_0_3px_var(--accent-soft),var(--shadow-card)]"
+                  : "border-line-strong shadow-[var(--shadow-xs)] hover:-translate-y-px hover:border-line-lava hover:shadow-[var(--shadow-card)]",
               )}
             >
               <input
@@ -459,40 +447,28 @@ export function RadioCards({
                 className="sr-only"
               />
 
-              {/* Active top heat rim */}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "pointer-events-none absolute inset-x-0 top-0 h-[1.5px] transition-opacity duration-300",
-                  isChecked ? "opacity-100" : "opacity-0",
-                )}
-                style={{ background: "var(--gradient-heat-seam)" }}
-              />
-
               <div className="flex items-start justify-between gap-3">
-                <span className="font-medium text-text">{opt.title}</span>
+                <span className="font-semibold text-text">{opt.title}</span>
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors",
-                    isChecked ? "border-accent bg-accent" : "border-line-strong",
+                    "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+                    isChecked ? "border-transparent text-on-accent [background-image:var(--gradient-cta)]" : "border-line-input bg-surface",
                   )}
                 >
-                  <span
-                    className={cn(
-                      "h-1.5 w-1.5 rounded-full bg-obsidian-950 transition-transform",
-                      isChecked ? "scale-100" : "scale-0",
-                    )}
+                  <CheckIcon
+                    size={12}
+                    className={cn("transition-transform", isChecked ? "scale-100" : "scale-0")}
                   />
                 </span>
               </div>
 
               {opt.description ? (
-                <p className="text-xs leading-relaxed text-muted">{opt.description}</p>
+                <p className="text-[0.8125rem] leading-relaxed text-muted">{opt.description}</p>
               ) : null}
 
               {opt.meta ? (
-                <span className="mt-1 font-mono text-[11px] text-accent rtl:font-sans">
+                <span className="mt-auto pt-1 text-xs font-semibold text-accent-text">
                   {opt.meta}
                 </span>
               ) : null}
@@ -502,7 +478,7 @@ export function RadioCards({
       </div>
 
       {error ? (
-        <p role="alert" className="text-xs text-danger">
+        <p role="alert" className="mt-2 text-[0.8125rem] font-medium text-danger">
           {error}
         </p>
       ) : null}
@@ -630,18 +606,18 @@ export function FileDropZone({
         onDragLeave={() => setIsDragging(false)}
         onDrop={onDrop}
         className={cn(
-          "group flex w-full flex-col items-center justify-center gap-2.5 rounded-[var(--radius-md)] border border-dashed px-5 py-7 text-center transition-all duration-250",
+          "group flex w-full flex-col items-center justify-center gap-2.5 rounded-[var(--radius-md)] border-[1.5px] border-dashed bg-surface px-5 py-8 text-center transition-[border-color,background-color,box-shadow] duration-250",
           isDragging
-            ? "border-accent bg-lava-900/20 shadow-[var(--lava-glow-sm)]"
-            : "border-line-strong bg-bg-elevated hover:border-line-lava-strong hover:bg-surface/75",
-          activeError && "border-danger/70",
+            ? "border-accent bg-accent-soft shadow-[0_0_0_4px_var(--accent-soft)]"
+            : "border-line-input hover:border-accent hover:bg-[color-mix(in_oklab,var(--accent-soft)_50%,var(--surface))]",
+          activeError && "border-danger",
         )}
       >
-        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line-strong bg-surface text-accent transition-colors group-hover:border-line-lava-strong group-hover:text-ember">
-          <UploadIcon size={18} />
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-soft text-accent-text transition-transform duration-300 group-hover:-translate-y-0.5">
+          <UploadIcon size={19} />
         </span>
-        <span className="text-sm font-medium text-text">{dropTitle}</span>
-        <span className="text-xs text-faint">
+        <span className="text-sm font-semibold text-text">{dropTitle}</span>
+        <span className="text-[0.8125rem] text-faint">
           {dropHint ?? `Up to ${maxFiles} files · ${maxSizeMb} MB max each`}
         </span>
       </button>
@@ -651,10 +627,10 @@ export function FileDropZone({
           {fileList.map((file, idx) => (
             <li
               key={`${file.name}-${file.size}-${idx}`}
-              className="flex items-center justify-between gap-3 rounded-[var(--radius-sm)] border border-line bg-surface px-3 py-2 text-xs"
+              className="flex items-center justify-between gap-3 rounded-[12px] border border-line-strong bg-surface px-3.5 py-2.5 text-[0.8125rem] shadow-[var(--shadow-xs)]"
             >
-              <span className="flex min-w-0 items-center gap-2.5 text-ash-200">
-                <FileIcon size={15} className="text-accent" />
+              <span className="flex min-w-0 items-center gap-2.5 text-text">
+                <FileIcon size={15} className="text-accent-text" />
                 <span className="truncate">{file.name}</span>
                 <span className="shrink-0 font-mono text-[11px] text-faint tabular-nums">
                   {formatBytes(file.size)}
@@ -664,7 +640,7 @@ export function FileDropZone({
                 type="button"
                 aria-label={removeLabel(file.name)}
                 onClick={() => removeAt(idx)}
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-muted transition-colors hover:bg-obsidian-700 hover:text-text"
+                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent-text"
               >
                 <CloseIcon size={13} />
               </button>

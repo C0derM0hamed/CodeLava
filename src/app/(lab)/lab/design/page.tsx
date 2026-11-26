@@ -4,7 +4,7 @@ import { DesignShowcaseClient } from "./DesignShowcaseClient";
 
 export const metadata: Metadata = {
   title: "CodeLava — Design System Lab",
-  description: "Obsidian & Magma living design system showcase (EN / AR, LTR / RTL).",
+  description: "Daylight Magma living design system showcase (EN / AR, LTR / RTL).",
   robots: { index: false, follow: false },
 };
 

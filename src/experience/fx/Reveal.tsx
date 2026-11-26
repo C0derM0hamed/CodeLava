@@ -15,13 +15,15 @@ export interface RevealProps {
   mode?: RevealMode;
   /** Optional explicit array of lines when mode="lines". */
   lines?: string[];
-  as?: "div" | "h1" | "h2" | "h3" | "h4" | "p" | "span";
+  as?: "div" | "h1" | "h2" | "h3" | "h4" | "p" | "span" | "li" | "section" | "article" | "header";
   /** Initial delay in ms before the stagger begins. */
   delay?: number;
   /** Stagger interval between words/lines in ms. */
   stagger?: number;
   /** Reveal immediately on mount instead of waiting for viewport intersection. */
   immediate?: boolean;
+  /** words mode: a phrase inside the text to paint with the lava gradient (e.g. "Digital Products"). */
+  highlight?: string;
   className?: string;
 }
 
@@ -38,6 +40,7 @@ export function Reveal({
   delay = 0,
   stagger = 42,
   immediate = false,
+  highlight,
   className = "",
 }: RevealProps) {
   const hostRef = useRef<HTMLElement | null>(null);
@@ -105,30 +108,34 @@ export function Reveal({
     );
   }
 
-  // Word-level masked split (100% Arabic cursive safe)
+  // Word-level rise + fade (never splits letters — Arabic cursive safe). Supports "\n" line breaks
+  // and an optional highlighted phrase rendered with the lava display gradient.
   if (mode === "words" && typeof children === "string") {
-    const words = children.trim().split(/\s+/);
+    const plain = children.replace(/\s*\n\s*/g, " ").trim();
+    const tokens = tokenizeWords(children, highlight);
+    let wordIndex = 0;
     return (
-      <Tag ref={setRef as never} className={className} aria-label={children}>
-        {words.map((word, i) => (
-          <span
-            key={`${i}-${word}`}
-            aria-hidden="true"
-            className="inline-block overflow-hidden align-bottom py-[0.14em] -my-[0.14em]"
-          >
+      <Tag ref={setRef as never} className={className} aria-label={plain}>
+        {tokens.map((tok, i) => {
+          if (tok.type === "br") return <br key={`br-${i}`} aria-hidden="true" />;
+          const idx = wordIndex++;
+          const d = delay + idx * stagger;
+          return (
             <span
-              className="inline-block will-change-transform"
+              key={`${i}-${tok.text}`}
+              aria-hidden="true"
+              className={`inline-block will-change-transform ${tok.highlight ? "text-lava-gradient" : ""}`}
               style={{
-                transform: shown ? "translate3d(0, 0%, 0)" : "translate3d(0, 112%, 0)",
+                transform: shown ? "translate3d(0, 0, 0)" : "translate3d(0, 0.42em, 0)",
                 opacity: shown ? 1 : 0,
-                transition: `transform 720ms var(--ease-out-expo) ${delay + i * stagger}ms, opacity 500ms ease-out ${delay + i * stagger}ms`,
+                transition: `transform 760ms var(--ease-out-expo) ${d}ms, opacity 560ms ease-out ${d}ms`,
               }}
             >
-              {word}
-              {i < words.length - 1 ? "\u00A0" : ""}
+              {tok.text}
+              {tok.space ? "\u00A0" : ""}
             </span>
-          </span>
-        ))}
+          );
+        })}
       </Tag>
     );
   }
@@ -139,12 +146,45 @@ export function Reveal({
       ref={setRef as never}
       className={className}
       style={{
-        transform: shown ? "translate3d(0, 0, 0)" : "translate3d(0, 22px, 0)",
+        transform: shown ? "translate3d(0, 0, 0)" : "translate3d(0, 20px, 0)",
         opacity: shown ? 1 : 0,
-        transition: `transform 780ms var(--ease-out-expo) ${delay}ms, opacity 620ms ease-out ${delay}ms`,
+        transition: `transform 720ms var(--ease-out-expo) ${delay}ms, opacity 600ms ease-out ${delay}ms`,
       }}
     >
       {children}
     </Tag>
   );
+}
+
+type WordToken = { type: "word"; text: string; space: boolean; highlight: boolean } | { type: "br" };
+
+function tokenizeWords(text: string, highlight?: string): WordToken[] {
+  const hl = highlight?.trim();
+  let hlStart = -1;
+  let hlEnd = -1;
+  if (hl) {
+    hlStart = text.indexOf(hl);
+    if (hlStart >= 0) hlEnd = hlStart + hl.length;
+  }
+  const out: WordToken[] = [];
+  const re = /(\n)|([^\s]+)(\s*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m[1]) {
+      // drop the trailing nbsp of the previous word before a line break
+      const prev = out[out.length - 1];
+      if (prev && prev.type === "word") prev.space = false;
+      out.push({ type: "br" });
+      continue;
+    }
+    const start = m.index;
+    const word = m[2] ?? "";
+    const trailing = m[3] ?? "";
+    const isHl = hlStart >= 0 && start >= hlStart && start + word.length <= hlEnd;
+    out.push({ type: "word", text: word, space: trailing.length > 0 && !trailing.includes("\n"), highlight: isHl });
+    if (trailing.includes("\n")) out.push({ type: "br" });
+  }
+  const last = out[out.length - 1];
+  if (last && last.type === "word") last.space = false;
+  return out;
 }

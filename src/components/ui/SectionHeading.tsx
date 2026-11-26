@@ -3,22 +3,32 @@ import { Reveal } from "@/experience/fx/Reveal";
 import { cn } from "./cn";
 
 export interface SectionHeadingProps {
-  /** Monospace section index such as "01" or "02 /". Trailing slash is formatted automatically if omitted. */
+  /** Legacy mono section index ("01" → "01 /"). When set, the kicker renders as mono meta next to it. */
   index?: string;
-  /** Short editorial kicker label next to the index. */
+  /** Short kicker label. Without `index` it renders as the reference "kicker-rule" (orange rule + label). */
   kicker?: string;
-  /** Primary display headline. */
+  /** Display headline. Use "\n" for the reference's deliberate two-line H2s ("End-to-End\nDigital Solutions"). */
   title: string;
-  /** Optional lead description below or paired alongside the title. */
+  /** A phrase inside `title` painted with the lava display gradient. */
+  highlight?: string;
+  /** Intro copy under the title. */
   lead?: string;
-  /** Optional trailing action slot (e.g. <ActionLink variant="molten">). */
+  /** Trailing action slot — typically `<ActionLink variant="text">` (split intro) or a pill. */
   action?: ReactNode;
-  /** Display heading level & visual scale. */
   as?: "h1" | "h2" | "h3";
   size?: "xl" | "lg" | "md" | "sm";
-  /** "split" creates an asymmetric editorial layout on desktop (title start, lead+action end). */
-  layout?: "stack" | "split";
-  /** Animate title words with bilingual-safe Reveal. Default true. */
+  /**
+   * "stack": kicker · title · lead · action stacked (default).
+   * "split": title on the start side, lead + action on the end side (desktop).
+   * "intro": compact column for the reference "split intro" — narrow measure, text link under the lead.
+   *          Usually you want `<SplitIntro>` which also lays out the content column.
+   */
+  layout?: "stack" | "split" | "intro";
+  /** Horizontal alignment for stack/intro layouts. */
+  align?: "start" | "center";
+  /** id applied to the heading element (for aria-labelledby on the section). */
+  titleId?: string;
+  /** Word rise + fade reveal. Default true. */
   animated?: boolean;
   className?: string;
 }
@@ -30,18 +40,49 @@ const SIZE_CLASS = {
   sm: "text-display-sm",
 } as const;
 
+/** Static (non-animated) title renderer with "\n" breaks and gradient highlight. */
+export function renderDisplayTitle(title: string, highlight?: string): ReactNode {
+  const lines = title.split("\n");
+  const hl = highlight?.trim();
+  return lines.map((line, li) => {
+    let node: ReactNode = line;
+    if (hl) {
+      const at = line.indexOf(hl);
+      if (at >= 0) {
+        node = (
+          <>
+            {line.slice(0, at)}
+            <span className="text-lava-gradient">{hl}</span>
+            {line.slice(at + hl.length)}
+          </>
+        );
+      }
+    }
+    return (
+      <span key={li}>
+        {node}
+        {li < lines.length - 1 ? <br /> : null}
+      </span>
+    );
+  });
+}
+
 /**
- * Editorial numbered section heading (`01 / Services` + display headline + optional asymmetric split lead/CTA).
+ * Section heading for the v2 light system: kicker-rule + bold display title (optionally two lines
+ * with a gradient phrase) + muted intro + optional action.
  */
 export function SectionHeading({
   index,
   kicker,
   title,
+  highlight,
   lead,
   action,
   as = "h2",
   size = "lg",
   layout = "stack",
+  align = "start",
+  titleId,
   animated = true,
   className,
 }: SectionHeadingProps) {
@@ -50,55 +91,84 @@ export function SectionHeading({
       ? index.trim()
       : `${index.trim()} /`
     : null;
-
   const HeadingTag = as;
+  const centered = align === "center" && layout !== "split";
+  const titleClass = cn(SIZE_CLASS[size], "text-text");
 
   const titleNode = animated ? (
-    <Reveal as={as} mode="words" className={cn(SIZE_CLASS[size], "text-text")}>
-      {title}
-    </Reveal>
+    <div id={titleId}>
+      <Reveal as={as} mode="words" highlight={highlight} className={titleClass}>
+        {title}
+      </Reveal>
+    </div>
   ) : (
-    <HeadingTag className={cn(SIZE_CLASS[size], "text-text")}>{title}</HeadingTag>
+    <HeadingTag id={titleId} className={titleClass}>
+      {renderDisplayTitle(title, highlight)}
+    </HeadingTag>
   );
+
+  const kickerNode =
+    formattedIndex || kicker ? (
+      formattedIndex ? (
+        <div className={cn("flex items-center gap-3", centered && "justify-center")}>
+          <span
+            dir="ltr"
+            className="font-mono text-xs font-medium tracking-[0.12em] text-accent-text tabular-nums"
+          >
+            {formattedIndex}
+          </span>
+          {kicker ? <span className="text-kicker text-muted">{kicker}</span> : null}
+        </div>
+      ) : (
+        <p className={cn("kicker-rule", centered && "kicker-rule--center")}>{kicker}</p>
+      )
+    ) : null;
+
+  if (layout === "split") {
+    return (
+      <header
+        className={cn("grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-12", className)}
+      >
+        <div className="space-y-4 lg:col-span-7">
+          {kickerNode}
+          {titleNode}
+        </div>
+        {lead || action ? (
+          <div className="flex flex-col items-start gap-5 lg:col-span-5 lg:pb-1.5">
+            {lead ? <p className="text-lead max-w-[46ch]">{lead}</p> : null}
+            {action ? <div>{action}</div> : null}
+          </div>
+        ) : null}
+      </header>
+    );
+  }
+
+  const isIntro = layout === "intro";
 
   return (
     <header
       className={cn(
-        layout === "split"
-          ? "grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end lg:gap-10"
-          : "flex flex-col gap-5",
+        "flex flex-col",
+        isIntro ? "gap-4" : "gap-5",
+        centered ? "items-center text-center" : "items-start",
         className,
       )}
     >
-      <div className={cn(layout === "split" ? "lg:col-span-7" : "max-w-4xl", "space-y-4")}>
-        {formattedIndex || kicker ? (
-          <div className="flex items-center gap-3">
-            {formattedIndex ? (
-              <span
-                dir="ltr"
-                className="font-mono text-xs font-medium tracking-[0.12em] text-accent tabular-nums"
-              >
-                {formattedIndex}
-              </span>
-            ) : null}
-            {kicker ? <span className="text-kicker text-muted">{kicker}</span> : null}
-          </div>
-        ) : null}
+      {kickerNode}
+      <div className={cn(!isIntro && "max-w-4xl", centered && "mx-auto")}>
         {titleNode}
       </div>
-
-      {lead || action ? (
-        <div
+      {lead ? (
+        <p
           className={cn(
-            layout === "split"
-              ? "flex flex-col items-start gap-5 lg:col-span-5 lg:pb-1.5"
-              : "flex max-w-2xl flex-col items-start gap-5",
+            isIntro ? "max-w-[42ch] text-body text-muted" : "text-lead max-w-[54ch]",
+            centered && "mx-auto",
           )}
         >
-          {lead ? <p className="text-lead">{lead}</p> : null}
-          {action ? <div>{action}</div> : null}
-        </div>
+          {lead}
+        </p>
       ) : null}
+      {action ? <div className={cn(isIntro ? "pt-1" : "pt-2")}>{action}</div> : null}
     </header>
   );
 }

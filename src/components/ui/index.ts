@@ -1,8 +1,10 @@
 export { cn } from "./cn";
 export { ActionLink } from "./ActionLink";
-export type { ActionLinkProps, ActionVariant, ActionSize } from "./ActionLink";
-export { SectionHeading } from "./SectionHeading";
+export type { ActionLinkProps, ActionVariant, ActionSize, ActionArrow } from "./ActionLink";
+export { SectionHeading, renderDisplayTitle } from "./SectionHeading";
 export type { SectionHeadingProps } from "./SectionHeading";
+export { SplitIntro } from "./SplitIntro";
+export type { SplitIntroProps } from "./SplitIntro";
 export { Tag } from "./Tag";
 export type { TagProps, TagTone } from "./Tag";
 export {

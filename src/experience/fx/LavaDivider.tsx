@@ -14,7 +14,7 @@ export interface LavaDividerProps {
 /**
  * Molten architectural section separator.
  * "seam": razor-thin warm hairline with a slow travelling ember glint.
- * "crack": organic volcanic obsidian fissure with an incandescent core filament.
+ * "crack": organic hairline fissure with an incandescent core filament (light-safe: no dark stops).
  * Animates ONLY while visible in the viewport (IntersectionObserver).
  */
 export function LavaDivider({
@@ -51,7 +51,7 @@ export function LavaDivider({
       >
         {glow ? (
           <div
-            className="pointer-events-none absolute inset-x-0 top-1/2 h-12 -translate-y-1/2 opacity-35 blur-2xl"
+            className="pointer-events-none absolute inset-x-[15%] top-1/2 h-10 -translate-y-1/2 opacity-20 blur-2xl"
             style={{ background: "var(--gradient-heat-seam)" }}
           />
         ) : null}
@@ -63,13 +63,13 @@ export function LavaDivider({
         >
           <defs>
             <linearGradient id={gradId} x1="0" y1="14" x2="1440" y2="14" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="var(--obsidian-800)" stopOpacity="0" />
-              <stop offset="16%" stopColor="var(--lava-700)" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="var(--lava-300)" stopOpacity="0" />
+              <stop offset="16%" stopColor="var(--lava-300)" stopOpacity="0.55" />
               <stop offset="46%" stopColor="var(--lava-500)" stopOpacity="0.95" />
               <stop offset="52%" stopColor="var(--ember)" stopOpacity="1" />
               <stop offset="60%" stopColor="var(--lava-500)" stopOpacity="0.9" />
-              <stop offset="84%" stopColor="var(--lava-700)" stopOpacity="0.55" />
-              <stop offset="100%" stopColor="var(--obsidian-800)" stopOpacity="0" />
+              <stop offset="84%" stopColor="var(--lava-300)" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="var(--lava-300)" stopOpacity="0" />
             </linearGradient>
             <linearGradient id={coreId} x1="420" y1="14" x2="1020" y2="14" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="var(--lava-400)" stopOpacity="0" />
@@ -90,8 +90,8 @@ export function LavaDivider({
           {/* Branching micro-fractures near center */}
           <path
             d="M695 15.2 L714 21.5 L728 23.2 M738 9.2 L752 4.2 L769 2.6 M592 17.5 L606 22.8"
-            stroke="var(--lava-600)"
-            strokeOpacity="0.55"
+            stroke="var(--lava-400)"
+            strokeOpacity="0.5"
             strokeWidth="1"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -122,7 +122,7 @@ export function LavaDivider({
       />
       {glow ? (
         <span
-          className="pointer-events-none absolute -top-2 inset-x-1/4 h-5 opacity-25 blur-md"
+          className="pointer-events-none absolute -top-2 inset-x-1/4 h-5 opacity-15 blur-md"
           style={{ background: "var(--gradient-heat-seam)" }}
         />
       ) : null}
@@ -160,7 +160,7 @@ export function HeatEdge({
       <div
         className={`mx-auto h-16 w-3/4 blur-3xl ${
           isTop ? "-mt-8" : "-mb-8"
-        } ${intensity === "medium" ? "opacity-25" : "opacity-14"}`}
+        } ${intensity === "medium" ? "opacity-20" : "opacity-10"}`}
         style={{ background: "var(--gradient-heat-seam)" }}
       />
     </div>

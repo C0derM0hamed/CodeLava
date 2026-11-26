@@ -109,13 +109,13 @@ const DEFAULT_SNIPPET: CodeToken[][] = [
 ];
 
 const TONE_CLASS: Record<NonNullable<CodeToken["tone"]>, string> = {
-  plain: "text-ash-400/75",
-  kw: "text-syntax-blue/85",
-  fn: "text-syntax-cyan/85",
-  str: "text-syntax-green/80",
-  num: "text-syntax-yellow/85",
-  comment: "text-ash-500/60",
-  accent: "text-lava-400/90",
+  plain: "text-muted/80",
+  kw: "text-code-blue",
+  fn: "text-code-cyan",
+  str: "text-code-green",
+  num: "text-code-amber",
+  comment: "text-faint/70",
+  accent: "text-accent-text",
 };
 
 export interface CodeTextureProps {
@@ -155,7 +155,7 @@ export function CodeTexture({
     <div className="space-y-1.5 pb-6">
       {DEFAULT_SNIPPET.map((line, lineIdx) => (
         <div key={`${prefix}-${lineIdx}`} className="flex gap-4 whitespace-pre">
-          <span className="w-7 shrink-0 text-right text-ash-600/55 select-none">
+          <span className="w-7 shrink-0 text-right text-faint/45 select-none">
             {String(lineIdx + 1).padStart(2, "0")}
           </span>
           <span>

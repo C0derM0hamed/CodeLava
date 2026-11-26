@@ -19,7 +19,9 @@
     "mainLabel": "Primary navigation",
     "switchToLocale": "العربية",
     "switchLanguageAria": "Switch language to Arabic",
-    "homeAria": "CodeLava home"
+    "homeAria": "CodeLava home",
+    "getQuote": "Get a quote",
+    "menuTitle": "Menu"
   },
   "footer": {
     "tagline": "Software & AI Solutions",
@@ -36,7 +38,22 @@
     "resourcesHeading": "Resources",
     "contactHeading": "Direct",
     "rights": "All rights reserved.",
-    "signature": "Engineered under pressure."
+    "signature": "Engineered under pressure.",
+    "ctaTitle": "Have a <hl>project</hl> in mind?",
+    "ctaLead": "Let’s talk through your idea and turn it into a digital product that performs.",
+    "ctaPrimary": "Get a quote",
+    "ctaSecondary": "Contact us",
+    "blurb": "Custom software, web, mobile and AI solutions for ambitious businesses across the Gulf, Egypt and beyond.",
+    "quickLinksHeading": "Quick links",
+    "servicesHeading": "Services",
+    "companyHeading": "Company",
+    "contactInfoHeading": "Contact info",
+    "startHeading": "Start a project",
+    "startLead": "Share your idea and requirements — we’ll come back with a clear scope and estimate.",
+    "startCta": "Request a proposal",
+    "socialsLabel": "CodeLava on social media",
+    "followOn": "CodeLava on {network}",
+    "legalLabel": "Legal"
   },
   "common": {
     "brand": "CodeLava",
@@ -129,7 +146,10 @@
     "title": "Our process",
     "step": "Step {step}",
     "duration": "Estimated duration",
-    "empty": "Process details will appear here when available."
+    "empty": "Process details will appear here when available.",
+    "seeStages": "See the stages",
+    "glance": "At a glance",
+    "allQuestions": "Browse all questions"
   },
   "technologies": {
     "title": "Technologies",
@@ -141,7 +161,11 @@
     "database": "Databases",
     "design": "Design",
     "other": "Other technologies",
-    "empty": "Technologies will appear here as they’re published."
+    "empty": "Technologies will appear here as they’re published.",
+    "filterByCategory": "Filter by category",
+    "count": "{count, plural, one {# technology} other {{formatted} technologies}}",
+    "showing": "Showing {count, plural, one {{formatted} technology} other {{formatted} technologies}}",
+    "whyKicker": "Why this stack"
   },
   "blog": {
     "title": "Insights",
@@ -157,7 +181,13 @@
     "related": "Related articles",
     "page": "Page {page} of {total}",
     "empty": "Articles will appear here as they’re published.",
-    "noResults": "No articles match this topic."
+    "noResults": "No articles match this topic.",
+    "emptyLead": "We’re preparing our first articles. In the meantime, tell us about what you’re building.",
+    "featured": "Featured",
+    "share": "Share this article",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "draftPreview": "Draft preview"
   },
   "faq": {
     "title": "Frequently asked questions",
