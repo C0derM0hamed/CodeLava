@@ -1,0 +1,274 @@
+.cl-volcano-scene {
+  --plate: 1;
+  --intro: 1;
+  --lift: 0px;
+  --logo: 0;
+  --rise: 16px;
+  --bleed: 0;
+  --foot: 1;
+  position: relative;
+  background: var(--bg);
+  color: var(--ash-50);
+  isolation: isolate;
+}
+.cl-volcano-scene[data-active] {
+  height: 380svh;
+}
+.cl-volcano-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cl-volcano-poster,
+.cl-volcano-plate,
+.cl-volcano-scrim,
+.cl-volcano-fx,
+.cl-volcano-bleed {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.cl-volcano-poster,
+.cl-volcano-plate {
+  object-fit: cover;
+  object-position: center;
+}
+.cl-volcano-plate {
+  visibility: hidden;
+}
+.cl-volcano-scene[data-ready] .cl-volcano-plate {
+  visibility: visible;
+}
+.cl-volcano-scrim {
+  background:
+    linear-gradient(
+      0deg,
+      var(--bg) 0%,
+      color-mix(in srgb, var(--bg) 53%, transparent) 18%,
+      transparent 53%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) 38%, transparent),
+      transparent 29%
+    );
+}
+.cl-volcano-intro {
+  position: absolute;
+  inset-inline-start: max(6.5vw, var(--gutter));
+  bottom: clamp(105px, 17svh, 165px);
+  opacity: var(--intro);
+  transform: translateY(var(--lift));
+}
+.cl-volcano-intro h1,
+.cl-volcano-intro p,
+.cl-volcano-reveal p {
+  margin: 0;
+}
+.cl-volcano-wordmark {
+  display: inline-block;
+  font-family: var(--font-display-latin, "Arial"), sans-serif;
+  font-size: clamp(5rem, 9.5vw, 10rem);
+  font-weight: 600;
+  letter-spacing: -0.073em;
+  line-height: 0.96;
+}
+.cl-volcano-wordmark span {
+  color: var(--lava-400);
+  background: linear-gradient(
+    120deg,
+    var(--lava-300) 0%,
+    var(--lava-400) 40%,
+    var(--lava-500) 78%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.cl-volcano-tag {
+  font-family:
+    var(--font-body-latin, sans-serif), var(--font-body-arabic, sans-serif);
+  font-size: clamp(1rem, 1.55vw, 1.55rem);
+  font-weight: 400;
+  color: var(--ash-200);
+  line-height: 1.55;
+}
+.cl-volcano-intro .cl-volcano-tag {
+  margin-block-start: 16px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.cl-volcano-intro .cl-volcano-tag::before {
+  content: "";
+  height: 1px;
+  width: 28px;
+  background: var(--lava-400);
+}
+.cl-volcano-kicker,
+.cl-volcano-foot {
+  font-family: var(--font-code, monospace), var(--font-body-arabic, sans-serif);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+}
+.cl-volcano-intro .cl-volcano-kicker {
+  margin-block-end: 17px;
+  color: var(--ash-200);
+}
+.cl-volcano-scene:lang(ar)
+  :is(.cl-volcano-kicker, .cl-volcano-foot, .cl-volcano-tag) {
+  font-family: var(--font-body-arabic, sans-serif);
+  letter-spacing: normal;
+}
+.cl-volcano-reveal {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + var(--rise)));
+  width: 100%;
+  text-align: center;
+  opacity: var(--logo);
+  pointer-events: none;
+  display: grid;
+  justify-items: center;
+}
+.cl-volcano-mark {
+  width: clamp(110px, 12vw, 195px);
+  margin-bottom: 12px;
+}
+.cl-volcano-reveal .cl-volcano-wordmark {
+  font-size: clamp(4.5rem, 7.8vw, 9rem);
+}
+.cl-volcano-reveal .cl-volcano-tag {
+  margin-top: 14px;
+}
+.cl-volcano-foot {
+  position: absolute;
+  bottom: max(5svh, env(safe-area-inset-bottom));
+  inset-inline: max(6.5vw, var(--gutter));
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--ash-200);
+  opacity: var(--foot);
+}
+.cl-volcano-scene[data-active] .cl-volcano-foot {
+  display: flex;
+}
+.cl-volcano-track,
+.cl-volcano-instruction,
+.cl-volcano-ticks {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cl-volcano-instruction i {
+  display: block;
+  height: 26px;
+  width: 1px;
+  background: linear-gradient(var(--ash-500), var(--ash-200));
+  position: relative;
+}
+.cl-volcano-instruction i::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -2px;
+  width: 5px;
+  height: 5px;
+  border: solid var(--ash-200);
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+.cl-volcano-ticks {
+  gap: 4px;
+}
+.cl-volcano-ticks i {
+  width: clamp(8px, 1.4vw, 21px);
+  height: 2px;
+  background: var(--obsidian-500);
+}
+.cl-volcano-ticks i[data-lit] {
+  background: var(--lava-400);
+}
+.cl-volcano-bleed {
+  opacity: var(--bleed);
+  background:
+    radial-gradient(
+      ellipse 48% 12% at 50% 86%,
+      color-mix(in srgb, var(--lava-700) 15%, transparent),
+      transparent
+    ),
+    linear-gradient(0deg, var(--bg) 4%, transparent 45%);
+}
+@media (max-width: 640px) {
+  .cl-volcano-scene[data-active] {
+    height: 325svh;
+  }
+  .cl-volcano-intro {
+    bottom: 18svh;
+  }
+  .cl-volcano-foot {
+    font-size: 10px;
+  }
+  .cl-volcano-track {
+    gap: 8px;
+  }
+  .cl-volcano-wordmark {
+    font-size: clamp(4rem, 19vw, 6.3rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-volcano-scene[data-active] {
+    height: auto;
+  }
+  .cl-volcano-scene .cl-volcano-stage {
+    position: relative;
+  }
+  .cl-volcano-scene .cl-volcano-intro {
+    opacity: 0;
+  }
+  .cl-volcano-scene .cl-volcano-reveal {
+    opacity: 1;
+    top: 70%;
+    transform: translate(-50%, -50%);
+  }
+  .cl-volcano-scene .cl-volcano-foot,
+  .cl-volcano-scene .cl-volcano-fx,
+  .cl-volcano-scene .cl-volcano-plate {
+    display: none;
+  }
+  .cl-volcano-scene .cl-volcano-poster {
+    opacity: 0.76;
+  }
+}
+.cl-volcano-plate {
+  opacity: var(--film, 1);
+}
+
+.cl-volcano-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: var(--plate);
+}
+.cl-volcano-end {
+  display: block;
+  height: 0;
+}
+.cl-volcano-skip {
+  position: absolute;
+  inset-inline-start: var(--gutter);
+  top: calc(var(--header-h) + 1rem);
+  z-index: 2;
+  padding: 0.6rem 1rem;
+  color: var(--text);
+  background: var(--bg);
+  transform: translateY(-220vh);
+}
+.cl-volcano-skip:focus-visible {
+  transform: none;
+}

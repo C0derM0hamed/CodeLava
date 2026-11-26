@@ -1,0 +1,23 @@
+.cl-volcano-handoff {
+  min-height: 190svh;
+  padding: 18svh max(6.5vw, var(--gutter));
+  background: var(--bg);
+  color: var(--text);
+}
+.cl-volcano-handoff div {
+  max-width: 58rem;
+}
+.cl-volcano-handoff a {
+  color: var(--lava-300);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.cl-volcano-handoff h2 {
+  margin: 3rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 7rem);
+  line-height: 1.06;
+}
+.cl-volcano-handoff p {
+  color: var(--text-muted);
+}
