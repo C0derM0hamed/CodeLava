@@ -158,7 +158,7 @@
     "relatedProjectsLead": "Explore real software products delivered by our team under this discipline.",
     "viewServiceProjects": "View projects",
     "allInPortfolio": "Browse in portfolio",
-    "projectsBadge": "{count, plural, one {# project} other {# projects}}",
+    "projectsBadge": "{count, plural, one {{formatted} project} other {{formatted} projects}}",
     "empty": "Services will appear here as they’re published.",
     "relatedServices": "More ways we can help",
     "technologies": "Technologies we use for this service"
@@ -273,7 +273,7 @@
     "other": "Other technologies",
     "empty": "Technologies will appear here as they’re published.",
     "filterByCategory": "Filter by category",
-    "count": "{count, plural, one {# technology} other {{formatted} technologies}}",
+    "count": "{count, plural, one {{formatted} technology} other {{formatted} technologies}}",
     "showing": "Showing {count, plural, one {{formatted} technology} other {{formatted} technologies}}",
     "whyKicker": "Why this stack"
   },
@@ -283,7 +283,7 @@
     "backToBlog": "Back to insights",
     "allTopics": "All topics",
     "filterByTopic": "Filter by topic",
-    "readingTime": "{minutes, plural, one {# min read} other {# min read}}",
+    "readingTime": "{minutes, plural, one {{formatted} min read} other {{formatted} min read}}",
     "by": "By {author}",
     "published": "Published {date}",
     "updated": "Updated {date}",

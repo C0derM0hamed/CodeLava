@@ -158,7 +158,7 @@
     "relatedProjectsLead": "تصفّح أبرز المنتجات الرقمية التي صمّمناها وطوّرناها ضمن هذا التخصص.",
     "viewServiceProjects": "استعرض المشاريع",
     "allInPortfolio": "عرض في معرض الأعمال",
-    "projectsBadge": "{count, plural, one {مشروع واحد} two {مشروعان} few {# مشاريع} many {# مشروعًا} other {# مشروع}}",
+    "projectsBadge": "{count, plural, one {مشروع واحد} two {مشروعان} few {{formatted} مشاريع} many {{formatted} مشروعًا} other {{formatted} مشروع}}",
     "empty": "ستظهر تفاصيل الخدمات هنا عند نشرها.",
     "relatedServices": "خدمات أخرى قد تهمّك",
     "technologies": "التقنيات التي نعتمد عليها في هذه الخدمة"
@@ -283,7 +283,7 @@
     "backToBlog": "العودة إلى المقالات",
     "allTopics": "جميع الموضوعات",
     "filterByTopic": "التصفية حسب الموضوع",
-    "readingTime": "{minutes, plural, zero {أقل من دقيقة للقراءة} one {دقيقة واحدة للقراءة} two {دقيقتان للقراءة} few {# دقائق للقراءة} many {# دقيقة للقراءة} other {# دقيقة للقراءة}}",
+    "readingTime": "{minutes, plural, zero {أقل من دقيقة للقراءة} one {دقيقة واحدة للقراءة} two {دقيقتان للقراءة} few {{formatted} دقائق للقراءة} many {{formatted} دقيقة للقراءة} other {{formatted} دقيقة للقراءة}}",
     "by": "بقلم {author}",
     "published": "نُشر في {date}",
     "updated": "حُدّث في {date}",

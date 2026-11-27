@@ -1,6 +1,9 @@
 "use client";
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useLocale } from "next-intl";
+import type { AppLocale } from "@/i18n/routing";
+import { formatNumber } from "@/lib/i18n-content";
 import { cn } from "./cn";
 
 export interface AccordionItemData {
@@ -37,6 +40,7 @@ export function Accordion({
   className,
 }: AccordionProps) {
   const uid = useId();
+  const locale = useLocale() as AppLocale;
   const [openIds, setOpenIds] = useState<string[]>(defaultOpenIds);
   const triggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -122,7 +126,7 @@ export function Accordion({
                         isOpen ? "text-accent-text" : "text-faint",
                       )}
                     >
-                      {String(idx + 1).padStart(2, "0")}
+                      {formatNumber(idx + 1, locale, { minimumIntegerDigits: 2, useGrouping: false })}
                     </span>
                   ) : null}
                   <span className="flex flex-col gap-1">

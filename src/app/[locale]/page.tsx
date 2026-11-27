@@ -19,6 +19,7 @@ import {
 import { CtaBanner } from "@/components/site/CtaBanner";
 import { sectionRegistry } from "@/content/sections";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { formatNumber } from "@/lib/i18n-content";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
 import { buildMetadata, localizedPath } from "@/lib/seo";
 import {
@@ -154,7 +155,7 @@ export default async function HomePage({ params }: HomeParams) {
         description={copy.description}
         exploreLabel={t("exploreServices")}
         moreLabel={t("moreServices")}
-        projectsBadge={(count) => tServices("projectsBadge", { count })}
+        projectsBadge={(count) => tServices("projectsBadge", { count, formatted: formatNumber(count, locale) })}
         services={services}
       />
     ),
@@ -193,7 +194,7 @@ export default async function HomePage({ params }: HomeParams) {
         title={copy.title || t("exploreTechnologies")}
         description={copy.description}
         exploreLabel={t("exploreTechnologies")}
-        moreLabel={(count) => t("moreTechnologies", { count })}
+        moreLabel={(count) => t("moreTechnologies", { count: formatNumber(count, locale) })}
         technologies={technologies}
       />
     ),

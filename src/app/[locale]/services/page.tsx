@@ -49,6 +49,8 @@ export default async function ServicesPage({ params }: Props) {
   const intro = sections.find(({ sectionKey }) => sectionKey === "intro")?.content;
   const visibleSteps = steps.filter(({ title }) => title.trim()).slice(0, 4);
   const totalProjects = services.reduce((sum, s) => sum + (s.projectCount ?? 0), 0);
+  const formatProjectsBadge = (count: number) =>
+    t("projectsBadge", { count, formatted: formatNumber(count, locale) });
 
   return (
     <main id="main-content" className="relative bg-bg text-text">
@@ -95,7 +97,7 @@ export default async function ServicesPage({ params }: Props) {
                       </span>
                       {totalProjects > 0 ? (
                         <span className="inline-flex items-center rounded-[var(--radius-pill)] border border-lava-400/35 bg-lava-500/20 px-2.5 py-0.5 text-xs font-semibold text-lava-100 tabular-nums">
-                          {t("projectsBadge", { count: totalProjects })}
+                          {formatProjectsBadge(totalProjects)}
                         </span>
                       ) : null}
                     </div>
@@ -119,7 +121,7 @@ export default async function ServicesPage({ params }: Props) {
                           </span>
                           {service.projectCount > 0 ? (
                             <span className="hidden shrink-0 text-xs font-medium text-ink-300 tabular-nums sm:inline">
-                              {t("projectsBadge", { count: service.projectCount })}
+                              {formatProjectsBadge(service.projectCount)}
                             </span>
                           ) : (
                             <span dir="ltr" className="hidden shrink-0 font-mono text-xs text-ink-300 tabular-nums sm:inline">
@@ -148,7 +150,7 @@ export default async function ServicesPage({ params }: Props) {
             <ServiceTiles
               services={services}
               actionLabel={t("viewService")}
-              projectsBadge={(count) => t("projectsBadge", { count })}
+              projectsBadge={formatProjectsBadge}
               featuredFirst
               locale={locale}
             />

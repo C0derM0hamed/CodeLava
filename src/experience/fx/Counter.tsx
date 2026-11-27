@@ -12,7 +12,7 @@ export interface CounterProps {
   duration?: number;
   /** Locale for number formatting ("en" | "ar"). */
   locale?: "en" | "ar";
-  /** When true and locale is "ar", formats with Eastern Arabic-Indic digits (١٢٣). */
+  /** When true (default) and locale is "ar", formats with Eastern Arabic-Indic digits (١٢٣). */
   useLocaleDigits?: boolean;
   className?: string;
 }
@@ -29,7 +29,7 @@ export function Counter({
   decimals = 0,
   duration = 1350,
   locale = "en",
-  useLocaleDigits = false,
+  useLocaleDigits = true,
   className = "",
 }: CounterProps) {
   const ref = useRef<HTMLSpanElement | null>(null);
@@ -37,8 +37,9 @@ export function Counter({
   const hasAnimatedRef = useRef(false);
 
   const formatter = useMemo(() => {
-    const tag = locale === "ar" && useLocaleDigits ? "ar-EG" : "en-US";
-    return new Intl.NumberFormat(tag, {
+    const numberingSystem = locale === "ar" && useLocaleDigits ? "arab" : "latn";
+    return new Intl.NumberFormat(locale, {
+      numberingSystem,
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     });
@@ -99,6 +100,7 @@ export function Counter({
   return (
     <span
       ref={ref}
+      dir="ltr"
       className={`inline-block tabular-nums ${className}`}
       aria-label={`${prefix}${formatter.format(value)}${suffix}`}
     >

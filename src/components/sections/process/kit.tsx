@@ -137,7 +137,7 @@ export function HighlightTitle({ text }: { text: string }) {
   const tail = words.slice(words.length - tailCount).join(" ");
   return (
     <>
-      <span className="block">{lead}</span>
+      <span className="block">{lead}</span>{" "}
       <span className="text-lava-gradient block pb-[0.08em]">{tail}</span>
     </>
   );

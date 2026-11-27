@@ -79,6 +79,8 @@ export default async function ServicePage({ params }: Props) {
   const stack = technologies.filter(({ category }) => serviceDisciplines[slug]?.includes(category)).slice(0, 12);
   const hasBody = Boolean(service.bodyHtml);
   const hasDeliverables = service.deliverables.length > 0;
+  const formatProjectsBadge = (count: number) =>
+    t("projectsBadge", { count, formatted: formatNumber(count, locale) });
 
   // Smart project grid layout — eliminates single orphaned cards on 2- or 4-project services
   const projectGridClass =
@@ -124,7 +126,7 @@ export default async function ServicePage({ params }: Props) {
                 </Link>
                 {projects.length > 0 ? (
                   <Tag tone="lava" size="md" dot>
-                    {t("projectsBadge", { count: service.projectCount })}
+                    {formatProjectsBadge(service.projectCount)}
                   </Tag>
                 ) : null}
               </div>
@@ -537,7 +539,7 @@ export default async function ServicePage({ params }: Props) {
           <ServiceTiles
             services={related}
             actionLabel={t("viewService")}
-            projectsBadge={(count) => t("projectsBadge", { count })}
+            projectsBadge={formatProjectsBadge}
             locale={locale}
             className="mt-[var(--space-heading)]"
           />

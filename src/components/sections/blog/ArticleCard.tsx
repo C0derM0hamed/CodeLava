@@ -3,7 +3,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/components/ui/cn";
 import type { AppLocale } from "@/i18n/routing";
-import { formatDate } from "@/lib/i18n-content";
+import { formatDate, formatNumber } from "@/lib/i18n-content";
 import type { Article } from "@/server/queries/types";
 import { ArticleCover } from "./ArticleCover";
 
@@ -21,7 +21,10 @@ export function ArticleMeta({ article, className }: { article: Pick<Article, "pu
       {article.readingMinutes ? (
         <span className="inline-flex items-center gap-1.5">
           <Clock aria-hidden="true" className="size-3.5 text-faint/80" />
-          {t("readingTime", { minutes: article.readingMinutes })}
+          {t("readingTime", {
+            minutes: article.readingMinutes,
+            formatted: formatNumber(article.readingMinutes, locale, { useGrouping: false }),
+          })}
         </span>
       ) : null}
     </p>
