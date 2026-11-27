@@ -1,18 +1,25 @@
-import { useId, type ReactNode } from "react";
+"use client";
+
+import { useId, useRef, type ReactNode } from "react";
 import { HeroVolcano } from "./HeroVolcano";
 
-type Props = { locale: "en" | "ar"; children: ReactNode; className?: string; titleId?: string };
+import { useVolcanoSound, VolcanoSoundToggle, type VolcanoSoundLabels } from "./sound";
 
-export function HeroStage({ locale, children, className, titleId }: Props) {
+type Props = { locale: "en" | "ar"; children: ReactNode; className?: string; titleId?: string; soundLabels?: VolcanoSoundLabels };
+
+export function HeroStage({ locale, children, className, titleId, soundLabels }: Props) {
+  const stageRef = useRef<HTMLElement>(null);
+  const sound = useVolcanoSound({ stageRef });
   const after = useId();
   const ar = locale === "ar";
   const phases = ar
-    ? ["سكون", "اشتعال", "ثوران", "تدفّق الكود"]
-    : ["Stillness", "Ignition", "Eruption", "Code flow"];
+    ? ["سكون", "اشتعال", "ثوران", "تدفّق الكود", "الهوية"]
+    : ["Stillness", "Ignition", "Eruption", "Code flow", "Identity"];
 
   return (
     <>
       <section
+        ref={stageRef}
         data-daylight-stage=""
         data-hero-dark="true"
         data-surface="dark"
@@ -27,8 +34,9 @@ export function HeroStage({ locale, children, className, titleId }: Props) {
             {ar ? "تخطّ المشهد" : "Skip the animation"}
           </a>
 
-          {/* Full-bleed photorealistic volcano, scrubbed eruption video, WebGL embers & code stream */}
-          <HeroVolcano locale={locale} />
+          {/* Scroll-scrubbed frames from the supplied volcano film */}
+          <HeroVolcano locale={locale} onProgress={sound.setProgress} />
+          <VolcanoSoundToggle sound={sound} labels={soundLabels} tone="dark" />
 
           {/* Cinematic readability & framing scrims */}
           <div className="dl-scrim" aria-hidden="true" />

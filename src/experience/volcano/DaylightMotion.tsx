@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export function DaylightMotion({ locale, className, children }: {
-  locale: "en" | "ar"; className?: string; children: ReactNode;
+export function DaylightMotion({ locale, className, children, onProgress }: {
+  locale: "en" | "ar"; className?: string; children: ReactNode; onProgress?: (progress: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -33,7 +33,7 @@ export function DaylightMotion({ locale, className, children }: {
         try {
           const { mountDaylight } = await import("./daylight-scene");
           if (controller.signal.aborted) return;
-          const next = await mountDaylight(art, controller.signal);
+          const next = await mountDaylight(art, controller.signal, onProgress);
           if (controller.signal.aborted) next?.dispose();
           else if (next) scene = next;
           else failed = true;
@@ -68,7 +68,7 @@ export function DaylightMotion({ locale, className, children }: {
       motion.removeEventListener("change", reconcile);
       document.removeEventListener("visibilitychange", reconcile);
     };
-  }, []);
+  }, [onProgress]);
 
   return <div ref={ref} className={["dl-art", className].filter(Boolean).join(" ")} aria-hidden="true" dir="ltr" lang={locale}>{children}</div>;
 }

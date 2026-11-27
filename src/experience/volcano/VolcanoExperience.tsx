@@ -90,6 +90,7 @@ export default function VolcanoExperience({
     <>
       <section
         ref={root}
+        data-surface="dark"
         aria-label="CodeLava"
         lang={locale}
         dir={ar ? "rtl" : "ltr"}

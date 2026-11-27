@@ -2,6 +2,8 @@ import { ArrowDown, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { HeroVolcano } from "@/experience/volcano/HeroVolcano";
 import { HeroStage } from "@/experience/volcano/HeroStage";
+import { heroSound as englishSound } from "@/i18n/messages/en.json";
+import { heroSound as arabicSound } from "@/i18n/messages/ar.json";
 import "./lab.css";
 
 export default async function HeroLab({ searchParams }: { searchParams: Promise<{ locale?: string; standalone?: string }> }) {
@@ -29,7 +31,7 @@ export default async function HeroLab({ searchParams }: { searchParams: Promise<
         <section className="dl-stage">
           <div className="dl-pin"><div className="dl-columns"><div className="dl-copy">{copy}</div><HeroVolcano locale={locale} /></div></div>
         </section>
-      ) : <HeroStage locale={locale}>{copy}</HeroStage>}
+      ) : <HeroStage locale={locale} soundLabels={ar ? arabicSound : englishSound}>{copy}</HeroStage>}
       <section className="dl-lab-next" id="services">
         <span className="kicker-rule">{ar ? "خدماتنا" : "Services"}</span>
         <h2>{ar ? "هندسة برمجية تنسجم مع طريقة عملك." : "Engineering for the way you work."}</h2>

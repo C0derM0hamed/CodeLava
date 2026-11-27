@@ -11,7 +11,7 @@ export default async function VolcanoLab({
   const ar = (await searchParams).locale === "ar";
   const locale = ar ? "ar" : "en";
   return (
-    <main dir={ar ? "rtl" : "ltr"} lang={locale}>
+    <main data-surface="dark" dir={ar ? "rtl" : "ltr"} lang={locale}>
       <VolcanoExperience locale={locale} />
       <section className="cl-volcano-handoff">
         <HeroFilament />
