@@ -40,6 +40,19 @@ const TECH_PALETTE: Record<string, { color: string; badge: string }> = {
   figma: { color: "#a259ff", badge: "Fg" },
 };
 
+/** Resolves the brand accent colour for a technology (DB override → known preset → lava fallback). */
+export function resolveTechnologyBrand(
+  technology: Pick<Technology, "name" | "color"> & Partial<Pick<Technology, "slug" | "iconSlug">>,
+): string {
+  const key = (
+    technology.iconSlug ||
+    technology.slug ||
+    technology.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+  ).toLowerCase();
+  const preset = TECH_PALETTE[key];
+  return technology.color && HEX.test(technology.color) ? technology.color : preset?.color ?? "#e94e06";
+}
+
 /**
  * Brand-tinted technology badge. Uses uploaded media icon when present, otherwise a crisp
  * brand-accented geometric badge so technology grids look intentional and cohesive.
@@ -57,10 +70,7 @@ export function TechnologyLogo({
 }) {
   const key = (technology.iconSlug || technology.slug || technology.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")).toLowerCase();
   const preset = TECH_PALETTE[key];
-  const brand =
-    technology.color && HEX.test(technology.color)
-      ? technology.color
-      : preset?.color ?? "#e94e06";
+  const brand = resolveTechnologyBrand(technology);
   const glyph = preset?.badge ?? monogram(technology.name);
 
   const box = size === "lg" ? "size-16 rounded-2xl" : size === "sm" ? "size-10 rounded-xl" : "size-14 rounded-2xl";

@@ -273,7 +273,7 @@ export default async function HomePage({ params }: HomeParams) {
           ? { href: "/quote", label: copy.ctaLabel }
           : undefined;
       return (
-        <div className="container-lava relative z-10 py-[clamp(2rem,4vw,3.5rem)]">
+        <div className="container-lava relative z-10 py-[clamp(2.5rem,5vw,4.5rem)]">
           <CtaBanner eyebrow={copy.eyebrow !== ctaDefaults.eyebrow[locale] ? copy.eyebrow : undefined} title={customTitle} lead={customLead} primary={customPrimary} />
         </div>
       );

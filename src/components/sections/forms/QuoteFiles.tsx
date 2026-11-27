@@ -33,7 +33,7 @@ export function QuoteFiles({ files, onChange, enhanced, error }: {
 
   return (
     <FieldWrapper id="quote-files" label={quote("attachments")} optionalLabel={common("optional")} error={error} hint={help}>
-      <div className="quote-drop" data-dragging={dragging}
+      <div className="quote-drop group" data-dragging={dragging}
         onDragOver={enhanced ? (event) => { event.preventDefault(); setDragging(true); } : undefined}
         onDragLeave={() => setDragging(false)}
         onDrop={enhanced ? (event) => {
@@ -48,20 +48,26 @@ export function QuoteFiles({ files, onChange, enhanced, error }: {
             if (event.target.files) add(event.target.files);
             event.target.value = "";
           }} />
-        {enhanced ? <label htmlFor="quote-files" className="flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 p-4 text-center text-sm">
-          <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-accent-soft text-accent-text"><Upload size={19} /></span>
+        {enhanced ? <label htmlFor="quote-files" className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2.5 p-5 text-center text-sm">
+          <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl border border-line-lava/50 bg-accent-soft text-accent-text shadow-[var(--shadow-xs)] transition-[transform,background-color] duration-300 group-hover:-translate-y-0.5 group-hover:bg-accent-soft-strong motion-reduce:group-hover:translate-y-0">
+            <Upload size={20} />
+          </span>
           <span className="font-semibold text-text">{t("drop")}</span>
         </label> : null}
       </div>
-      {files.length > 0 ? <ul className="mt-1 grid gap-2" aria-live="polite">
+      {files.length > 0 ? <ul className="mt-1.5 grid gap-2" aria-live="polite">
         {files.map((file, index) => (
-          <li key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center gap-3 rounded-[12px] border border-line-strong bg-surface py-1 ps-3.5 pe-1 text-sm shadow-xs">
-            <FileText size={16} aria-hidden="true" className="shrink-0 text-accent-text" />
-            <bdi className="min-w-0 flex-1 break-all">{file.name}</bdi>
-            <span className="text-muted" dir="ltr">{file.size >= 1024 ** 2 ? `${(file.size / 1024 ** 2).toFixed(1)} MB` : `${Math.ceil(file.size / 1024)} KB`}</span>
-            <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent-text"
+          <li key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center gap-3 rounded-[12px] border border-line-strong/80 bg-bg/60 py-1.5 ps-3.5 pe-1.5 text-sm shadow-xs">
+            <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-[8px] bg-accent-soft text-accent-text">
+              <FileText size={15} />
+            </span>
+            <bdi className="min-w-0 flex-1 break-all font-medium text-text">{file.name}</bdi>
+            <span className="rounded-pill bg-surface px-2.5 py-0.5 font-mono text-xs text-muted tabular-nums" dir="ltr">
+              {file.size >= 1024 ** 2 ? `${(file.size / 1024 ** 2).toFixed(1)} MB` : `${Math.ceil(file.size / 1024)} KB`}
+            </span>
+            <button type="button" className="grid size-9 shrink-0 place-items-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent-text"
               aria-label={t("remove", { name: file.name })} onClick={() => onChange(files.filter((_, item) => item !== index))}>
-              <X size={17} aria-hidden="true" />
+              <X size={16} aria-hidden="true" />
             </button>
           </li>
         ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import { List } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/components/ui/cn";
 
@@ -10,7 +11,15 @@ export interface TocItem {
 }
 
 /** "In this article" navigation with scroll-spy. Falls back to plain anchors without JS. */
-export function ArticleToc({ items, label }: { items: TocItem[]; label: string }) {
+export function ArticleToc({
+  items,
+  label,
+  hideHeading = false,
+}: {
+  items: TocItem[];
+  label: string;
+  hideHeading?: boolean;
+}) {
   const [active, setActive] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -20,7 +29,9 @@ export function ArticleToc({ items, label }: { items: TocItem[]; label: string }
     if (headings.length === 0) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         if (visible[0]) setActive(visible[0].target.id);
       },
       { rootMargin: "-18% 0px -68% 0px", threshold: 0 },
@@ -31,8 +42,13 @@ export function ArticleToc({ items, label }: { items: TocItem[]; label: string }
 
   return (
     <nav aria-label={label}>
-      <p className="mb-3 text-sm font-semibold text-text">{label}</p>
-      <ol className="space-y-0.5 border-s border-line">
+      {!hideHeading ? (
+        <p className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-text">
+          <List aria-hidden="true" className="size-4 text-accent-text" />
+          <span>{label}</span>
+        </p>
+      ) : null}
+      <ol className="space-y-1 border-s border-line">
         {items.map((item) => {
           const selected = item.id === active;
           return (
@@ -42,11 +58,11 @@ export function ArticleToc({ items, label }: { items: TocItem[]; label: string }
                 aria-current={selected ? "location" : undefined}
                 data-cursor="pointer"
                 className={cn(
-                  "-ms-px block border-s-2 py-1.5 text-sm leading-snug transition-colors",
+                  "-ms-px block rounded-e-[8px] border-s-2 py-1.5 pe-2 text-sm leading-snug transition-[color,border-color,background-color] duration-200",
                   item.level >= 3 ? "ps-6" : "ps-4",
                   selected
-                    ? "border-accent font-medium text-accent-text"
-                    : "border-transparent text-muted hover:text-text",
+                    ? "border-accent bg-accent-soft/75 font-semibold text-accent-text"
+                    : "border-transparent text-muted hover:bg-bg/80 hover:text-text",
                 )}
               >
                 {item.text}

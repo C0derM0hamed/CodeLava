@@ -12,8 +12,7 @@
   .quote-panel[data-inactive="true"] { display: none; }
 }
 
-
-/* ---- Step rail: numbered circles, done = orange + check, current = orange ring ------------- */
+/* ---- Step rail: numbered circles, done = orange + check (clickable), current = orange ring - */
 .quote-steps {
   display: flex;
   align-items: flex-start;
@@ -31,6 +30,25 @@
   gap: 0.6rem;
   text-align: center;
 }
+.quote-step-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.quote-step-trigger:hover .quote-step-dot {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-lava);
+}
+.quote-step-trigger:hover .quote-step-label {
+  color: var(--accent-text);
+}
 /* connector to the next circle */
 .quote-steps > li:not(:last-child)::after {
   content: "";
@@ -40,10 +58,13 @@
   block-size: 2px;
   border-radius: 2px;
   background: var(--line-strong);
+  transition: background 300ms ease;
 }
 .quote-steps > li[data-state="done"]:not(:last-child)::after { background: var(--gradient-cta); }
 
 .quote-step-dot {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   inline-size: 2.25rem;
@@ -55,23 +76,26 @@
   font-size: 0.8125rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  transition: background-color 250ms ease, border-color 250ms ease, box-shadow 250ms ease, color 250ms ease;
+  transition: background-color 250ms ease, border-color 250ms ease, box-shadow 250ms ease, color 250ms ease, transform 250ms var(--ease-out-expo);
 }
 .quote-steps > li[data-state="current"] .quote-step-dot {
   border: 2px solid var(--accent);
   color: var(--accent-text);
+  background: color-mix(in oklab, var(--lava-100) 35%, var(--surface));
   box-shadow: 0 0 0 4px var(--accent-soft-strong);
 }
 .quote-steps > li[data-state="done"] .quote-step-dot {
   border-color: transparent;
   background-image: var(--gradient-cta);
   color: var(--on-accent);
+  box-shadow: var(--shadow-xs);
 }
 .quote-step-label {
   font-size: 0.8125rem;
   line-height: 1.3;
   color: var(--text-muted);
   overflow-wrap: anywhere;
+  transition: color 200ms ease;
 }
 .quote-steps > li[data-state="current"] .quote-step-label { color: var(--text); font-weight: 600; }
 
@@ -104,23 +128,27 @@
   column-gap: 1rem;
   row-gap: 0.25rem;
   min-inline-size: 0;
-  padding: 1.1rem 3rem 1.1rem 1.1rem;
+  padding: 1.15rem 3rem 1.15rem 1.15rem;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   background: var(--surface);
   box-shadow: var(--shadow-xs);
   cursor: pointer;
-  transition: border-color 200ms ease, box-shadow 250ms ease, background-color 200ms ease, transform 250ms var(--ease-out-expo);
+  transition: border-color 220ms ease, box-shadow 260ms ease, background-color 220ms ease, transform 260ms var(--ease-out-expo);
 }
-[dir="rtl"] .quote-service { padding: 1.1rem 1.1rem 1.1rem 3rem; }
+[dir="rtl"] .quote-service { padding: 1.15rem 1.15rem 1.15rem 3rem; }
 .quote-service:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   border-color: var(--line-lava-strong);
   box-shadow: var(--shadow-card);
 }
 .quote-service:has(input:checked) {
   border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 5%, var(--surface));
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--lava-100) 36%, var(--surface)) 0%,
+    var(--surface) 75%
+  );
   box-shadow: 0 0 0 3px var(--accent-soft-strong), var(--shadow-card);
 }
 .quote-service:has(input:focus-visible),
@@ -133,18 +161,24 @@
   grid-row: span 2;
   display: grid;
   place-items: center;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
+  inline-size: 2.85rem;
+  block-size: 2.85rem;
+  border: 1px solid color-mix(in oklab, var(--lava-500) 18%, transparent);
   border-radius: 12px;
   background: var(--accent-soft);
   color: var(--accent-text);
-  transition: background-color 200ms ease;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
-.quote-service:has(input:checked) .quote-service-icon { background: var(--accent-soft-strong); }
+.quote-service:has(input:checked) .quote-service-icon {
+  border-color: transparent;
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-lava);
+}
 .quote-service-tick {
   position: absolute;
-  inset-block-start: 0.95rem;
-  inset-inline-end: 0.95rem;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
   display: grid;
   place-items: center;
   inline-size: 1.375rem;
@@ -166,7 +200,7 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.32;
   color: var(--text);
   overflow-wrap: anywhere;
 }
@@ -177,7 +211,8 @@
   line-height: 1.5;
 }
 .quote-service:has(.quote-service-tagline) .quote-service-title { align-self: end; }
-.quote-service--unsure { grid-column: 1 / -1; align-items: center; }
+.quote-service--unsure { grid-column: 1 / -1; align-items: center; border-style: dashed; }
+.quote-service--unsure:has(input:checked) { border-style: solid; }
 .quote-service--unsure .quote-service-icon { grid-row: auto; }
 .quote-service--unsure .quote-service-title { align-self: center; }
 
@@ -197,15 +232,16 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 200ms ease, background-color 200ms ease, color 200ms ease;
+  transition: border-color 200ms ease, background-color 200ms ease, color 200ms ease, transform 220ms var(--ease-out-expo), box-shadow 220ms ease;
 }
 .quote-chip svg { display: none; }
-.quote-chip:hover { border-color: var(--accent); color: var(--text); }
+.quote-chip:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
 .quote-chip:has(input:checked) {
   border-color: var(--accent);
   background: var(--accent-soft-strong);
   color: var(--accent-text);
   font-weight: 600;
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 .quote-chip:has(input:checked) svg { display: block; }
 
@@ -214,13 +250,13 @@
   min-width: 0;
   border: 1.5px dashed var(--line-input);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: color-mix(in oklab, var(--bg) 40%, var(--surface));
   transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
 }
 .quote-drop:has(input:not(.sr-only)) { padding: 0.9rem; }
 .quote-drop:is(:hover, [data-dragging="true"]) {
   border-color: var(--accent);
-  background-color: color-mix(in oklab, var(--accent) 4%, var(--surface));
+  background-color: color-mix(in oklab, var(--accent) 5%, var(--surface));
 }
 .quote-drop[data-dragging="true"] { box-shadow: 0 0 0 4px var(--accent-soft); }
 
@@ -229,12 +265,14 @@
 .quote-review-row {
   display: grid;
   min-width: 0;
-  gap: 0.6rem;
-  padding: 1.1rem 1.25rem;
+  gap: 0.65rem;
+  padding: 1.15rem 1.3rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface-2);
+  transition: border-color 200ms ease;
 }
+.quote-review-row:hover { border-color: var(--line-strong); }
 .quote-review-row li { overflow-wrap: anywhere; }
 .quote-review-values { display: grid; gap: 0.7rem; overflow-wrap: anywhere; }
 .quote-review-values dt { color: var(--text); font-weight: 600; font-size: 0.8125rem; }
@@ -250,14 +288,18 @@
   border-block-start: 1px solid var(--line);
 }
 .conversion-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
   margin-block-end: 1.25rem;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.1rem;
   border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
   border-inline-start: 3px solid var(--danger);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--danger) 6%, var(--surface));
   color: var(--text);
   font-size: 0.9rem;
+  line-height: 1.5;
 }
 .contact-form { display: grid; gap: 1.4rem; }
 .contact-form .conversion-error { margin-block-end: 0; }
@@ -271,17 +313,17 @@
   gap: 1rem;
   width: 100%;
   overflow: hidden;
-  padding: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.75rem, 4vw, 3.25rem);
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background:
-    radial-gradient(60% 70% at 100% 0%, color-mix(in oklab, var(--lava-100) 65%, transparent), transparent 70%),
+    radial-gradient(60% 70% at 100% 0%, color-mix(in oklab, var(--lava-100) 70%, transparent), transparent 70%),
     var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-lift);
 }
 [dir="rtl"] .conversion-receipt {
   background:
-    radial-gradient(60% 70% at 0% 0%, color-mix(in oklab, var(--lava-100) 65%, transparent), transparent 70%),
+    radial-gradient(60% 70% at 0% 0%, color-mix(in oklab, var(--lava-100) 70%, transparent), transparent 70%),
     var(--surface);
 }
 .conversion-receipt > p { max-width: 58ch; }
@@ -293,7 +335,7 @@
   border-radius: 50%;
   background-image: var(--gradient-cta);
   color: var(--on-accent);
-  box-shadow: 0 0 0 0.4rem var(--accent-soft-strong), var(--shadow-lava);
+  box-shadow: 0 0 0 0.45rem var(--accent-soft-strong), var(--shadow-lava);
   animation: conversion-seal-in 520ms var(--ease-out-expo) both;
 }
 @keyframes conversion-seal-in {
@@ -301,7 +343,7 @@
   to { transform: scale(1); opacity: 1; }
 }
 
-/* ---- Mobile: sticky action bar inside the panel ------------------------------------------- */
+/* ---- Mobile: sticky frosted action bar inside the panel ----------------------------------- */
 @media (max-width: 47.99rem) {
   .quote-service-grid { grid-template-columns: minmax(0, 1fr); }
   .quote-form .conversion-form-actions {
@@ -310,15 +352,18 @@
     z-index: 2;
     margin-inline: -1.25rem;
     margin-block-end: -1.25rem;
-    padding: 0.8rem 1.25rem;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    background: var(--surface);
-    box-shadow: 0 -10px 24px -18px color-mix(in oklab, var(--ink-900) 30%, transparent);
+    padding: 0.9rem 1.25rem;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    background: color-mix(in oklab, var(--surface) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 -12px 28px -18px color-mix(in oklab, var(--ink-900) 32%, transparent);
   }
 }
 
 /* ---- Prose (privacy policy, service body, FAQ answers) ------------------------------------ */
-.conversion-prose { color: var(--text-muted); overflow-wrap: anywhere; }
+.conversion-prose { color: var(--text-muted); overflow-wrap: anywhere; line-height: 1.78; }
+[dir="rtl"] .conversion-prose { line-height: 1.92; }
 .conversion-prose > :first-child { margin-block-start: 0; }
 .conversion-prose > :last-child { margin-block-end: 0; }
 .conversion-prose :is(h1, h2, h3, h4) {
@@ -335,13 +380,16 @@
 .conversion-prose ol { list-style: decimal; }
 .conversion-prose li::marker { color: var(--accent-text); }
 .conversion-prose strong { color: var(--text); font-weight: 600; }
-.conversion-prose a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 0.17em; }
+.conversion-prose a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--line-lava); text-underline-offset: 0.18em; }
+.conversion-prose a:hover { text-decoration-color: var(--accent); }
 .conversion-prose pre { max-width: 100%; overflow: auto; padding: 0.85rem 1rem; border-radius: var(--radius-sm); background: var(--surface-2); }
 .conversion-prose img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
 .conversion-prose table { display: block; max-width: 100%; overflow: auto; }
-.conversion-prose :is(th, td) { padding: 0.4rem 0.6rem; border: 1px solid var(--line-strong); }
+.conversion-prose :is(th, td) { padding: 0.45rem 0.65rem; border: 1px solid var(--line-strong); }
 
 @media (prefers-reduced-motion: reduce) {
-  .quote-service:hover { transform: none; }
+  .quote-service:hover,
+  .quote-chip:hover,
+  .quote-step-trigger:hover .quote-step-dot { transform: none; }
   .conversion-seal { animation: none; }
 }

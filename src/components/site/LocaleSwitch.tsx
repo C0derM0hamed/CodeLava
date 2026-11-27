@@ -29,9 +29,9 @@ export function LocaleSwitch({
   const nextLocale: AppLocale = locale === "ar" ? "en" : "ar";
 
   const classes = cn(
-    "group inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-transparent font-medium text-text/85 transition-[background-color,border-color,color] duration-200",
-    "hover:border-line-strong hover:bg-surface hover:text-text",
-    size === "sm" ? "h-10 px-3 text-sm" : "h-12 px-4 text-[0.9375rem]",
+    "group inline-flex shrink-0 items-center gap-2 rounded-[var(--radius-pill)] border border-line/80 bg-surface/65 font-medium text-text/85 shadow-[var(--shadow-xs)] backdrop-blur-sm transition-[background-color,border-color,color,box-shadow,transform] duration-200",
+    "hover:-translate-y-px hover:border-line-lava hover:bg-surface hover:text-text hover:shadow-[var(--shadow-card)] motion-reduce:hover:translate-y-0",
+    size === "sm" ? "h-10 px-3.5 text-sm" : "h-12 px-4 text-[0.9375rem]",
     className,
   );
 

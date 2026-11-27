@@ -207,6 +207,12 @@
   gap: 0.75rem;
 }
 
+.dl-cue-left {
+  opacity: clamp(0, calc(1 - (var(--dl-progress, 0) - 0.72) * 5.5), 1);
+  transform: translate3d(0, calc(clamp(0, calc((var(--dl-progress, 0) - 0.72) * 5.5), 1) * 6px), 0);
+  transition: opacity 180ms ease;
+}
+
 .dl-mouse {
   position: relative;
   display: grid;
@@ -348,7 +354,7 @@
   .dl-poster,
   .dl-stage[dir="rtl"] .dl-poster {
     left: 50%;
-    top: 26%;
-    width: min(100%, 92.44svh);
+    top: 34%;
+    width: min(94%, 82svh);
   }
 }

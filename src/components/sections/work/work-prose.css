@@ -12,7 +12,11 @@
 }
 
 .work-prose > * + * {
-  margin-top: 1.25em;
+  margin-top: 1.15em;
+}
+
+.work-prose > :first-child {
+  margin-top: 0;
 }
 
 .work-prose h2,
@@ -25,10 +29,15 @@
 }
 
 .work-prose h2 {
-  margin-top: 2.25em;
-  font-size: clamp(1.35rem, 1.08rem + 0.9vw, 1.85rem);
-  line-height: 1.22;
+  margin-top: 1.85em;
+  font-size: clamp(1.28rem, 1.05rem + 0.78vw, 1.65rem);
+  line-height: 1.24;
   letter-spacing: -0.02em;
+}
+
+.work-prose > h2:first-child,
+.work-prose > h3:first-child {
+  margin-top: 0;
 }
 
 .work-prose h3 {

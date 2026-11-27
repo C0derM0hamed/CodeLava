@@ -38,17 +38,20 @@ export function HomeClientStrip({
   if (items.length === 0) return null;
 
   return (
-    <section aria-label={label} className={cn("relative border-b border-line/70 bg-bg-elevated/80 py-8 lg:py-11", className)}>
+    <section aria-label={label} className={cn("home-clients-band py-7 lg:py-9", className)}>
       <Reveal mode="block" className="container-lava">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-[var(--space-split)]">
-          <p className="max-w-[15rem] shrink-0 text-[0.8125rem] font-medium leading-snug text-muted">
-            {label}
-          </p>
-          <ul className="grid flex-1 grid-cols-2 items-center gap-x-6 gap-y-6 sm:grid-cols-3 lg:flex lg:gap-0">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-[var(--space-split)]">
+          <div className="flex max-w-[16rem] shrink-0 items-center gap-2.5">
+            <span aria-hidden="true" className="home-clients__dot" />
+            <p className="text-[0.8125rem] font-semibold leading-snug text-muted">
+              {label}
+            </p>
+          </div>
+          <ul className="grid flex-1 grid-cols-2 items-center gap-3 sm:grid-cols-3 lg:flex lg:gap-0">
             {items.map((client) => (
               <li
                 key={client.id}
-                className="home-clients__item group flex min-h-12 items-center justify-center lg:flex-1 lg:px-6"
+                className="home-clients__item group flex min-h-12 items-center justify-center lg:flex-1 lg:px-5 lg:py-2"
               >
                 {isSafeHttpUrl(client.url) ? (
                   <a

@@ -1,0 +1,247 @@
+/* Technologies page — Daylight Magma craft (scoped to technologies). */
+
+.tech-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: calc(var(--header-h) + var(--hero-top)) var(--hero-bottom);
+  background-image:
+    radial-gradient(62% 58% at 86% 10%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 6% 16%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+[dir="rtl"] .tech-hero {
+  background-image:
+    radial-gradient(62% 58% at 14% 10%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 94% 16%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+.tech-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in oklab, var(--ink-900) 10%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+}
+
+.tech-hero::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 1px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---- Hero constellation matrix ------------------------------------------------------------ */
+.tech-constellation-stage {
+  position: relative;
+  isolation: isolate;
+  padding-block-end: 1.25rem;
+}
+
+.tech-constellation-stage::before {
+  content: "";
+  position: absolute;
+  inset: -1.5rem;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--lava-300) 26%, transparent) 0%,
+    color-mix(in oklab, var(--lava-100) 18%, transparent) 48%,
+    transparent 78%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.tech-constellation-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  aspect-ratio: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 320ms var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo),
+    border-color 260ms ease;
+}
+
+.tech-constellation-tile:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklab, var(--tech-brand, var(--lava-500)) 48%, transparent);
+  box-shadow:
+    0 14px 28px -12px color-mix(in oklab, var(--tech-brand, var(--lava-500)) 28%, transparent),
+    var(--shadow-lift);
+}
+
+/* ---- Sticky filter bar -------------------------------------------------------------------- */
+.tech-filter-bar {
+  position: sticky;
+  top: calc(var(--header-h) + 0.75rem);
+  z-index: var(--z-sticky);
+  padding: 0.625rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--shadow-card);
+}
+
+.tech-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-block-size: 2.375rem;
+  padding-inline: 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    box-shadow 260ms var(--ease-out-expo),
+    transform 220ms var(--ease-out-expo);
+}
+
+.tech-filter-pill:hover {
+  border-color: var(--line-lava);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.tech-filter-pill[aria-pressed="true"] {
+  border-color: transparent;
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-lava);
+}
+
+.tech-filter-pill:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Brand-reactive technology card ------------------------------------------------------- */
+.tech-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  block-size: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 1.15rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 320ms var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo),
+    border-color 280ms ease;
+}
+
+@media (min-width: 640px) {
+  .tech-card {
+    gap: 1.15rem;
+    padding: var(--space-card);
+  }
+}
+
+.tech-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2.5px;
+  background: linear-gradient(
+    90deg,
+    var(--tech-brand, var(--lava-500)) 0%,
+    color-mix(in oklab, var(--tech-brand, var(--lava-500)) 35%, transparent) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 380ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+[dir="rtl"] .tech-card::before {
+  background: linear-gradient(
+    270deg,
+    var(--tech-brand, var(--lava-500)) 0%,
+    color-mix(in oklab, var(--tech-brand, var(--lava-500)) 35%, transparent) 100%
+  );
+  transform-origin: right center;
+}
+
+.tech-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--tech-brand, var(--lava-500)) 36%, var(--line));
+  box-shadow: var(--shadow-lift);
+}
+
+.tech-card:hover::before {
+  transform: scaleX(1);
+}
+
+.tech-card:hover .tech-card-logo {
+  transform: scale(1.05);
+}
+
+/* ---- "Why this stack" callout ------------------------------------------------------------- */
+.tech-why-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(65% 85% at 96% 8%, color-mix(in oklab, var(--lava-100) 75%, transparent) 0%, transparent 64%),
+    radial-gradient(45% 65% at 4% 92%, color-mix(in oklab, var(--mist) 80%, transparent) 0%, transparent 66%),
+    var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+[dir="rtl"] .tech-why-card {
+  background:
+    radial-gradient(65% 85% at 4% 8%, color-mix(in oklab, var(--lava-100) 75%, transparent) 0%, transparent 64%),
+    radial-gradient(45% 65% at 96% 92%, color-mix(in oklab, var(--mist) 80%, transparent) 0%, transparent 66%),
+    var(--surface);
+}
+
+.tech-why-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-constellation-tile:hover,
+  .tech-card:hover,
+  .tech-card:hover .tech-card-logo {
+    transform: none;
+  }
+}

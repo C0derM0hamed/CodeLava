@@ -30,15 +30,20 @@ export function WorkEmptyState({
         : "We’re preparing our detailed case studies. Planning a build now? Let’s talk through your scope.";
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center gap-5 rounded-[var(--radius-xl)] border border-line bg-surface px-6 py-14 text-center shadow-card sm:px-12 sm:py-20">
-      <span className="grid size-20 place-items-center rounded-2xl border border-line bg-[color-mix(in_oklab,var(--lava-100)_45%,white)]">
+    <div className="work-spotlight-card mx-auto flex max-w-2xl flex-col items-center gap-5 px-6 py-14 text-center sm:px-12 sm:py-20">
+      <span className="grid size-20 place-items-center rounded-2xl border border-line-lava bg-[color-mix(in_oklab,var(--lava-100)_45%,white)] shadow-xs">
         <BracketOrnament className="w-12" />
       </span>
       <h2 className="text-display-sm text-text">{message}</h2>
       <p className="max-w-[46ch] text-body text-muted">{subCopy}</p>
       <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
         {mode === "filtered" ? (
-          <PillLink href="/work">{clearFiltersLabel}</PillLink>
+          <>
+            <PillLink href="/work">{clearFiltersLabel}</PillLink>
+            <PillLink href="/quote" variant="outline" arrow={false}>
+              {discussProjectLabel}
+            </PillLink>
+          </>
         ) : (
           <>
             <PillLink href="/quote">{discussProjectLabel}</PillLink>

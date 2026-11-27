@@ -709,6 +709,28 @@ html.cursor-flame-active select {
   animation: page-wipe-sweep 420ms var(--ease-in-out-quart) forwards;
 }
 
+/* Additive editorial magma utilities (heroes, seams, mobile rails) */
+.magma-grid-bg {
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 20%, black 20%, transparent 82%);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 20%, black 20%, transparent 82%);
+}
+
+.lava-seam-hairline {
+  background: var(--gradient-heat-seam);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

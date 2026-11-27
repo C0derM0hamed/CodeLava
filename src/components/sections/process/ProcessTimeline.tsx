@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { Clock } from "lucide-react";
+import "./process.css";
 
 export interface TimelineStep {
   id: string;
@@ -21,9 +22,10 @@ export interface ProcessTimelineProps {
 }
 
 /**
- * Vertical storytelling timeline. A lava line connects the step nodes and fills in as the reader
+ * Vertical storytelling timeline. A lava conduit connects the step nodes and fills in as the reader
  * scrolls (segment by segment, driven by CSS variables so React never re-renders on scroll).
- * Without JS, or with reduced motion, every segment is simply fully lit.
+ * Step 01 starts warmly lit and a subtle ember baseline keeps the track alive even before scrolling.
+ * Without JS, or with reduced motion, every segment is fully lit.
  */
 export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) {
   const listRef = useRef<HTMLOListElement | null>(null);
@@ -44,13 +46,15 @@ export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) 
     let frame = 0;
     const update = () => {
       frame = 0;
-      const focusLine = window.innerHeight * 0.55;
-      for (const item of items) {
+      const focusLine = window.innerHeight * 0.72;
+      items.forEach((item, idx) => {
         const rect = item.getBoundingClientRect();
-        const progress = Math.min(1, Math.max(0, (focusLine - rect.top - 28) / Math.max(1, rect.height - 28)));
+        const rawProgress = Math.min(1, Math.max(0, (focusLine - rect.top - 28) / Math.max(1, rect.height - 28)));
+        // Keep step 01 warmly engaged with at least a gentle ignition lead-in
+        const progress = idx === 0 ? Math.max(0.28, rawProgress) : rawProgress;
         item.style.setProperty("--seg", progress.toFixed(3));
-        item.dataset.active = focusLine >= rect.top + 28 ? "true" : "false";
-      }
+        item.dataset.active = idx === 0 || focusLine >= rect.top + 28 ? "true" : "false";
+      });
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -79,45 +83,47 @@ export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) 
             key={step.id}
             id={`step-${step.id}`}
             data-step
-            data-active="false"
-            className="group/step relative scroll-mt-[calc(var(--header-h)+2rem)] ps-[4.75rem] pb-12 last:pb-0 sm:ps-[5.75rem] sm:pb-16"
+            data-active={index === 0 ? "true" : "false"}
+            className="group/step relative scroll-mt-[calc(var(--header-h)+2rem)] ps-[4.5rem] pb-11 last:pb-0 sm:ps-[5.75rem] sm:pb-14"
           >
             {/* node */}
             <span
-              className="absolute start-0 top-0 grid size-14 place-items-center rounded-2xl border border-white/12 bg-[color-mix(in_oklab,var(--ink-800)_90%,black)] text-lava-400 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.6)] transition-[border-color,box-shadow,color] duration-500 group-data-[active=true]/step:border-lava-500/70 group-data-[active=true]/step:text-lava-300 group-data-[active=true]/step:shadow-[0_0_0_4px_color-mix(in_oklab,var(--lava-500)_14%,transparent),0_0_36px_-4px_color-mix(in_oklab,var(--lava-500)_55%,transparent)] sm:size-16 [&_svg]:size-6 sm:[&_svg]:size-7"
+              className="absolute start-0 top-0 grid size-14 place-items-center rounded-2xl border border-white/14 bg-[color-mix(in_oklab,var(--ink-800)_92%,black)] text-lava-400 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.6)] transition-[border-color,box-shadow,color,transform] duration-500 group-data-[active=true]/step:border-lava-400/75 group-data-[active=true]/step:text-lava-300 group-data-[active=true]/step:shadow-[0_0_0_4px_color-mix(in_oklab,var(--lava-500)_16%,transparent),0_0_38px_-4px_color-mix(in_oklab,var(--lava-500)_60%,transparent)] sm:size-16 [&_svg]:size-6 sm:[&_svg]:size-7"
             >
               {step.icon}
             </span>
 
-            {/* connecting lava line to the next node */}
+            {/* connecting lava conduit — centered geometrically under the 56px (3.5rem) / 64px (4rem) node */}
             {!last ? (
-              <span aria-hidden="true" className="absolute start-[1.65rem] top-14 -bottom-0 w-0.5 sm:start-[1.85rem] sm:top-16">
-                <span className="absolute inset-0 rounded-full bg-white/10" />
+              <span
+                aria-hidden="true"
+                className="absolute start-[calc(1.75rem-1px)] top-14 -bottom-0 w-0.5 sm:start-[calc(2rem-1px)] sm:top-16"
+              >
+                <span className="process-conduit-ambient" />
                 <span
-                  className="absolute inset-0 origin-top rounded-full bg-[linear-gradient(180deg,var(--lava-300),var(--lava-500)_55%,var(--lava-600))]"
-                  style={{ transform: "scaleY(var(--seg, 0))" }}
+                  className="absolute inset-0 origin-top rounded-full bg-[linear-gradient(180deg,var(--ember),var(--lava-400)_42%,var(--lava-600))]"
+                  style={{ transform: "scaleY(var(--seg, 0.28))" }}
                 />
                 <span
-                  className="absolute -inset-x-1 inset-y-0 origin-top rounded-full bg-lava-500/55 blur-[6px]"
-                  style={{ transform: "scaleY(var(--seg, 0))" }}
+                  className="absolute -inset-x-1.5 inset-y-0 origin-top rounded-full bg-lava-500/60 blur-[6px]"
+                  style={{ transform: "scaleY(var(--seg, 0.28))" }}
                 />
               </span>
             ) : null}
 
             {/* card */}
-            <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-white/10 bg-white/[0.045] p-[var(--space-card)] transition-[border-color,background-color] duration-500 group-data-[active=true]/step:border-white/20 group-data-[active=true]/step:bg-white/[0.07]">
-              <span
-                aria-hidden="true"
-                dir="ltr"
-                className="pointer-events-none absolute end-6 -top-3 hidden font-display text-[7.5rem] leading-none font-bold text-transparent select-none sm:block [-webkit-text-stroke:1px_rgb(255_255_255/0.09)]"
-              >
+            <div className="process-step-card">
+              <span aria-hidden="true" dir="ltr" className="process-step-watermark hidden sm:block">
                 {step.number}
               </span>
 
-              <div className="relative flex flex-wrap items-center gap-x-4 gap-y-2">
-                <p className="text-sm font-semibold text-accent-text">{step.stepLabel}</p>
+              <div className="relative flex flex-wrap items-center gap-x-3.5 gap-y-2 pe-0 sm:pe-20">
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-lava-300">
+                  <span aria-hidden="true" className="size-1.5 rounded-full bg-lava-400" />
+                  <span>{step.stepLabel}</span>
+                </p>
                 {step.duration ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-pill border border-white/12 bg-white/[0.05] px-3 py-1 text-xs font-medium text-muted">
+                  <span className="inline-flex items-center gap-1.5 rounded-pill border border-white/14 bg-white/[0.06] px-3 py-1 text-xs font-medium text-ink-200">
                     <Clock aria-hidden="true" className="size-3.5 text-lava-400" />
                     <span className="sr-only">{durationLabel}: </span>
                     <span>{step.duration}</span>
@@ -125,9 +131,9 @@ export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) 
                 ) : null}
               </div>
 
-              <h3 className="text-display-sm relative mt-3 text-text">{step.title}</h3>
+              <h3 className="text-display-sm relative mt-3.5 text-ash-50 sm:pe-20">{step.title}</h3>
               {step.description ? (
-                <p className="text-body relative mt-3 max-w-[58ch] text-muted">{step.description}</p>
+                <p className="text-body relative mt-3 max-w-[56ch] text-ink-200">{step.description}</p>
               ) : null}
             </div>
           </li>

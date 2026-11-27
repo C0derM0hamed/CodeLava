@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { FilterPills, type FilterPillOption } from "@/components/sections/process/kit";
+import type { FilterPillOption } from "@/components/sections/process/kit";
 import {
   WorkEmptyState,
   WorkFeaturedSpotlight,
+  WorkFilterBar,
   WorkHero,
   WorkLedger,
   type WorkIndexItem,
@@ -21,6 +22,7 @@ import {
   getProjects,
   getServices,
 } from "@/server/queries";
+import "@/components/sections/work/work.css";
 
 type WorkPageParams = {
   params: Promise<{ locale: string }>;
@@ -79,10 +81,17 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
   const selectedCategory = categories.find(({ slug }) => slug === activeCategory);
   const selectedService = services.find(({ slug }) => slug === activeService);
   const unknownFilter = (activeCategory && !selectedCategory) || (activeService && !selectedService);
-  const filteredBase = !hasFilter ? allProjects : unknownFilter ? [] : await getProjects({
-    category: selectedCategory?.slug,
-    serviceSlug: selectedService?.slug,
-  }, locale);
+  const filteredBase = !hasFilter
+    ? allProjects
+    : unknownFilter
+      ? []
+      : await getProjects(
+          {
+            category: selectedCategory?.slug,
+            serviceSlug: selectedService?.slug,
+          },
+          locale,
+        );
 
   const details = await Promise.all(
     filteredBase.slice(0, 24).map((project) => getProjectBySlug(project.slug, locale)),
@@ -112,19 +121,30 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
     return search.size ? `/work?${search}` : "/work";
   }
 
+  const activeCategoriesWithProjects = categories.filter(({ count }) => count > 0);
+  const uniqueMarkets = new Set(allProjects.map((p) => p.clientCountryName).filter(Boolean));
+
   const categoryOptions: FilterPillOption[] = [
     { value: "", label: tWork("allCategories"), href: filterHref("", selectedService?.slug ?? "") },
-    ...categories.filter(({ count, slug }) => count > 0 || slug === activeCategory).map(({ slug, name, count }) => ({
-      value: slug, label: name, href: filterHref(slug, selectedService?.slug ?? ""),
-      count: activeService ? undefined : formatNumber(count, locale),
-    })),
+    ...categories
+      .filter(({ count, slug }) => count > 0 || slug === activeCategory)
+      .map(({ slug, name, count }) => ({
+        value: slug,
+        label: name,
+        href: filterHref(slug, selectedService?.slug ?? ""),
+        count: activeService ? undefined : formatNumber(count, locale),
+      })),
   ];
   const serviceOptions: FilterPillOption[] = [
     { value: "", label: tWork("allServices"), href: filterHref(selectedCategory?.slug ?? "", "") },
-    ...services.filter(({ projectCount, slug }) => projectCount > 0 || slug === activeService).map(({ slug, title, projectCount }) => ({
-      value: slug, label: title, href: filterHref(selectedCategory?.slug ?? "", slug),
-      count: activeCategory ? undefined : formatNumber(projectCount, locale),
-    })),
+    ...services
+      .filter(({ projectCount, slug }) => projectCount > 0 || slug === activeService)
+      .map(({ slug, title, projectCount }) => ({
+        value: slug,
+        label: title,
+        href: filterHref(selectedCategory?.slug ?? "", slug),
+        count: activeCategory ? undefined : formatNumber(projectCount, locale),
+      })),
   ];
   const showCategories = categoryOptions.length > 1 || Boolean(activeCategory);
   const showServices = serviceOptions.length > 1 || Boolean(activeService);
@@ -147,6 +167,8 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
         intro={introContent}
         ctaLabel={ctaContent.ctaLabel || tCommon("discussProject")}
         totalCount={allProjects.length}
+        categoryCount={activeCategoriesWithProjects.length}
+        marketCount={uniqueMarkets.size}
         fallbackTitle={tWork("title")}
       />
 
@@ -165,19 +187,19 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
         </section>
       ) : (
         <>
-          {showCategories || showServices ? (
-            <section className="pb-4 sm:pb-6">
-              <div className="container-lava flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-3">
-                  {showCategories && <FilterPills options={categoryOptions} value={activeCategory} ariaLabel={tWork("filterByCategory")} />}
-                  {showServices && <FilterPills options={serviceOptions} value={activeService} ariaLabel={tWork("filterByService")} />}
-                </div>
-                <p role="status" className="shrink-0 text-sm text-faint tabular-nums">
-                  {showingText}
-                </p>
-              </div>
-            </section>
-          ) : null}
+          <WorkFilterBar
+            locale={locale}
+            categoryOptions={categoryOptions}
+            serviceOptions={serviceOptions}
+            activeCategory={activeCategory}
+            activeService={activeService}
+            showCategories={showCategories}
+            showServices={showServices}
+            categoryAriaLabel={tWork("filterByCategory")}
+            serviceAriaLabel={tWork("filterByService")}
+            showingText={showingText}
+            clearLabel={tCommon("clearFilters")}
+          />
 
           {enrichedProjects.length === 0 ? (
             <section className="py-14 sm:py-20">
@@ -204,8 +226,7 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
                 locale={locale}
                 projects={ledgerProjects}
                 headingKicker={
-                  activeFilterLabel ||
-                  (isRtl ? "جميع المشاريع" : "All projects")
+                  activeFilterLabel || (isRtl ? "جميع المشاريع" : "All projects")
                 }
                 headingTitle={
                   hasFilter

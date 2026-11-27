@@ -23,6 +23,7 @@ import {
 } from "@/lib/jsonld";
 import { buildMetadata, localizedPath } from "@/lib/seo";
 import { getAllSlugs, getPageSections, getProjectBySlug } from "@/server/queries";
+import "@/components/sections/work/work.css";
 
 type CaseStudyParams = {
   params: Promise<{ locale: string; slug: string }>;

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/Logo";
@@ -75,11 +76,16 @@ const COMPANY_FALLBACK_LINKS = [
 ] as const;
 
 function FooterHeading({ children }: { children: ReactNode }) {
-  return <h2 className="mb-5 font-display text-base font-semibold text-text">{children}</h2>;
+  return (
+    <h2 className="mb-5 flex items-center gap-2.5 font-display text-[0.9375rem] font-semibold tracking-[-0.01em] text-text rtl:tracking-normal">
+      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-lava-400" />
+      <span>{children}</span>
+    </h2>
+  );
 }
 
 const LINK_CLASS =
-  "inline-flex min-h-7 items-center text-[0.9375rem] text-muted transition-colors duration-200 hover:text-accent-text";
+  "inline-flex min-h-7 items-center text-[0.9375rem] text-muted transition-[color,transform] duration-200 hover:text-text hover:translate-x-0.5 rtl:hover:-translate-x-0.5 motion-reduce:hover:translate-x-0";
 
 /**
  * Site footer (v2): CTA banner overlapping the top edge (once per page), then a dark ink band with
@@ -161,49 +167,63 @@ export function SiteFooter({
             : "pt-[clamp(4.5rem,7vw,6.5rem)]",
         )}
       >
+        {/* Luminous molten seam along the top of the footer when standalone */}
+        {!showCta ? (
+          <div
+            aria-hidden="true"
+            className="lava-seam-hairline pointer-events-none absolute inset-x-0 top-0 h-[1.5px] opacity-80"
+          />
+        ) : null}
+
         {/* faint volcanic warmth along the bottom horizon */}
         <div
           aria-hidden="true"
-          className="heat-haze-radial pointer-events-none absolute inset-x-0 bottom-0 h-[360px] opacity-70"
+          className="heat-haze-radial pointer-events-none absolute inset-x-0 bottom-0 h-[400px] opacity-75"
         />
 
         <div className="container-lava relative">
-          <div className="grid grid-cols-2 gap-x-[var(--space-grid-lg)] gap-y-12 pb-16 md:grid-cols-3 lg:grid-cols-[1.45fr_0.8fr_1fr_1.25fr_1.4fr]">
+          <div className="grid grid-cols-2 gap-x-[var(--space-grid-lg)] gap-y-12 pb-16 md:grid-cols-3 lg:grid-cols-[1.45fr_0.8fr_1fr_1.25fr_1.45fr]">
             {/* Brand */}
             <div className="col-span-2 space-y-5 md:col-span-3 lg:col-span-1">
               <Link href="/" aria-label={tn("homeAria")} className="inline-block rounded-md" data-cursor="pointer">
-                <Logo size="md" tone="dark" />
+                <Logo size="md" tone="dark" animated />
               </Link>
               <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-muted">{t("blurb")}</p>
               {socials.length > 0 ? (
-                <ul aria-label={t("socialsLabel")} className="flex flex-wrap items-center gap-2.5 pt-1">
-                  {socials.map((social) => {
-                    const network = detectSocialNetwork(social.href) ?? detectSocialNetwork(social.label);
-                    return (
-                      <li key={`${social.label}-${social.href}`}>
-                        <a
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          data-cursor="pointer"
-                          aria-label={network ? t("followOn", { network: social.label }) : undefined}
-                          className={cn(
-                            "inline-flex h-10 items-center justify-center rounded-full border border-line bg-[color-mix(in_oklab,var(--ash-50)_5%,transparent)] text-text transition-[background-color,border-color,color,transform] duration-300 hover:-translate-y-0.5 hover:border-transparent hover:text-on-accent hover:[background-image:var(--gradient-cta)]",
-                            network ? "w-10" : "gap-1.5 px-3.5 text-sm font-medium",
-                          )}
-                        >
-                          {network ? (
-                            <SocialIcon network={network} size={17} />
-                          ) : (
-                            <>
-                              <span>{social.label}</span>
-                              <ArrowUpRightIcon size={13} />
-                            </>
-                          )}
-                        </a>
-                      </li>
-                    );
-                  })}
+                <ul aria-label={t("socialsLabel")} className="flex flex-wrap items-center gap-2 pt-1">
+                  {[...socials]
+                    .sort((a, b) => {
+                      const aNet = detectSocialNetwork(a.href) ?? detectSocialNetwork(a.label) ? 0 : 1;
+                      const bNet = detectSocialNetwork(b.href) ?? detectSocialNetwork(b.label) ? 0 : 1;
+                      return aNet - bNet;
+                    })
+                    .map((social) => {
+                      const network = detectSocialNetwork(social.href) ?? detectSocialNetwork(social.label);
+                      return (
+                        <li key={`${social.label}-${social.href}`}>
+                          <a
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cursor="pointer"
+                            aria-label={network ? t("followOn", { network: social.label }) : undefined}
+                            className={cn(
+                              "inline-flex h-10 items-center justify-center rounded-full border border-line bg-[color-mix(in_oklab,var(--ash-50)_5%,transparent)] text-text transition-[background-color,border-color,color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-transparent hover:text-on-accent hover:shadow-[var(--shadow-lava)] hover:[background-image:var(--gradient-cta)] motion-reduce:hover:translate-y-0",
+                              network ? "w-10" : "gap-1.5 px-3.5 text-xs font-semibold tracking-wide",
+                            )}
+                          >
+                            {network ? (
+                              <SocialIcon network={network} size={16} />
+                            ) : (
+                              <>
+                                <span>{social.label}</span>
+                                <ArrowUpRightIcon size={12} />
+                              </>
+                            )}
+                          </a>
+                        </li>
+                      );
+                    })}
                 </ul>
               ) : null}
             </div>
@@ -257,23 +277,27 @@ export function SiteFooter({
                 <ul className="space-y-3.5">
                   {contactRows.map((row) => (
                     <li key={row.key} className="flex items-start gap-3 text-[0.9375rem] text-muted">
-                      <span className="mt-[0.2rem] text-accent-text">{row.icon}</span>
-                      <span className="min-w-0">{row.node}</span>
+                      <span className="mt-[0.15rem] grid size-7 shrink-0 place-items-center rounded-[8px] bg-accent-soft text-accent-text">
+                        {row.icon}
+                      </span>
+                      <span className="min-w-0 pt-0.5">{row.node}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             ) : null}
 
-            {/* Start a project (replaces the reference newsletter — no backend needed) */}
+            {/* Start a project */}
             <div
               className={cn(
                 "col-span-2 md:col-span-3 lg:col-span-1",
                 contactRows.length === 0 && "lg:col-span-2 lg:w-full lg:max-w-sm lg:justify-self-end",
               )}
             >
-              <div className="rounded-[var(--radius-md)] border border-line bg-[color-mix(in_oklab,var(--ash-50)_4%,transparent)] p-5 sm:p-6">
-                <h2 className="font-display text-base font-semibold text-text">{t("startHeading")}</h2>
+              <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-line-strong bg-[linear-gradient(155deg,color-mix(in_oklab,var(--lava-500)_12%,var(--ink-800))_0%,var(--ink-800)_60%)] p-6 shadow-[var(--shadow-card)]">
+                <span aria-hidden="true" className="lava-seam-hairline pointer-events-none absolute inset-x-4 top-0 h-[1.5px] opacity-80" />
+                <p className="kicker-rule mb-2.5">{t("closingEyebrow")}</p>
+                <h2 className="font-display text-lg font-semibold text-text">{t("startHeading")}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{t("startLead")}</p>
                 <ActionLink href="/quote" variant="primary" size="sm" className="mt-5">
                   {t("startCta")}
@@ -287,8 +311,8 @@ export function SiteFooter({
             <p>
               <bdi dir="ltr">© {displayYear} CodeLava.</bdi> {t("rights")}
             </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              <nav aria-label={t("legalLabel")} className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+              <nav aria-label={t("legalLabel")} className="flex flex-wrap items-center gap-x-5 gap-y-2">
                 <Link href="/privacy" data-cursor="pointer" className="inline-flex min-h-7 items-center transition-colors hover:text-text">
                   {t("privacy")}
                 </Link>
@@ -303,7 +327,16 @@ export function SiteFooter({
                   </Link>
                 ))}
               </nav>
-              <LocaleSwitch className="-me-3" />
+              <LocaleSwitch className="border-line bg-white/5 text-text/90 hover:border-lava-400/50 hover:bg-white/10" />
+              <button
+                type="button"
+                aria-label={t("backToTop")}
+                data-cursor="pointer"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white/5 text-muted transition-[border-color,color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-lava-400/60 hover:bg-accent-soft hover:text-lava-300 motion-reduce:hover:translate-y-0"
+              >
+                <ArrowUp size={16} aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>

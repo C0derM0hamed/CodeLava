@@ -134,19 +134,19 @@ export function SiteHeader({
           className,
         )}
       >
-        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-6 xl:gap-10">
+        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-4 xl:gap-10">
           <Link
             href="/"
             aria-label={t("homeAria")}
             data-cursor="pointer"
             onClick={() => onNavigate?.("/")}
-            className="shrink-0 rounded-md"
+            className="shrink-0 rounded-md transition-opacity duration-200 hover:opacity-90"
           >
             <Logo size="md" tone={darkChrome ? "dark" : "light"} />
           </Link>
 
           <nav aria-label={t("mainLabel")} className="hidden lg:block">
-            <ul className="flex items-center gap-1 xl:gap-2 2xl:gap-3">
+            <ul className="flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2">
               {navItems.map((item) => {
                 const active = isNavActive(pathname, item.href);
                 return (
@@ -157,22 +157,22 @@ export function SiteHeader({
                       data-cursor="pointer"
                       onClick={() => onNavigate?.(item.href)}
                       className={cn(
-                        "group relative inline-flex h-11 items-center rounded-md px-3 text-[0.9375rem] font-medium transition-colors duration-200 xl:px-3.5 2xl:px-4",
+                        "group relative inline-flex h-10 items-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 text-[0.9375rem] font-medium transition-[color,background-color] duration-200 xl:px-3.5 2xl:px-4",
                         darkChrome
                           ? active
-                            ? "text-lava-300"
-                            : "text-ash-50/88 hover:text-white"
+                            ? "bg-white/10 text-lava-300"
+                            : "text-ash-50/88 hover:bg-white/8 hover:text-white"
                           : active
-                            ? "text-accent-text"
-                            : "text-text/80 hover:text-text",
+                            ? "bg-accent-soft text-accent-text"
+                            : "text-text/80 hover:bg-surface/85 hover:text-text",
                       )}
                     >
                       <span>{t(item.key)}</span>
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "pointer-events-none absolute inset-x-3 bottom-1 h-[2px] origin-center rounded-full transition-transform duration-300 ease-[var(--ease-out-expo)] xl:inset-x-3.5 2xl:inset-x-4",
-                          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-60",
+                          "pointer-events-none absolute inset-x-3.5 bottom-1 h-[2px] origin-center rounded-full transition-transform duration-300 ease-[var(--ease-out-expo)] xl:inset-x-4",
+                          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50",
                         )}
                         style={{ background: "var(--gradient-cta)" }}
                       />
@@ -183,13 +183,13 @@ export function SiteHeader({
             </ul>
           </nav>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3.5">
             <div className="hidden sm:block">
               <LocaleSwitch
                 onLocaleChange={onLocaleChange}
                 className={
                   darkChrome
-                    ? "text-ash-50/90 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                    ? "border-white/18 bg-white/8 text-ash-50/92 hover:border-lava-400/50 hover:bg-white/14 hover:text-white"
                     : undefined
                 }
               />
@@ -209,7 +209,7 @@ export function SiteHeader({
               onClick={() => setMenuOpen((v) => !v)}
               data-cursor="pointer"
               className={cn(
-                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-[var(--shadow-xs)] transition-colors lg:hidden",
+                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-[var(--shadow-xs)] transition-[color,border-color,background-color,transform] duration-200 active:scale-95 lg:hidden",
                 darkChrome
                   ? "border-white/20 bg-white/10 text-ash-50 backdrop-blur-md hover:border-lava-400/60 hover:text-lava-300"
                   : "border-line-strong bg-surface text-text hover:border-line-lava hover:text-accent-text",

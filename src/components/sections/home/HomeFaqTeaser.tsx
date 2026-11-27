@@ -25,10 +25,10 @@ export function HomeFaqTeaser({
     <section aria-labelledby="home-faq-title" className="section-y">
       <div className="container-lava">
         <SplitIntro kicker={eyebrow} title={title} lead={description} link={{ href: "/faq", label: exploreLabel }} titleId="home-faq-title">
-          <Reveal mode="block">
+          <Reveal mode="block" className="home-faq-list">
             <Accordion
               variant="cards"
-              numbered={false}
+              numbered
               defaultOpenIds={[items[0].id]}
               items={items.map((faq) => ({
                 id: faq.id,

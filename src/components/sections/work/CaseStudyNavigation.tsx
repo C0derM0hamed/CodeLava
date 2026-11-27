@@ -19,30 +19,47 @@ export interface CaseStudyNavigationProps {
   };
 }
 
-export function CaseStudyNavigation({ locale, related, prev, next, labels }: CaseStudyNavigationProps) {
+export function CaseStudyNavigation({
+  locale,
+  related,
+  prev,
+  next,
+  labels,
+}: CaseStudyNavigationProps) {
   const isRtl = locale === "ar";
+  const relatedColsClass =
+    related.length === 1
+      ? "md:grid-cols-1 max-w-xl"
+      : related.length === 2
+        ? "md:grid-cols-2"
+        : "md:grid-cols-3";
 
   return (
     <>
       {related.length > 0 ? (
-        <section id="related" className="section-y scroll-mt-[calc(var(--header-h)+2.5rem)]">
+        <section
+          id="related"
+          className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-12 sm:py-16"
+        >
           <div className="container-lava space-y-[var(--space-heading)]">
-            <div className="flex flex-col items-start gap-[var(--space-copy)]">
+            <div className="flex flex-col items-start gap-3">
               <Kicker>{isRtl ? "أعمال مشابهة" : "Continue exploring"}</Kicker>
               <h2 className="text-display-md text-text">{labels.relatedTitle}</h2>
             </div>
 
-            <ul className="grid grid-cols-1 gap-[var(--space-grid)] md:grid-cols-3">
+            <ul className={`grid grid-cols-1 gap-[var(--space-grid)] ${relatedColsClass}`}>
               {related.map((item) => {
-                const yearText = item.year ? formatNumber(item.year, locale, { useGrouping: false }) : null;
+                const yearText = item.year
+                  ? formatNumber(item.year, locale, { useGrouping: false })
+                  : null;
                 return (
                   <li key={item.id} className="flex">
                     <Link
                       href={`/work/${item.slug}`}
                       data-cursor="view"
-                      className="group flex w-full flex-col overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface p-2.5 shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift"
+                      className="work-spotlight-card group flex w-full flex-col p-2.5"
                     >
-                      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[calc(var(--radius-md)-4px)] bg-pearl-300">
+                      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[calc(var(--radius-xl)-10px)] border border-line bg-pearl-300">
                         {item.cover ? (
                           <Image
                             src={item.cover.url}
@@ -60,17 +77,26 @@ export function CaseStudyNavigation({ locale, related, prev, next, labels }: Cas
                       <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
                         <div className="flex flex-wrap items-center gap-2">
                           {item.category ? <Chip tone="accent">{item.category.name}</Chip> : null}
-                          {yearText ? <span className="text-xs text-faint tabular-nums">{yearText}</span> : null}
+                          {yearText ? (
+                            <span className="text-xs font-medium text-faint tabular-nums">
+                              {yearText}
+                            </span>
+                          ) : null}
                         </div>
                         <h3 className="font-display text-xl font-bold text-text transition-colors group-hover:text-accent-text">
                           {item.title}
                         </h3>
                         {item.summary ? (
-                          <p className="line-clamp-2 text-sm leading-relaxed text-muted">{item.summary}</p>
+                          <p className="line-clamp-2 text-sm leading-relaxed text-muted">
+                            {item.summary}
+                          </p>
                         ) : null}
                         <span className="mt-auto inline-flex items-center gap-2 pt-2 text-sm font-semibold text-accent-text">
                           {labels.openCaseStudy}
-                          <ArrowUpRight aria-hidden="true" className="rtl-flip size-4" />
+                          <ArrowUpRight
+                            aria-hidden="true"
+                            className="rtl-flip size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
+                          />
                         </span>
                       </div>
                     </Link>
@@ -85,7 +111,7 @@ export function CaseStudyNavigation({ locale, related, prev, next, labels }: Cas
       {prev || next ? (
         <nav
           aria-label={isRtl ? "التنقل بين المشاريع" : "Project sequence navigation"}
-          className="py-10 sm:py-14"
+          className="pt-8 pb-16 sm:pt-12 sm:pb-20"
         >
           <div className="container-lava">
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
@@ -93,9 +119,9 @@ export function CaseStudyNavigation({ locale, related, prev, next, labels }: Cas
                 <Link
                   href={`/work/${prev.slug}`}
                   data-cursor="pointer"
-                  className={`group flex flex-col justify-between gap-4 rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-8 ${next ? "lg:col-span-4" : "lg:col-span-12"}`}
+                  className={`group flex flex-col justify-between gap-5 rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-line-lava hover:shadow-lift sm:p-8 ${next ? "lg:col-span-5" : "lg:col-span-12"}`}
                 >
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-faint">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.08em] text-faint uppercase rtl:tracking-normal rtl:normal-case">
                     <ArrowLeft
                       aria-hidden="true"
                       className="rtl-flip size-4 text-accent-text transition-transform duration-300 group-hover:-translate-x-1 rtl:group-hover:translate-x-1"
@@ -112,19 +138,18 @@ export function CaseStudyNavigation({ locale, related, prev, next, labels }: Cas
                 <Link
                   href={`/work/${next.slug}`}
                   data-cursor="view"
-                  className={`group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-10 ${prev ? "lg:col-span-8" : "lg:col-span-12"}`}
+                  className={`surface-dark case-next-card group flex flex-col justify-between gap-6 p-6 sm:p-9 ${prev ? "lg:col-span-7" : "lg:col-span-12"}`}
                 >
-                  <span className="page-wash pointer-events-none absolute inset-0" aria-hidden="true" />
                   <span className="relative flex items-center justify-between gap-4">
                     <span className="kicker-rule">{labels.nextLabel}</span>
-                    <span className="grid size-11 place-items-center rounded-full bg-[image:var(--gradient-cta)] text-white shadow-lava">
+                    <span className="grid size-11 place-items-center rounded-full bg-[image:var(--gradient-cta)] text-white shadow-lava transition-transform duration-300 group-hover:scale-105">
                       <ArrowRight
                         aria-hidden="true"
                         className="rtl-flip size-4 transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
                       />
                     </span>
                   </span>
-                  <span className="text-display-md relative text-text transition-colors duration-300 group-hover:text-accent-text">
+                  <span className="text-display-md relative text-ash-50 transition-colors duration-300 group-hover:text-lava-300">
                     {next.title}
                   </span>
                 </Link>

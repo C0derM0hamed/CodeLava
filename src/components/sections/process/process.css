@@ -1,0 +1,199 @@
+/* Process page — Daylight Magma craft (scoped to process). */
+
+.process-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: calc(var(--header-h) + var(--hero-top)) var(--hero-bottom);
+  background-image:
+    radial-gradient(62% 58% at 88% 8%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 6% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+[dir="rtl"] .process-hero {
+  background-image:
+    radial-gradient(62% 58% at 12% 8%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 94% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+.process-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in oklab, var(--ink-900) 10%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+}
+
+/* ---- "At a glance" roadmap card ----------------------------------------------------------- */
+.process-roadmap {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-card);
+  box-shadow: var(--shadow-lift);
+}
+
+.process-roadmap::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2.5px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.process-roadmap-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  padding-block: 0.8rem;
+  padding-inline: 0.6rem;
+  margin-inline: -0.6rem;
+  border-radius: var(--radius-md);
+  transition: background-color 240ms var(--ease-out-expo);
+}
+
+.process-roadmap-item:hover {
+  background: var(--surface-2);
+}
+
+.process-roadmap-item:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.process-roadmap-dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  flex: none;
+  border-radius: 999px;
+  border: 1px solid var(--line-lava);
+  background: color-mix(in oklab, var(--lava-500) 8%, white);
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 260ms var(--ease-out-expo),
+    border-color 260ms var(--ease-out-expo),
+    color 260ms ease,
+    box-shadow 260ms ease,
+    transform 260ms var(--ease-out-expo);
+}
+
+.process-roadmap-item:hover .process-roadmap-dot {
+  border-color: transparent;
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-lava);
+  transform: scale(1.06);
+}
+
+/* ---- Dark timeline step cards ------------------------------------------------------------- */
+.process-step-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--ash-50) 11%, transparent);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(
+      65% 80% at 96% 0%,
+      color-mix(in oklab, var(--lava-500) 12%, transparent) 0%,
+      transparent 65%
+    ),
+    color-mix(in oklab, var(--ash-50) 4.5%, transparent);
+  padding: var(--space-card);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--ash-50) 8%, transparent);
+  transition:
+    border-color 420ms var(--ease-out-expo),
+    background-color 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo),
+    transform 320ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .process-step-card {
+  background:
+    radial-gradient(
+      65% 80% at 4% 0%,
+      color-mix(in oklab, var(--lava-500) 12%, transparent) 0%,
+      transparent 65%
+    ),
+    color-mix(in oklab, var(--ash-50) 4.5%, transparent);
+}
+
+.process-step-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.2;
+  transition: opacity 420ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.group\/step[data-active="true"] .process-step-card,
+.process-step-card:hover {
+  border-color: color-mix(in oklab, var(--lava-400) 38%, transparent);
+  background-color: color-mix(in oklab, var(--ash-50) 7.5%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 14%, transparent),
+    0 20px 44px -22px color-mix(in oklab, var(--lava-600) 35%, transparent);
+}
+
+.group\/step[data-active="true"] .process-step-card::before,
+.process-step-card:hover::before {
+  opacity: 0.9;
+}
+
+.process-step-watermark {
+  pointer-events: none;
+  position: absolute;
+  inset-inline-end: 1.5rem;
+  top: -0.6rem;
+  font-family: var(--font-display);
+  font-size: 7.25rem;
+  line-height: 1;
+  font-weight: 700;
+  color: transparent;
+  user-select: none;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--ash-50) 13%, transparent);
+  transition: -webkit-text-stroke-color 420ms var(--ease-out-expo);
+}
+
+.group\/step[data-active="true"] .process-step-watermark,
+.process-step-card:hover .process-step-watermark {
+  -webkit-text-stroke-color: color-mix(in oklab, var(--lava-400) 26%, transparent);
+}
+
+/* Ambient warm baseline inside the connecting lava conduit so it always feels alive */
+.process-conduit-ambient {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--lava-400) 40%, transparent) 0%,
+    color-mix(in oklab, var(--lava-500) 22%, transparent) 55%,
+    color-mix(in oklab, var(--ash-50) 12%, transparent) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-roadmap-item:hover .process-roadmap-dot {
+    transform: none;
+  }
+}

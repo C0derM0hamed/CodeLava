@@ -196,13 +196,14 @@
 
 @media (max-width: 640px) {
   .cl-sound-wrap--floating {
-    inset-block-start: calc(var(--header-h, 76px) + 0.75rem);
+    inset-block-start: calc(var(--header-h, 76px) + 0.5rem);
   }
 
   .cl-sound-pill {
-    min-block-size: 2.25rem;
-    padding-inline: 0.75rem 0.85rem;
-    font-size: 0.78rem;
+    min-block-size: 2.1rem;
+    padding-block: 0.3rem;
+    padding-inline: 0.68rem 0.78rem;
+    font-size: 0.75rem;
   }
 }
 

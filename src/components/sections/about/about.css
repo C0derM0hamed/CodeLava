@@ -1,0 +1,282 @@
+/*
+ * About page styles — Daylight Magma v2.
+ * Scoped exclusively to web/src/components/sections/about/**.
+ * Token-only colors from globals.css; logical properties for full EN/AR RTL parity;
+ * strict prefers-reduced-motion compliance.
+ */
+
+/* ------------------------------------------------------------------ hero stage */
+
+.about-hero-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image:
+    radial-gradient(58% 58% at 86% 12%, color-mix(in oklab, var(--lava-300) 28%, transparent) 0%, transparent 64%),
+    radial-gradient(50% 48% at 8% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 70%),
+    var(--gradient-page-wash);
+}
+
+[dir="rtl"] .about-hero-stage {
+  background-image:
+    radial-gradient(58% 58% at 14% 12%, color-mix(in oklab, var(--lava-300) 28%, transparent) 0%, transparent 64%),
+    radial-gradient(50% 48% at 92% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 70%),
+    var(--gradient-page-wash);
+}
+
+.about-hero-grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.4;
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--ink-900) 5.5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--ink-900) 5.5%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(75% 75% at 50% 28%, black 25%, transparent 88%);
+  mask-image: radial-gradient(75% 75% at 50% 28%, black 25%, transparent 88%);
+}
+
+/* Layered daylight-glass architectural bezel around the obsidian brand key art */
+.about-key-art-shell {
+  position: relative;
+  isolation: isolate;
+  border-radius: calc(var(--radius-xl) + 2px);
+  padding: 0.625rem;
+  border: 1px solid color-mix(in oklab, var(--ink-900) 10%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--pearl-50) 94%, transparent) 0%,
+    color-mix(in oklab, var(--lava-100) 26%, var(--pearl-100)) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    var(--shadow-lift),
+    0 28px 70px -30px color-mix(in oklab, var(--lava-600) 35%, transparent);
+}
+
+.about-key-art-halo {
+  position: absolute;
+  inset: -1.75rem;
+  z-index: -1;
+  border-radius: 44px;
+  background: radial-gradient(
+    60% 58% at 50% 56%,
+    color-mix(in oklab, var(--lava-400) 32%, transparent) 0%,
+    color-mix(in oklab, var(--lava-100) 24%, transparent) 46%,
+    transparent 74%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.about-key-art-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--obsidian-950);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ash-50) 12%, transparent);
+}
+
+.about-key-art-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--pearl-50) 10%, transparent) 0%,
+    transparent 24%,
+    transparent 74%,
+    color-mix(in oklab, var(--obsidian-950) 45%, transparent) 100%
+  );
+}
+
+.about-heat-seam {
+  height: 1px;
+  width: 100%;
+  background: var(--gradient-heat-seam);
+  opacity: 0.7;
+}
+
+/* ------------------------------------------------------------------ story statements */
+
+.about-statement-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: var(--space-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 340ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo);
+}
+
+.about-statement-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-lava);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Obsidian-ink magma-lit card for the second (Vision) statement */
+.about-statement-card--obsidian {
+  border-color: color-mix(in oklab, var(--lava-500) 36%, transparent);
+  background:
+    radial-gradient(88% 82% at 92% 6%, color-mix(in oklab, var(--lava-500) 44%, transparent) 0%, color-mix(in oklab, var(--lava-600) 16%, transparent) 44%, transparent 74%),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+  box-shadow:
+    0 20px 44px -18px color-mix(in oklab, var(--lava-600) 42%, transparent),
+    var(--shadow-card);
+}
+
+[dir="rtl"] .about-statement-card--obsidian {
+  background:
+    radial-gradient(88% 82% at 8% 6%, color-mix(in oklab, var(--lava-500) 44%, transparent) 0%, color-mix(in oklab, var(--lava-600) 16%, transparent) 44%, transparent 74%),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+}
+
+.about-statement-card--obsidian:hover {
+  border-color: color-mix(in oklab, var(--lava-400) 58%, transparent);
+  box-shadow:
+    0 24px 52px -18px color-mix(in oklab, var(--lava-600) 54%, transparent),
+    var(--shadow-lift);
+}
+
+/* ------------------------------------------------------------------ values cards */
+
+.about-value-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: var(--space-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 340ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo);
+}
+
+.about-value-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--gradient-lava);
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: left center;
+  transition:
+    opacity 300ms var(--ease-out-expo),
+    transform 420ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .about-value-card::before {
+  transform-origin: right center;
+}
+
+.about-value-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-lava);
+  box-shadow: var(--shadow-lift);
+}
+
+.about-value-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ dark waveband markets */
+
+.about-market-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in oklab, var(--ash-50) 15%, transparent);
+  background:
+    radial-gradient(85% 75% at 100% 0%, color-mix(in oklab, var(--lava-500) 14%, transparent) 0%, transparent 65%),
+    linear-gradient(165deg, color-mix(in oklab, var(--ink-700) 54%, var(--ink-800)) 0%, color-mix(in oklab, var(--ink-800) 88%, var(--ink-950)) 100%);
+  padding: var(--space-card);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--ash-50) 11%, transparent),
+    0 18px 40px -22px rgb(0 0 0 / 0.55);
+  transition:
+    transform 340ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .about-market-card {
+  background:
+    radial-gradient(85% 75% at 0% 0%, color-mix(in oklab, var(--lava-500) 14%, transparent) 0%, transparent 65%),
+    linear-gradient(195deg, color-mix(in oklab, var(--ink-700) 54%, var(--ink-800)) 0%, color-mix(in oklab, var(--ink-800) 88%, var(--ink-950)) 100%);
+}
+
+.about-market-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--lava-400) 45%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-300) 24%, transparent),
+    0 22px 48px -20px color-mix(in oklab, var(--lava-600) 32%, transparent);
+}
+
+/* ------------------------------------------------------------------ team cards */
+
+.about-team-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 360ms var(--ease-out-expo),
+    box-shadow 360ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo);
+}
+
+.about-team-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-lava);
+  box-shadow: var(--shadow-lift);
+}
+
+/* ------------------------------------------------------------------ client trust tiles */
+
+.about-client-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform 280ms var(--ease-out-expo),
+    border-color 260ms var(--ease-out-expo),
+    box-shadow 280ms var(--ease-out-expo),
+    background-color 260ms ease;
+}
+
+.about-client-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-lava);
+  background: color-mix(in oklab, var(--lava-100) 18%, var(--pearl-50));
+  box-shadow: var(--shadow-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-statement-card:hover,
+  .about-value-card:hover,
+  .about-market-card:hover,
+  .about-team-card:hover,
+  .about-client-tile:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,474 @@
+/*
+ * Work index & Case Study detail styles — Daylight Magma v2.
+ * Scoped exclusively to web/src/components/sections/work/** and work pages.
+ * Token-only colors from globals.css; logical properties for full EN/AR RTL parity;
+ * strict prefers-reduced-motion compliance.
+ */
+
+/* ------------------------------------------------------------------ hero atmosphere */
+
+.work-hero-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image:
+    radial-gradient(64% 60% at 88% 0%, color-mix(in oklab, var(--lava-300) 26%, transparent) 0%, transparent 62%),
+    radial-gradient(56% 52% at 6% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%),
+    var(--gradient-page-wash);
+}
+
+[dir="rtl"] .work-hero-stage {
+  background-image:
+    radial-gradient(64% 60% at 12% 0%, color-mix(in oklab, var(--lava-300) 26%, transparent) 0%, transparent 62%),
+    radial-gradient(56% 52% at 94% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%),
+    var(--gradient-page-wash);
+}
+
+.work-hero-grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--ink-900) 5.5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--ink-900) 5.5%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(78% 72% at 50% 24%, black 28%, transparent 86%);
+  mask-image: radial-gradient(78% 72% at 50% 24%, black 28%, transparent 86%);
+}
+
+.work-heat-seam {
+  height: 1px;
+  width: 100%;
+  background: var(--gradient-heat-seam);
+  opacity: 0.72;
+}
+
+/* Precision frosted-glass eyebrow pill (consistent with Daylight Magma identity) */
+.work-eyebrow-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-block: 0.42rem;
+  padding-inline: 0.85rem 1.05rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  backdrop-filter: blur(14px) saturate(145%);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  border: 1px solid color-mix(in oklab, var(--ink-900) 10%, transparent);
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    var(--shadow-xs);
+}
+
+.work-eyebrow-pill__glyph {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  line-height: 1;
+}
+
+.work-eyebrow-pill__text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .work-eyebrow-pill__text {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Hero display headline — preserves Arabic harakat headroom & crisp word rise */
+.work-display-line {
+  display: block;
+}
+
+.work-display-line--accent {
+  background-image: var(--gradient-lava-wordmark-deep);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-block-end: 0.08em;
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .work-display-line--accent {
+  padding-block: 0.12em 0.18em;
+  margin-block: -0.12em -0.06em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .work-hero-enter {
+    animation: work-rise 680ms var(--ease-out-expo) both;
+    animation-delay: var(--work-delay, 0ms);
+  }
+}
+
+@keyframes work-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Tactile CTA button with magma sheen & sliding arrow well */
+.work-cta-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  min-block-size: 3.15rem;
+  padding-block: 0.35rem;
+  padding-inline: 1.4rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 45%, transparent),
+    var(--shadow-lava);
+  transition:
+    transform 300ms var(--ease-out-expo),
+    box-shadow 300ms var(--ease-out-expo);
+}
+
+.work-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 62%, transparent),
+    var(--shadow-lava-hover);
+}
+
+.work-cta-btn:active {
+  transform: translateY(0);
+}
+
+.work-cta-btn__well {
+  display: grid;
+  place-items: center;
+  inline-size: 2.15rem;
+  block-size: 2.15rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--obsidian-950) 22%, transparent);
+  border: 1px solid color-mix(in oklab, var(--pearl-50) 20%, transparent);
+  transition: transform 300ms var(--ease-out-expo), background-color 260ms ease;
+}
+
+.work-cta-btn:hover .work-cta-btn__well {
+  background: color-mix(in oklab, var(--obsidian-950) 10%, var(--pearl-50) 16%);
+  transform: translateX(2px);
+}
+
+[dir="rtl"] .work-cta-btn:hover .work-cta-btn__well {
+  transform: translateX(-2px);
+}
+
+/* ------------------------------------------------------------------ filter bar */
+
+.work-filter-shell {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: color-mix(in oklab, var(--pearl-50) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-card);
+}
+
+.work-filter-rail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-block: 0.15rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.work-filter-rail::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .work-filter-rail {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+.work-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.35rem;
+  padding-inline: 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background-color 220ms var(--ease-out-expo),
+    border-color 220ms var(--ease-out-expo),
+    color 220ms var(--ease-out-expo),
+    box-shadow 220ms var(--ease-out-expo),
+    transform 220ms var(--ease-out-expo);
+}
+
+.work-filter-pill:hover {
+  border-color: var(--line-lava-strong);
+  color: var(--text);
+  background: color-mix(in oklab, var(--lava-100) 24%, var(--pearl-50));
+}
+
+.work-filter-pill--active-primary {
+  border-color: transparent;
+  background: var(--ink-900);
+  color: var(--pearl-50);
+  box-shadow: var(--shadow-card);
+}
+
+.work-filter-pill--active-primary:hover {
+  background: var(--ink-800);
+  color: var(--pearl-50);
+  border-color: transparent;
+}
+
+.work-filter-pill--active-accent {
+  border-color: var(--line-lava-strong);
+  background: color-mix(in oklab, var(--lava-500) 11%, var(--pearl-50));
+  color: var(--accent-text);
+  font-weight: 600;
+  box-shadow: 0 6px 18px -10px color-mix(in oklab, var(--lava-500) 45%, transparent);
+}
+
+.work-filter-pill--active-accent:hover {
+  background: color-mix(in oklab, var(--lava-500) 15%, var(--pearl-50));
+  color: var(--accent-text);
+}
+
+/* ------------------------------------------------------------------ spotlight cards */
+
+.work-spotlight-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo),
+    border-color 320ms var(--ease-out-expo);
+}
+
+.work-spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 10%;
+  height: 2px;
+  background: var(--gradient-heat-seam);
+  opacity: 0;
+  transition: opacity 360ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.work-spotlight-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-lava);
+  box-shadow:
+    var(--shadow-lift),
+    0 18px 48px -28px color-mix(in oklab, var(--lava-500) 32%, transparent);
+}
+
+.work-spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ work ledger */
+
+.work-ledger-row {
+  position: relative;
+  transition: background-color 280ms var(--ease-out-expo);
+}
+
+.work-ledger-row:hover,
+.work-ledger-row:focus-visible {
+  background-color: color-mix(in oklab, var(--lava-100) 24%, var(--pearl-50));
+}
+
+.work-ledger-thumb {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--pearl-300);
+  transition:
+    border-color 300ms var(--ease-out-expo),
+    box-shadow 300ms var(--ease-out-expo);
+}
+
+.work-ledger-row:hover .work-ledger-thumb {
+  border-color: var(--line-lava);
+  box-shadow: 0 10px 24px -14px color-mix(in oklab, var(--lava-600) 42%, transparent);
+}
+
+/* ------------------------------------------------------------------ case study showcase & bands */
+
+.case-media-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.case-media-stage::before {
+  content: "";
+  position: absolute;
+  inset: 14% 6% -6%;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    color-mix(in oklab, var(--lava-400) 22%, transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(36px);
+  pointer-events: none;
+}
+
+.case-metrics-band {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in oklab, var(--ash-50) 10%, transparent);
+  background:
+    radial-gradient(62% 95% at 92% 0%, color-mix(in oklab, var(--lava-500) 32%, transparent) 0%, transparent 66%),
+    radial-gradient(48% 85% at 8% 100%, color-mix(in oklab, var(--lava-700) 18%, transparent) 0%, transparent 64%),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 56%, var(--ink-950) 100%);
+  box-shadow: var(--shadow-lift);
+}
+
+[dir="rtl"] .case-metrics-band {
+  background:
+    radial-gradient(62% 95% at 8% 0%, color-mix(in oklab, var(--lava-500) 32%, transparent) 0%, transparent 66%),
+    radial-gradient(48% 85% at 92% 100%, color-mix(in oklab, var(--lava-700) 18%, transparent) 0%, transparent 64%),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 56%, var(--ink-950) 100%);
+}
+
+.case-feature-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 340ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo);
+}
+
+.case-feature-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--gradient-lava);
+  opacity: 0;
+  transform: scaleX(0.3);
+  transform-origin: left center;
+  transition:
+    opacity 320ms var(--ease-out-expo),
+    transform 420ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .case-feature-card::before {
+  transform-origin: right center;
+}
+
+.case-feature-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-lava);
+  box-shadow: var(--shadow-lift);
+}
+
+.case-feature-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Dramatic obsidian "Up Next" card */
+.case-next-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in oklab, var(--lava-500) 34%, transparent);
+  background:
+    radial-gradient(74% 110% at 94% 6%, color-mix(in oklab, var(--lava-500) 42%, transparent) 0%, color-mix(in oklab, var(--lava-600) 14%, transparent) 44%, transparent 72%),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 60%, var(--ink-950) 100%);
+  box-shadow:
+    0 20px 44px -18px color-mix(in oklab, var(--lava-600) 38%, transparent),
+    var(--shadow-lift);
+  transition:
+    transform 360ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    box-shadow 360ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .case-next-card {
+  background:
+    radial-gradient(74% 110% at 6% 6%, color-mix(in oklab, var(--lava-500) 42%, transparent) 0%, color-mix(in oklab, var(--lava-600) 14%, transparent) 44%, transparent 72%),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 60%, var(--ink-950) 100%);
+}
+
+.case-next-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--lava-400) 58%, transparent);
+  box-shadow:
+    0 26px 56px -18px color-mix(in oklab, var(--lava-600) 52%, transparent),
+    var(--shadow-lift);
+}
+
+/* Narrative chapter surface */
+.case-chapter-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+/* Reduced motion guard */
+@media (prefers-reduced-motion: reduce) {
+  .work-hero-enter {
+    animation: none;
+  }
+
+  .work-cta-btn:hover,
+  .work-spotlight-card:hover,
+  .case-feature-card:hover,
+  .case-next-card:hover {
+    transform: none;
+  }
+}

@@ -7,15 +7,16 @@ import type { ReactNode } from "react";
 import { Languages, MessageCircleHeart, ShieldCheck, Handshake, type LucideIcon } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 
-/** Page opener: pearl + atmospheric wash, offset for the fixed header. */
+/** Page opener: pearl + atmospheric wash + subtle architectural grid, offset for the fixed header. */
 export function PageTop({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <section
       className={cn(
-        "page-wash relative pt-[calc(var(--header-h)+var(--hero-top))] pb-[var(--hero-bottom)]",
+        "page-wash relative overflow-x-clip pt-[calc(var(--header-h)+var(--hero-top))] pb-[var(--hero-bottom)]",
         className,
       )}
     >
+      <div aria-hidden="true" className="magma-grid-bg pointer-events-none absolute inset-0 opacity-65" />
       <div className="container-lava relative">{children}</div>
     </section>
   );
@@ -52,7 +53,7 @@ export function Panel({
   return (
     <Tag
       className={cn(
-        "rounded-[var(--radius-lg)] border border-line bg-surface p-[var(--space-card)] shadow-card",
+        "relative rounded-[var(--radius-lg)] border border-line bg-surface p-[var(--space-card)] shadow-card",
         className,
       )}
       {...rest}
@@ -77,7 +78,11 @@ export function IconTile({
   return (
     <span
       aria-hidden="true"
-      className={cn("inline-grid shrink-0 place-items-center bg-accent-soft text-accent-text", box, className)}
+      className={cn(
+        "inline-grid shrink-0 place-items-center border border-line-lava/45 bg-accent-soft text-accent-text transition-[background-color,border-color,color,transform] duration-250",
+        box,
+        className,
+      )}
     >
       <Icon size={glyph} strokeWidth={1.65} />
     </span>
@@ -96,10 +101,12 @@ export interface ReassuranceCopy {
 export function ReassuranceList({
   copy,
   limit,
+  columns = 1,
   className,
 }: {
   copy: ReassuranceCopy;
   limit?: number;
+  columns?: 1 | 2;
   className?: string;
 }) {
   const points: { icon: LucideIcon; title: string; body: string }[] = [
@@ -108,10 +115,25 @@ export function ReassuranceList({
     { icon: Languages, ...copy.bilingual },
     { icon: Handshake, ...copy.free },
   ].slice(0, limit ?? 4);
+  if (columns === 2) {
+    return (
+      <ul className={cn("grid gap-6 sm:grid-cols-2", className)}>
+        {points.map(({ icon, title, body }) => (
+          <li key={title} className="flex items-start gap-3.5">
+            <IconTile icon={icon} size="sm" className="mt-0.5" />
+            <div className="min-w-0">
+              <p className="font-display text-[0.9375rem] font-semibold leading-snug text-text">{title}</p>
+              <p className="mt-1 text-[0.8125rem] leading-relaxed text-muted">{body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
-    <ul className={cn("grid gap-5", className)}>
+    <ul className={cn("divide-y divide-line", className)}>
       {points.map(({ icon, title, body }) => (
-        <li key={title} className="flex items-start gap-4">
+        <li key={title} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
           <IconTile icon={icon} size="sm" className="mt-0.5" />
           <div className="min-w-0">
             <p className="font-display text-[0.9375rem] font-semibold leading-snug text-text">{title}</p>

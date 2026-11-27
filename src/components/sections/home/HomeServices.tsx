@@ -75,18 +75,35 @@ export function HomeServices({
                       ) : null}
                     </div>
                     <span className="grid gap-2">
-                      <span className="font-display text-[1.125rem] font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-accent-text">
+                      <span
+                        className={cn(
+                          "font-display text-[1.125rem] font-semibold leading-snug transition-colors duration-200",
+                          featured ? "text-text group-hover:text-lava-100" : "text-text group-hover:text-accent-text",
+                        )}
+                      >
                         {service.title}
                       </span>
                       {service.tagline ? (
                         <span className="text-sm leading-relaxed text-muted">{service.tagline}</span>
                       ) : null}
                     </span>
-                    <span aria-hidden="true" className="home-service__arrow mt-auto self-end">
-                      <ArrowRightIcon
-                        size={14}
-                        className="transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
-                      />
+                    <span className="mt-auto flex items-center justify-between gap-2 pt-2">
+                      <span
+                        dir="ltr"
+                        aria-hidden="true"
+                        className={cn(
+                          "font-mono text-[0.7rem] font-medium tracking-[0.12em] tabular-nums",
+                          featured ? "text-lava-300/75" : "text-faint/80",
+                        )}
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span aria-hidden="true" className="home-service__arrow">
+                        <ArrowRightIcon
+                          size={14}
+                          className="transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
+                        />
+                      </span>
                     </span>
                   </Link>
                 </Reveal>

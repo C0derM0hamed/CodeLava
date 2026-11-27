@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { readNativeLead } from "@/components/sections/forms/native";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PageTop, Panel, ReassuranceList } from "@/components/sections/forms/page-kit";
 import { QuoteForm } from "@/components/sections/forms/QuoteForm";
@@ -29,9 +30,9 @@ export async function generateMetadata({ params }: Props) {
 export default async function QuotePage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [query, sections, services, t, requestHeaders, aside] = await Promise.all([
+  const [query, sections, services, t, requestHeaders, aside, tf] = await Promise.all([
     searchParams, getPageSections("quote", locale), getServices(locale), getTranslations("quote"), headers(),
-    getTranslations("reassurance"),
+    getTranslations("reassurance"), getTranslations("footer"),
   ]);
   const hero = sections.find(({ sectionKey }) => sectionKey === "hero")?.content;
   const intro = sections.find(({ sectionKey }) => sectionKey === "intro")?.content;
@@ -59,10 +60,16 @@ export default async function QuotePage({ params, searchParams }: Props) {
               countries={countries} campaign={campaignQuery(query)} startedAt={formOpenedAt()}
               initialReferrer={requestHeaders.get("referer") ?? ""} nativeResult={readNativeLead(query.result, "quote", locale)} />
           </div>
-          <aside aria-labelledby="quote-aside-title" className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-4">
-            <Panel className="!p-6 sm:!p-7">
+          <aside aria-labelledby="quote-aside-title" className="space-y-5 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-4">
+            <Panel className="overflow-hidden rounded-[var(--radius-xl)] !p-6 sm:!p-7">
+              <span aria-hidden="true" className="lava-seam-hairline pointer-events-none absolute inset-x-8 top-0 h-[1.5px] opacity-80" />
               <h2 id="quote-aside-title" className="kicker-rule">{reassurance.title}</h2>
               <ReassuranceList copy={reassurance} className="mt-6" />
+              <div className="mt-6 border-t border-line pt-5">
+                <ActionLink href="/contact" variant="text" size="sm">
+                  {tf("ctaSecondary")}
+                </ActionLink>
+              </div>
             </Panel>
           </aside>
         </div>

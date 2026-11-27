@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleHelp } from "lucide-react";
+import { AlertCircle, Check, CircleHelp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   startTransition, useActionState, useEffect, useRef, useState, useSyncExternalStore, useTransition,
@@ -263,30 +263,66 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
     </div>],
   ];
 
+  const progressPercent = Math.round(((step + 1) / stepTitles.length) * 100);
+
   return (
-    <form className="quote-form rounded-[var(--radius-lg)] border border-line bg-surface p-5 shadow-card sm:p-8 lg:p-10" data-ready={enhanced && restored} method="post" encType="multipart/form-data" action={`/${locale}/quote/submit`} onSubmit={enhanced ? submit : undefined} noValidate={enhanced}
+    <form className="quote-form relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-5 shadow-card sm:p-8 lg:p-10" data-ready={enhanced && restored} method="post" encType="multipart/form-data" action={`/${locale}/quote/submit`} onSubmit={enhanced ? submit : undefined} noValidate={enhanced}
       aria-busy={pending || undefined}>
+      <span aria-hidden="true" className="lava-seam-hairline pointer-events-none absolute inset-x-10 top-0 h-[2px] opacity-85" />
       <input type="hidden" name="startedAt" value={originTime} />
       <input type="hidden" name="utm" value={attribution.campaign} />
       <input type="hidden" name="referrer" value={attribution.referrer} />
       <div hidden aria-hidden="true"><label htmlFor="quote-website">Website</label>
         <input id="quote-website" name="website" tabIndex={-1} autoComplete="off" /></div>
 
-      <nav className="quote-progress mb-8 border-b border-line pb-8 sm:mb-10 sm:pb-9" aria-label={t("progressLabel")}>
+      <nav className="quote-progress mb-8 border-b border-line pb-7 sm:mb-10 sm:pb-9" aria-label={t("progressLabel")}>
         <p className="sr-only" role="status" aria-live="polite">{progressText}</p>
-        <p aria-hidden="true" className="mb-4 text-sm font-semibold text-accent-text md:hidden">{progressText}</p>
+        <div aria-hidden="true" className="mb-4 space-y-2.5 md:hidden">
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="font-semibold text-accent-text">{progressText}</span>
+            <span dir="ltr" className="font-mono text-xs font-semibold text-faint tabular-nums">{progressPercent}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-bg">
+            <div
+              className="h-full rounded-full transition-[width] duration-400 ease-[var(--ease-out-expo)]"
+              style={{ width: `${progressPercent}%`, background: "var(--gradient-cta)" }}
+            />
+          </div>
+        </div>
         <ol className="quote-steps">
           {stepTitles.map((title, index) => {
             const state = index < step ? "done" : index === step ? "current" : "todo";
+            const dot = (
+              <span className="quote-step-dot" aria-hidden="true">
+                {state === "done" ? <Check size={15} strokeWidth={2.5} /> : new Intl.NumberFormat(locale).format(index + 1)}
+              </span>
+            );
+            const label = (
+              <span className="quote-step-label">
+                {title}
+                {state === "done" ? <span className="sr-only"> · {t("stepDone")}</span> : null}
+              </span>
+            );
             return (
               <li key={index} data-state={state} aria-current={index === step ? "step" : undefined}>
-                <span className="quote-step-dot" aria-hidden="true">
-                  {state === "done" ? <Check size={15} strokeWidth={2.4} /> : new Intl.NumberFormat(locale).format(index + 1)}
-                </span>
-                <span className="quote-step-label">
-                  {title}
-                  {state === "done" ? <span className="sr-only"> · {t("stepDone")}</span> : null}
-                </span>
+                {state === "done" && enhanced ? (
+                  <button
+                    type="button"
+                    onClick={() => move(index)}
+                    disabled={pending}
+                    data-cursor="pointer"
+                    aria-label={t("editStep", { step: title })}
+                    className="quote-step-trigger"
+                  >
+                    {dot}
+                    {label}
+                  </button>
+                ) : (
+                  <>
+                    {dot}
+                    {label}
+                  </>
+                )}
               </li>
             );
           })}
@@ -295,10 +331,13 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
 
       <div className="quote-workspace">
         {errors.form || failure || Object.keys(errors).length ? <div className="conversion-error" role="alert" tabIndex={-1} ref={errorSummary}>
-          {formError ?? validation("reviewFields")}
-          {!enhanced && Object.keys(errors).filter((fieldName) => !stepFields.some((fields) =>
-            (fields as readonly string[]).includes(fieldName)) && fieldName !== "form").map((fieldName) =>
-            <p key={fieldName}>{error(errors[fieldName]?.[0])}</p>)}
+          <AlertCircle size={18} aria-hidden="true" className="mt-0.5 shrink-0 text-danger" />
+          <div className="min-w-0 space-y-1">
+            <p>{formError ?? validation("reviewFields")}</p>
+            {!enhanced && Object.keys(errors).filter((fieldName) => !stepFields.some((fields) =>
+              (fields as readonly string[]).includes(fieldName)) && fieldName !== "form").map((fieldName) =>
+              <p key={fieldName}>{error(errors[fieldName]?.[0])}</p>)}
+          </div>
         </div> : null}
         {panel(0, <>
           <p id="quote-service-help" className="text-sm text-muted">{t("servicesHelp")}</p>
@@ -316,16 +355,16 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
               </label>
             ))}
           </fieldset>
-          {serviceError ? <p id="quote-service-error" role="alert" className="text-sm text-danger">{serviceError}</p> : null}
+          {serviceError ? <p id="quote-service-error" role="alert" className="text-sm font-medium text-danger">{serviceError}</p> : null}
         </>)}
 
         {panel(1, <div className="grid gap-5">
           <Textarea name="message" id="lead-message" label={t("projectDescription")} placeholder={t("projectPlaceholder")}
-            hint={t("projectHelp")} required minLength={10} maxLength={10000} dir="auto" value={draft.message}
+            hint={t("projectHelp")} required minLength={10} maxLength={10000} dir={draft.message ? "auto" : undefined} value={draft.message}
             onChange={(event) => field("message", event.target.value)} error={error(errors.message?.[0])} />
-          <Textarea name="goals" label={formCopy(locale, "goals")} rows={2} maxLength={3000} dir="auto" optionalLabel={optional}
+          <Textarea name="goals" label={formCopy(locale, "goals")} rows={2} maxLength={3000} dir={draft.goals ? "auto" : undefined} optionalLabel={optional}
             value={draft.goals} onChange={(event) => field("goals", event.target.value)} />
-          <TextInput name="existing" label={formCopy(locale, "existing")} maxLength={2000} dir="auto" optionalLabel={optional}
+          <TextInput name="existing" label={formCopy(locale, "existing")} maxLength={2000} dir={draft.existing ? "auto" : undefined} optionalLabel={optional}
             value={draft.existing} onChange={(event) => field("existing", event.target.value)} />
           <fieldset className="quote-chips">
             <legend className="text-sm font-semibold text-text">{formCopy(locale, "features")}</legend>
@@ -338,7 +377,7 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
               </label>)}
             </div>
           </fieldset>
-          <TextInput name="otherFeatures" label={formCopy(locale, "otherFeatures")} maxLength={3000} dir="auto" optionalLabel={optional}
+          <TextInput name="otherFeatures" label={formCopy(locale, "otherFeatures")} maxLength={3000} dir={draft.otherFeatures ? "auto" : undefined} optionalLabel={optional}
             value={draft.otherFeatures} onChange={(event) => field("otherFeatures", event.target.value)} error={invalidDetails} />
         </div>)}
 
@@ -388,8 +427,17 @@ export function QuoteForm({ locale, services, countries, preselected, campaign, 
         {enhanced && step === reviewStep ? panel(reviewStep, <div className="quote-review">
           {reviewGroups.map(([index, content]) => (
             <div key={index} className="quote-review-row">
-              <div className="flex flex-wrap items-center justify-between gap-x-3">
-                <h3 className="font-display text-base font-semibold text-text">{stepTitles[index]}</h3>
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <h3 className="flex items-center gap-2.5 font-display text-base font-semibold text-text">
+                  <span
+                    aria-hidden="true"
+                    dir="ltr"
+                    className="grid size-6 place-items-center rounded-full bg-accent-soft font-mono text-[11px] font-semibold text-accent-text tabular-nums"
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>{stepTitles[index]}</span>
+                </h3>
                 <ActionLink type="button" variant="text" size="sm" arrow="none" disabled={pending} onClick={() => move(index)}>
                   {t("editStep", { step: stepTitles[index] })}
                 </ActionLink>

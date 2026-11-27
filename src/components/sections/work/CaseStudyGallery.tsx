@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Dialog } from "@/components/ui/Dialog";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
@@ -24,20 +24,19 @@ export interface CaseStudyGalleryProps {
   };
 }
 
+/**
+ * Keeps widescreen UI screenshots & mockups uncropped on their horizontal edges.
+ * - 1 item: full-width 16:9
+ * - 2 items: balanced 6/6 split at 16:10 (never squashes widescreen interfaces into a square)
+ * - 3+ odd items: lead hero 12-col 16:9 followed by balanced 6/6 16:10 pairs
+ * - 4+ even items: balanced 6/6 16:10 pairs
+ */
 function getGridItemLayout(index: number, total: number) {
   if (total === 1) return { colClass: "md:col-span-12", aspectClass: "aspect-[16/9]" };
   if (total % 2 === 1 && index === 0) {
     return { colClass: "md:col-span-12", aspectClass: "aspect-[16/9]" };
   }
-  const adjustedIdx = total % 2 === 1 ? index - 1 : index;
-  const pairIdx = Math.floor(adjustedIdx / 2);
-  const posInPair = adjustedIdx % 2;
-  const wideFirst = pairIdx % 2 === 0;
-  const isWide = (wideFirst && posInPair === 0) || (!wideFirst && posInPair === 1);
-
-  return isWide
-    ? { colClass: "md:col-span-7", aspectClass: "aspect-[16/10]" }
-    : { colClass: "md:col-span-5", aspectClass: "aspect-[4/3] md:aspect-[16/14]" };
+  return { colClass: "md:col-span-6", aspectClass: "aspect-[16/10]" };
 }
 
 export function CaseStudyGallery({
@@ -62,7 +61,6 @@ export function CaseStudyGallery({
     setActiveIndex((curr) => (curr === null ? null : (curr + 1) % count));
   }, [count]);
 
-  // Keyboard navigation while lightbox Dialog is open (Escape handled by Dialog)
   useEffect(() => {
     if (!isOpen || count <= 1) return;
 
@@ -99,12 +97,17 @@ export function CaseStudyGallery({
   return (
     <section
       id="gallery"
-      className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-12 sm:py-16"
+      className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-10 sm:py-14"
     >
-      <div className="container-lava space-y-10">
-        <div className="flex flex-col items-start gap-4">
-          <Kicker>{isRtl ? "لقطات ونماذج" : "Visuals & mockups"}</Kicker>
-          <h2 className="text-display-md text-text">{headingTitle}</h2>
+      <div className="container-lava space-y-8 sm:space-y-10">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-col items-start gap-3">
+            <Kicker>{isRtl ? "لقطات ونماذج" : "Visuals & mockups"}</Kicker>
+            <h2 className="text-display-md text-text">{headingTitle}</h2>
+          </div>
+          <p className="text-xs font-medium text-faint">
+            {isRtl ? "اضغط على أي لقطة للتكبير" : "Select any visual to inspect"}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
@@ -121,9 +124,14 @@ export function CaseStudyGallery({
                   onClick={() => setActiveIndex(idx)}
                   data-cursor="view"
                   aria-label={`${altText} — ${numLabel}`}
-                  className="group relative block w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface p-1.5 text-start shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift"
+                  className="group relative block w-full overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface p-2 text-start shadow-card transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-line-lava hover:shadow-lift"
                 >
-                  <div className={cn("relative w-full overflow-hidden rounded-[calc(var(--radius-md)-6px)]", aspectClass)}>
+                  <div
+                    className={cn(
+                      "relative w-full overflow-hidden rounded-[calc(var(--radius-lg)-8px)] border border-line bg-pearl-200",
+                      aspectClass,
+                    )}
+                  >
                     <Image
                       src={item.media.url}
                       alt={altText}
@@ -132,7 +140,7 @@ export function CaseStudyGallery({
                       sizes={
                         colClass.includes("col-span-12")
                           ? "(max-width: 768px) 100vw, 1360px"
-                          : "(max-width: 768px) 100vw, 56vw"
+                          : "(max-width: 768px) 100vw, 48vw"
                       }
                       placeholder={item.media.blurDataUrl ? "blur" : "empty"}
                       blurDataURL={item.media.blurDataUrl ?? undefined}
@@ -141,18 +149,27 @@ export function CaseStudyGallery({
                   </div>
 
                   <div className="pointer-events-none absolute inset-x-4 top-4 flex items-center justify-between gap-2">
-                    <Chip className="bg-white/90 backdrop-blur-sm">{roleText}</Chip>
+                    <Chip className="border-white/50 bg-white/92 text-text shadow-xs backdrop-blur-md">
+                      {roleText}
+                    </Chip>
                     <span
                       dir="ltr"
-                      className="rounded-pill border border-line bg-white/90 px-2.5 py-0.5 text-[11px] font-medium text-muted tabular-nums backdrop-blur-sm"
+                      className="rounded-pill border border-white/50 bg-white/92 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-muted tabular-nums shadow-xs backdrop-blur-md"
                     >
                       {numLabel}
                     </span>
                   </div>
+
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute end-4 bottom-4 grid size-9 place-items-center rounded-full border border-white/60 bg-ink-900/80 text-white opacity-0 shadow-card backdrop-blur-md transition-all duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  >
+                    <Maximize2 className="size-4" />
+                  </span>
                 </button>
 
                 {item.caption ? (
-                  <figcaption className="text-xs leading-relaxed text-muted">
+                  <figcaption className="px-1 text-xs font-medium leading-relaxed text-muted">
                     {item.caption}
                   </figcaption>
                 ) : null}

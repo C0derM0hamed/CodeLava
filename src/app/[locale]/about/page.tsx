@@ -17,6 +17,7 @@ import { JsonLd, breadcrumbListJsonLd } from "@/lib/jsonld";
 import { buildMetadata, localizedPath } from "@/lib/seo";
 import { getAchievements, getClientLogos, getPageMeta, getPageSections, getTeam, getTestimonials } from "@/server/queries";
 import "@/components/sections/home/home.css";
+import "@/components/sections/about/about.css";
 
 type AboutParams = { params: Promise<{ locale: string }> };
 
@@ -44,8 +45,7 @@ export async function generateMetadata({ params }: AboutParams): Promise<Metadat
 
 /**
  * About: story hero → story & mission → principles → markets (dark wave band) → team →
- * achievements → clients. DB-backed parts hide when empty; the footer owns the closing CTA.
- * Hero / intro copy comes from page_sections ("about": hero, intro) with message fallbacks.
+ * achievements → clients → testimonials. DB-backed parts hide when empty; footer owns closing CTA.
  */
 export default async function AboutPage({ params }: AboutParams) {
   const { locale: rawLocale } = await params;
@@ -86,6 +86,11 @@ export default async function AboutPage({ params }: AboutParams) {
     { icon: "Globe", title: t("markets.international.title"), body: t("markets.international.body") },
   ];
 
+  const heroHighlights = achievements.slice(0, 3).map((item) => ({
+    value: `${item.prefix ?? ""}${item.value}${item.suffix ?? ""}`,
+    label: item.label,
+  }));
+
   return (
     <main id="main-content" className="relative overflow-x-clip bg-bg text-text">
       <JsonLd
@@ -102,9 +107,11 @@ export default async function AboutPage({ params }: AboutParams) {
         primaryLabel={tHome("startProject")}
         secondaryLabel={tHome("viewWork")}
         imageAlt={t("heroImageAlt")}
+        highlights={heroHighlights}
       />
 
       <AboutStory
+        locale={locale}
         eyebrow={t("story")}
         title={intro?.title || t("story")}
         lead={intro?.description}
@@ -115,9 +122,21 @@ export default async function AboutPage({ params }: AboutParams) {
         ]}
       />
 
-      <AboutValues eyebrow={t("valuesKicker")} title={t("valuesTitle")} lead={t("valuesLead")} values={values} />
+      <AboutValues
+        locale={locale}
+        eyebrow={t("valuesKicker")}
+        title={t("valuesTitle")}
+        lead={t("valuesLead")}
+        values={values}
+      />
 
-      <AboutMarkets eyebrow={t("marketsKicker")} title={t("marketsTitle")} lead={t("marketsLead")} markets={markets} />
+      <AboutMarkets
+        locale={locale}
+        eyebrow={t("marketsKicker")}
+        title={t("marketsTitle")}
+        lead={t("marketsLead")}
+        markets={markets}
+      />
 
       <AboutTeam
         eyebrow={t("team")}

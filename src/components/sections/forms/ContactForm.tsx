@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { startTransition, useActionState, useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { ActionLink } from "@/components/ui/ActionLink";
@@ -67,19 +68,22 @@ export function ContactForm({ locale, campaign, startedAt, initialReferrer, nati
       <input type="hidden" name="referrer" value={initialReferrer} />
       <div hidden aria-hidden="true"><label htmlFor="contact-website">Website</label>
         <input name="website" id="contact-website" tabIndex={-1} autoComplete="off" /></div>
-      {showErrors ? <div tabIndex={-1} ref={summary} role="alert" className="conversion-error">
-        {error(errors.form?.[0]) ?? validation("reviewFields")}
-      </div> : null}
+      {showErrors ? (
+        <div tabIndex={-1} ref={summary} role="alert" className="conversion-error">
+          <AlertCircle size={18} aria-hidden="true" className="mt-0.5 shrink-0 text-danger" />
+          <span>{error(errors.form?.[0]) ?? validation("reviewFields")}</span>
+        </div>
+      ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <IdentityFields locale={locale} values={identity} errors={errors} onField={(key, value) =>
           setIdentity((current) => ({ ...current, [key]: value }))} />
       </div>
       <Textarea id="lead-message" name="message" label={t("message")} placeholder={t("messagePlaceholder")}
-        required maxLength={10000} dir="auto" rows={5} value={message} error={error(errors.message?.[0])}
+        required maxLength={10000} dir={message ? "auto" : undefined} rows={5} value={message} error={error(errors.message?.[0])}
         onChange={(event) => setMessage(event.target.value)} />
       <LeadConsent locale={locale} checked={consent} onChange={setConsent} error={error(errors.consent?.[0])} />
       <div className="conversion-form-actions">
-        <ActionLink type="submit" variant="primary" loading={pending} arrow="right">
+        <ActionLink type="submit" variant="primary" size="md" loading={pending} arrow="right" className="max-sm:w-full">
           {pending ? f("submitting") : errors.form ? c("tryAgain") : t("submit")}
         </ActionLink>
       </div>

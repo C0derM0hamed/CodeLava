@@ -1,5 +1,7 @@
 export { WorkHero } from "./WorkHero";
 export type { WorkHeroProps } from "./WorkHero";
+export { WorkFilterBar } from "./WorkFilterBar";
+export type { WorkFilterBarProps } from "./WorkFilterBar";
 export { WorkFeaturedSpotlight } from "./WorkFeaturedSpotlight";
 export type { WorkFeaturedSpotlightProps } from "./WorkFeaturedSpotlight";
 export { WorkLedger } from "./WorkLedger";

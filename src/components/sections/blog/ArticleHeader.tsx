@@ -19,15 +19,16 @@ export interface ArticleHeaderProps {
 
 export function ArticleHeader({ article, isDraft, labels }: ArticleHeaderProps) {
   return (
-    <PageHero className="pb-8 sm:pb-12">
-      <div className="mx-auto flex max-w-4xl flex-col gap-6">
+    <PageHero className="border-b border-line pb-10 sm:pb-14">
+      <div aria-hidden="true" className="magma-grid-bg pointer-events-none absolute inset-0 opacity-65" />
+      <div className="relative mx-auto flex max-w-4xl flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <nav aria-label={labels.breadcrumbs}>
             <ol className="flex flex-wrap items-center gap-2 text-sm text-faint">
               <li>
                 <Link href="/" className="transition-colors hover:text-text">{labels.home}</Link>
               </li>
-              <li aria-hidden="true">/</li>
+              <li aria-hidden="true" className="opacity-50">/</li>
               <li>
                 <Link href="/blog" className="transition-colors hover:text-text">{labels.blog}</Link>
               </li>
@@ -36,10 +37,10 @@ export function ArticleHeader({ article, isDraft, labels }: ArticleHeaderProps) 
           <Link
             href="/blog"
             data-cursor="pointer"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-accent-text"
+            className="group inline-flex h-9 items-center gap-2 rounded-pill border border-line-strong/80 bg-surface/90 px-3.5 text-sm font-semibold text-text shadow-[var(--shadow-xs)] transition-[border-color,color,box-shadow] duration-200 hover:border-line-lava hover:text-accent-text hover:shadow-card"
           >
-            <ArrowLeft aria-hidden="true" className="rtl-flip size-4 transition-transform group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5" />
-            {labels.back}
+            <ArrowLeft aria-hidden="true" className="rtl-flip size-4 text-accent-text transition-transform duration-200 group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5" />
+            <span>{labels.back}</span>
           </Link>
         </div>
 
@@ -52,8 +53,14 @@ export function ArticleHeader({ article, isDraft, labels }: ArticleHeaderProps) 
             ) : null}
             {article.tags.map((tag) => (
               <li key={tag}>
-                <Link href={`/blog?tag=${encodeURIComponent(tag)}`} data-cursor="pointer">
-                  <Chip tone="accent">{tag}</Chip>
+                <Link
+                  href={`/blog?tag=${encodeURIComponent(tag)}`}
+                  data-cursor="pointer"
+                  className="inline-block rounded-pill transition-transform duration-200 hover:-translate-y-px"
+                >
+                  <Chip tone="accent" className="transition-colors hover:border-accent hover:bg-accent-soft-strong">
+                    {tag}
+                  </Chip>
                 </Link>
               </li>
             ))}
@@ -61,36 +68,40 @@ export function ArticleHeader({ article, isDraft, labels }: ArticleHeaderProps) 
         ) : null}
 
         <h1 className="text-display-lg text-text">{article.title}</h1>
-        {article.excerpt ? <p className="text-lead max-w-[62ch]">{article.excerpt}</p> : null}
+        {article.excerpt ? <p className="text-lead max-w-[60ch]">{article.excerpt}</p> : null}
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-5">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-line pt-5">
           {article.author ? (
-            <p className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               <span
                 aria-hidden="true"
-                className="grid size-10 place-items-center rounded-full border border-line-lava bg-[color-mix(in_oklab,var(--lava-500)_9%,white)] font-display text-sm font-bold text-accent-text"
+                className="grid size-11 shrink-0 place-items-center rounded-full border border-line-lava bg-[color-mix(in_oklab,var(--lava-500)_10%,white)] font-display text-sm font-bold text-accent-text shadow-[0_0_0_3px_var(--accent-soft)]"
               >
                 {article.author.name.trim().slice(0, 1).toUpperCase()}
               </span>
-              <span className="leading-tight">
+              <div className="leading-snug">
                 <span className="block text-sm font-semibold text-text">{article.author.name}</span>
                 {article.author.role ? <span className="block text-xs text-faint">{article.author.role}</span> : null}
-              </span>
-            </p>
+              </div>
+            </div>
           ) : null}
-          <ArticleMeta article={article} className="text-sm" />
+          <ArticleMeta
+            article={article}
+            className="rounded-pill border border-line bg-surface/85 px-4 py-2 text-xs shadow-[var(--shadow-xs)]"
+          />
         </div>
       </div>
 
       {article.cover ? (
-        <div className="mx-auto mt-10 max-w-6xl">
-          <div className="overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-2 shadow-card sm:p-3">
+        <div className="relative mx-auto mt-10 max-w-5xl">
+          <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-2 shadow-lift sm:p-3">
+            <span aria-hidden="true" className="lava-seam-hairline pointer-events-none absolute inset-x-12 top-0 z-10 h-[1.5px] opacity-80" />
             <ArticleCover
               cover={article.cover}
               title={article.title}
-              sizes="(max-width: 1280px) 94vw, 1152px"
+              sizes="(max-width: 1280px) 94vw, 1024px"
               priority
-              className="aspect-[16/8] rounded-[calc(var(--radius-xl)-10px)] max-sm:aspect-[16/10]"
+              className="aspect-[16/10] max-h-[580px] rounded-[calc(var(--radius-xl)-10px)]"
             />
           </div>
         </div>

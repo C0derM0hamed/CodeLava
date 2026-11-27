@@ -1,9 +1,191 @@
-/* FAQ: split intro on the left, card accordion on the right. */
+/* FAQ page & FaqGroups — Daylight Magma craft (scoped to faq). */
 
-.faq-browser { display: grid; gap: clamp(1.75rem, 3.5vw, 2.75rem); }
-.faq-search { display: flex; align-items: end; gap: 1rem; }
-.faq-count { flex-shrink: 0; color: var(--text-muted); font-size: 0.8125rem; padding-block-end: 0.8rem; }
-.faq-group { display: grid; gap: 1rem; }
+/* ---- Hero atmosphere ---------------------------------------------------------------------- */
+.faq-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: calc(var(--header-h) + var(--hero-top)) var(--hero-bottom);
+  background-image:
+    radial-gradient(62% 58% at 88% 8%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 6% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+[dir="rtl"] .faq-hero {
+  background-image:
+    radial-gradient(62% 58% at 12% 8%, color-mix(in oklab, var(--lava-100) 68%, transparent) 0%, transparent 66%),
+    radial-gradient(50% 45% at 94% 18%, color-mix(in oklab, var(--mist) 85%, transparent) 0%, transparent 68%);
+}
+
+.faq-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in oklab, var(--ink-900) 10%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.52) 0%, rgb(0 0 0 / 0.14) 68%, transparent 100%);
+}
+
+.faq-hero::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 1px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---- Browser & search controls ------------------------------------------------------------ */
+.faq-browser {
+  display: grid;
+  gap: clamp(1.75rem, 3.2vw, 2.75rem);
+}
+
+.faq-controls {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 640px) {
+  .faq-controls {
+    padding: 1.25rem;
+  }
+}
+
+.faq-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.faq-search-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 16rem;
+  min-inline-size: 0;
+}
+
+.faq-search-input {
+  inline-size: 100%;
+  min-block-size: 3rem;
+  padding-block: 0.65rem;
+  padding-inline-start: 2.85rem;
+  padding-inline-end: 2.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: border-color 220ms ease, background-color 220ms ease, box-shadow 220ms ease;
+}
+
+.faq-search-input::placeholder {
+  color: var(--text-faint);
+}
+
+.faq-search-input:hover {
+  border-color: var(--line-lava-strong);
+}
+
+.faq-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-soft-strong);
+}
+
+/* Hide browser default search cancel so our custom accessible button handles it cleanly */
+.faq-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.faq-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  min-block-size: 2.25rem;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--line-lava);
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Topic filter pills ------------------------------------------------------------------- */
+.faq-topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.faq-topic-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-block-size: 2.25rem;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    box-shadow 260ms var(--ease-out-expo);
+}
+
+.faq-topic-pill:hover {
+  border-color: var(--line-lava-strong);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.faq-topic-pill[aria-pressed="true"] {
+  border-color: transparent;
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-lava);
+}
+
+.faq-topic-pill:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Groups & question cards -------------------------------------------------------------- */
+.faq-group {
+  display: grid;
+  gap: 1rem;
+}
+
+.faq-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block-end: 0.25rem;
+}
+
 .faq-group-title {
   display: flex;
   align-items: center;
@@ -14,6 +196,7 @@
   line-height: 1.25;
   color: var(--text);
 }
+
 .faq-group-title::before {
   content: "";
   inline-size: 1.5rem;
@@ -22,19 +205,94 @@
   background: var(--gradient-cta);
   flex: none;
 }
-.faq-list { display: grid; gap: 0.75rem; }
-.faq-question { scroll-margin-block-start: calc(var(--header-h) + 1rem); }
-.faq-question:target [data-state] { border-color: var(--line-lava-strong); box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-card); }
-.faq-accordion h3 > button { padding-block: 1.15rem; }
-.faq-accordion [role="region"] > div > div { padding-inline-end: 0; }
-.faq-accordion h3:has(> button[aria-expanded="false"]) + [role="region"] { visibility: hidden; }
+
+.faq-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.faq-question {
+  scroll-margin-block-start: calc(var(--header-h) + 1.5rem);
+}
+
+.faq-question:target [data-state] {
+  border-color: var(--line-lava-strong);
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-card);
+}
+
+.faq-accordion h3 > button {
+  padding-block: 1.15rem;
+}
+
+.faq-accordion [role="region"] > div > div {
+  padding-inline-end: 0;
+}
+
+.faq-accordion h3:has(> button[aria-expanded="false"]) + [role="region"] {
+  visibility: hidden;
+}
+
 .faq-permalink {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  min-block-size: 1.75rem;
-  margin-block-start: 0.5rem;
-  color: var(--text-faint);
-  font-size: 0.8125rem;
+  gap: 0.45rem;
+  min-block-size: 2rem;
+  margin-block-start: 0.85rem;
+  padding-inline: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.78125rem;
+  font-weight: 500;
+  transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
 }
-.faq-permalink:is(:hover, :focus-visible) { color: var(--accent-text); text-decoration: underline; text-underline-offset: 0.2em; }
+
+.faq-permalink:is(:hover, :focus-visible) {
+  border-color: var(--line-lava);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/* ---- Obsidian companion help card --------------------------------------------------------- */
+.faq-help-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--lava-500) 34%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card);
+  background:
+    radial-gradient(
+      90% 80% at 92% 4%,
+      color-mix(in oklab, var(--lava-500) 44%, transparent) 0%,
+      color-mix(in oklab, var(--lava-600) 18%, transparent) 42%,
+      transparent 74%
+    ),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--ash-50) 12%, transparent),
+    0 22px 54px -20px color-mix(in oklab, var(--ink-950) 60%, transparent),
+    0 12px 32px -16px color-mix(in oklab, var(--lava-600) 38%, transparent);
+}
+
+[dir="rtl"] .faq-help-card {
+  background:
+    radial-gradient(
+      90% 80% at 8% 4%,
+      color-mix(in oklab, var(--lava-500) 44%, transparent) 0%,
+      color-mix(in oklab, var(--lava-600) 18%, transparent) 42%,
+      transparent 74%
+    ),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+}
+
+.faq-help-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  background: var(--gradient-heat-seam);
+  opacity: 0.85;
+  pointer-events: none;
+}

@@ -93,6 +93,16 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
             </defs>
             <path d={path} fill="none" stroke="url(#home-lava-line)" strokeWidth="8" vectorEffect="non-scaling-stroke" style={{ filter: "blur(7px)", opacity: 0.6 }} />
             <path d={path} fill="none" stroke="url(#home-lava-line)" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
+            <path
+              d={path}
+              fill="none"
+              stroke="var(--ember)"
+              strokeWidth="2.5"
+              vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+              pathLength={1000}
+              className="home-process-pulse"
+            />
           </svg>
 
           <span
@@ -104,28 +114,31 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
             className="relative grid gap-9 lg:grid-cols-[repeat(var(--steps),minmax(0,1fr))] lg:gap-[var(--space-grid)]"
             style={{ "--steps": visible.length } as CSSProperties}
           >
-            {visible.map((step, index) => (
-              <Reveal
-                as="li"
-                mode="block"
-                key={step.id}
-                delay={index * 90}
-                className={`flex gap-5 lg:flex-col lg:items-center lg:gap-4 lg:text-center ${index % 2 === 1 ? "lg:pt-[34px]" : ""}`}
-              >
-                <span aria-hidden="true" className="home-step__tile shrink-0">
-                  <StepIcon icon={step.icon} className="size-6" />
-                </span>
-                <span className="grid gap-2 pt-1 lg:max-w-[26ch] lg:pt-2">
-                  <span dir="ltr" className="font-mono text-xs text-faint lg:hidden">
-                    {formatNumber(index + 1, locale, { minimumIntegerDigits: 2, useGrouping: false })}
+            {visible.map((step, index) => {
+              const stepNumber = formatNumber(index + 1, locale, { minimumIntegerDigits: 2, useGrouping: false });
+              return (
+                <Reveal
+                  as="li"
+                  mode="block"
+                  key={step.id}
+                  delay={index * 90}
+                  className={`home-step flex items-start gap-5 lg:flex-col lg:items-center lg:gap-4 lg:text-center ${index % 2 === 1 ? "lg:pt-[34px]" : ""}`}
+                >
+                  <span aria-hidden="true" className="home-step__tile shrink-0">
+                    <StepIcon icon={step.icon} className="size-6" />
+                    <span dir="ltr" className="home-step__num tabular-nums">
+                      {stepNumber}
+                    </span>
                   </span>
-                  <span className="font-display text-[1.125rem] font-semibold leading-snug text-text">{step.title}</span>
-                  {step.description ? (
-                    <span className="text-[0.9375rem] leading-relaxed text-muted">{step.description}</span>
-                  ) : null}
-                </span>
-              </Reveal>
-            ))}
+                  <span className="grid gap-1.5 pt-0.5 text-start lg:max-w-[26ch] lg:gap-2 lg:pt-2 lg:text-center">
+                    <span className="font-display text-[1.125rem] font-semibold leading-snug text-text">{step.title}</span>
+                    {step.description ? (
+                      <span className="text-[0.9375rem] leading-relaxed text-muted">{step.description}</span>
+                    ) : null}
+                  </span>
+                </Reveal>
+              );
+            })}
           </ol>
         </div>
       </div>

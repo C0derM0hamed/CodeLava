@@ -55,13 +55,13 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
     // As the source fades to black, settle the filmed wordmark alongside the copy.
     const t = clamp((best.index / last - 0.59) / 0.23);
     const reveal = t * t * (3 - 2 * t);
-    const endScale = Math.min(w * (compact ? 1 : 0.54) / img.width, h * (compact ? 0.52 : 1) / img.height);
+    const endScale = Math.min(w * (compact ? 0.94 : 0.54) / img.width, h * (compact ? 0.44 : 1) / img.height);
     const scale = cover + (endScale - cover) * reveal;
     const width = img.width * scale, height = img.height * scale;
     const coverX = (w - width) * (compact ? 0.68 : rtl ? 0.66 : 0.34);
     const endX = w * (compact ? 0.5 : rtl ? 0.27 : 0.73) - width / 2;
     const coverY = (h - height) * (compact ? 0.42 : 0.46);
-    const endY = h * (compact ? 0.26 : 0.5) - height / 2;
+    const endY = h * (compact ? 0.35 : 0.5) - height / 2;
     context.fillStyle = backdrop;
     context.fillRect(0, 0, w, h);
     const x = coverX + (endX - coverX) * reveal;

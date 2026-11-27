@@ -1,6 +1,7 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { Chip, TextLink } from "../process/kit";
+import { Chip } from "../process/kit";
 import type { AppLocale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
 import type { ProjectDetail } from "@/server/queries";
@@ -54,60 +55,73 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
     project.playStoreUrl ? { href: project.playStoreUrl, label: labels.playStore } : null,
   ].filter((item): item is { href: string; label: string } => item !== null);
 
-  const hasContent =
-    facts.length > 0 ||
+  const hasLowerTier =
     project.services.length > 0 ||
     project.technologies.length > 0 ||
     externalLinks.length > 0;
 
-  if (!hasContent) return null;
+  if (facts.length === 0 && !hasLowerTier) return null;
+
+  const factsColsClass =
+    facts.length >= 5
+      ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+      : facts.length === 4
+        ? "grid-cols-2 lg:grid-cols-4"
+        : facts.length === 3
+          ? "grid-cols-1 sm:grid-cols-3"
+          : "grid-cols-1 sm:grid-cols-2";
 
   return (
-    <section aria-label={labels.overview} className="py-8 sm:py-10">
+    <section aria-label={labels.overview} className="py-6 sm:py-8">
       <div className="container-lava">
-        <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card sm:p-8 lg:p-10">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            {/* Core facts columns */}
-            {facts.length > 0 ? (
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:col-span-7 lg:grid-cols-3">
-                {facts.map((fact) => (
-                  <div key={fact.label} className="space-y-1.5 border-s border-line ps-4">
-                    <dt className="text-xs font-semibold text-faint">{fact.label}</dt>
-                    <dd
-                      className={
-                        fact.mono
-                          ? "text-base font-semibold text-text tabular-nums"
-                          : "text-sm font-semibold text-text sm:text-base"
-                      }
-                    >
-                      {fact.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
+        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface shadow-card">
+          {/* Tier 1: Balanced horizontal project dossier bar — zero orphan empty cells */}
+          {facts.length > 0 ? (
+            <dl className={`grid ${factsColsClass} divide-y divide-line sm:divide-y-0 lg:divide-x rtl:lg:divide-x-reverse`}>
+              {facts.map((fact) => (
+                <div
+                  key={fact.label}
+                  className="flex flex-col gap-1.5 px-5 py-4 sm:px-6 sm:py-5 [&:last-child:nth-child(odd)]:col-span-2 sm:[&:last-child:nth-child(odd)]:col-span-1"
+                >
+                  <dt className="text-[11px] font-semibold tracking-[0.1em] text-faint uppercase rtl:tracking-normal rtl:normal-case">
+                    {fact.label}
+                  </dt>
+                  <dd
+                    className={
+                      fact.mono
+                        ? "font-display text-base font-bold text-text tabular-nums sm:text-lg"
+                        : "text-sm font-semibold text-text sm:text-[0.95rem]"
+                    }
+                  >
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
 
-            {/* Services, Technologies & Live links */}
-            <div
-              className={
-                facts.length > 0
-                  ? "flex flex-col justify-between gap-6 border-t border-line pt-6 lg:col-span-5 lg:border-s lg:border-t-0 lg:ps-8 lg:pt-0"
-                  : "flex flex-col justify-between gap-6 lg:col-span-12"
-              }
-            >
-              <div className="space-y-5">
+          {/* Tier 2: Services, Technologies & Live Links */}
+          {hasLowerTier ? (
+            <div className="grid grid-cols-1 gap-6 border-t border-line bg-pearl-100/70 px-5 py-5 sm:px-6 sm:py-6 lg:grid-cols-12 lg:items-center">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-9">
                 {project.services.length > 0 ? (
                   <div className="space-y-2.5">
-                    <h2 className="text-xs font-semibold text-faint">{labels.services}</h2>
+                    <h2 className="text-[11px] font-semibold tracking-[0.1em] text-faint uppercase rtl:tracking-normal rtl:normal-case">
+                      {labels.services}
+                    </h2>
                     <div className="flex flex-wrap gap-2">
                       {project.services.map((service) => (
                         <Link
                           key={service.id}
                           href={`/services/${service.slug}`}
                           data-cursor="pointer"
-                          className="inline-flex items-center rounded-pill border border-line-strong bg-surface px-3.5 py-1.5 text-xs font-medium text-text transition-colors hover:border-line-lava-strong hover:text-accent-text"
+                          className="group inline-flex items-center gap-1.5 rounded-pill border border-line-strong bg-surface px-3.5 py-1.5 text-xs font-semibold text-text transition-colors hover:border-line-lava-strong hover:text-accent-text"
                         >
-                          {service.title}
+                          <span>{service.title}</span>
+                          <ArrowUpRight
+                            aria-hidden="true"
+                            className="rtl-flip size-3 text-faint transition-colors group-hover:text-accent-text"
+                          />
                         </Link>
                       ))}
                     </div>
@@ -116,10 +130,12 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
 
                 {project.technologies.length > 0 ? (
                   <div className="space-y-2.5">
-                    <h2 className="text-xs font-semibold text-faint">{labels.technologies}</h2>
-                    <div className="flex flex-wrap gap-2">
+                    <h2 className="text-[11px] font-semibold tracking-[0.1em] text-faint uppercase rtl:tracking-normal rtl:normal-case">
+                      {labels.technologies}
+                    </h2>
+                    <div className="flex flex-wrap gap-1.5">
                       {project.technologies.map((tech) => (
-                        <Chip key={tech.slug}>
+                        <Chip key={tech.slug} className="bg-surface">
                           <span dir="ltr" className="inline-flex items-center gap-1.5">
                             {tech.icon ? (
                               <Image
@@ -140,26 +156,33 @@ export function CaseStudyFactsRail({ locale, project, labels }: CaseStudyFactsRa
               </div>
 
               {externalLinks.length > 0 ? (
-                <div className="space-y-2.5 border-t border-line pt-5">
-                  <span className="text-xs font-semibold text-faint">
+                <div className="flex flex-col items-start gap-2.5 border-t border-line pt-4 lg:col-span-3 lg:items-end lg:border-s lg:border-t-0 lg:ps-6 lg:pt-0">
+                  <span className="text-[11px] font-semibold tracking-[0.1em] text-faint uppercase rtl:tracking-normal rtl:normal-case">
                     {isRtl ? "روابط مباشرة" : "Live links"}
                   </span>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  <div className="flex flex-wrap items-center gap-2 lg:justify-end">
                     {externalLinks.map((link) => (
-                      <TextLink
+                      <a
                         key={link.href}
                         href={link.href}
-                        icon="up-right"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="pointer"
                         aria-label={`${link.label} (${labels.openInNewTab})`}
+                        className="group inline-flex h-10 items-center gap-2 rounded-pill border border-line-lava bg-surface px-4 text-xs font-semibold text-accent-text shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-line-lava-strong hover:bg-[color-mix(in_oklab,var(--lava-500)_8%,white)] hover:shadow-card sm:text-sm"
                       >
-                        {link.label}
-                      </TextLink>
+                        <span>{link.label}</span>
+                        <ArrowUpRight
+                          aria-hidden="true"
+                          className="rtl-flip size-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
+                        />
+                      </a>
                     ))}
                   </div>
                 </div>
               ) : null}
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </section>

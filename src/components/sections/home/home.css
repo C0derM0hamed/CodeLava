@@ -201,8 +201,8 @@
       text-align: center;
       justify-self: center;
       align-self: end;
-      max-inline-size: 22rem;
-      padding-block-end: 3rem;
+      max-inline-size: 23rem;
+      padding-block-end: clamp(3.5rem, 8svh, 5rem);
     }
 
     .dl-stage[data-story] .hero-return-rule,
@@ -359,10 +359,16 @@
   color: var(--text);
 }
 
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow {
+  padding-block: 0.45rem;
+}
+
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow__label {
   font-family: var(--font-hero-display);
   font-size: 0.84rem;
   font-weight: 500;
+  line-height: 1.6;
+  padding-block: 0.05em;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -372,6 +378,10 @@
     gap: 0.6rem;
     padding-block: 0.525rem;
     padding-inline: 1rem 1.2rem;
+  }
+
+  :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow {
+    padding-block: 0.475rem;
   }
 
   .hero-eyebrow__code {
@@ -385,6 +395,7 @@
 
   :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow__label {
     font-size: 0.9rem;
+    line-height: 1.6;
   }
 }
 
@@ -810,17 +821,21 @@
 }
 
 @media (max-width: 479.98px) {
+  .hero-actions {
+    gap: 0.625rem;
+  }
+
   .hero-cta {
-    min-block-size: 3rem;
-    padding-inline: 1.05rem 0.375rem;
-    gap: 0.55rem;
-    font-size: 0.875rem;
+    min-block-size: 2.875rem;
+    padding-inline: 0.95rem 0.35rem;
+    gap: 0.5rem;
+    font-size: 0.84rem;
   }
 
   .hero-cta--primary .hero-cta__well,
   .hero-cta--secondary .hero-cta__well {
-    inline-size: 1.9rem;
-    block-size: 1.9rem;
+    inline-size: 1.85rem;
+    block-size: 1.85rem;
   }
 }
 
@@ -924,14 +939,77 @@
   }
 }
 
+/* ---------------------------------------------------- atmospheric bands */
+
+/* Subtle warm-pearl tinted band to establish alternating rhythm across lower home sections */
+.home-band--tinted {
+  position: relative;
+  background:
+    radial-gradient(65% 50% at 12% 0%, color-mix(in oklab, var(--lava-100) 28%, transparent) 0%, transparent 65%),
+    radial-gradient(55% 45% at 88% 100%, color-mix(in oklab, var(--mist) 65%, transparent) 0%, transparent 70%),
+    var(--pearl-100);
+  border-block: 1px solid var(--line);
+}
+
+[dir="rtl"] .home-band--tinted {
+  background:
+    radial-gradient(65% 50% at 88% 0%, color-mix(in oklab, var(--lava-100) 28%, transparent) 0%, transparent 65%),
+    radial-gradient(55% 45% at 12% 100%, color-mix(in oklab, var(--mist) 65%, transparent) 0%, transparent 70%),
+    var(--pearl-100);
+}
+
 /* ------------------------------------------------------------ trust strip */
 
-.home-clients__item + .home-clients__item {
-  border-inline-start: 1px solid var(--line-strong);
+.home-clients-band {
+  position: relative;
+  border-block-end: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--lava-100) 14%, var(--pearl-50)) 0%, var(--pearl-100) 100%);
 }
+
+.home-clients__dot {
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  border-radius: 999px;
+  background: var(--lava-500);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lava-500) 18%, transparent);
+  flex: none;
+}
+
+.home-clients__item {
+  position: relative;
+  border-radius: var(--radius-sm);
+  transition:
+    background-color 260ms var(--ease-out-expo),
+    box-shadow 260ms var(--ease-out-expo),
+    transform 260ms var(--ease-out-expo);
+}
+
+.home-clients__item:hover {
+  background: color-mix(in oklab, var(--pearl-50) 90%, transparent);
+  box-shadow: var(--shadow-xs);
+  transform: translateY(-1px);
+}
+
+.home-clients__item + .home-clients__item::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 22%;
+  inline-size: 1px;
+  background: linear-gradient(180deg, transparent, var(--line-strong), transparent);
+}
+
 @media (max-width: 1023.98px) {
-  .home-clients__item + .home-clients__item {
-    border-inline-start: 0;
+  .home-clients__item {
+    border: 1px solid var(--line);
+    background: color-mix(in oklab, var(--pearl-50) 75%, transparent);
+    padding-block: 0.75rem;
+    padding-inline: 0.875rem;
+  }
+
+  .home-clients__item + .home-clients__item::before {
+    display: none;
   }
 }
 
@@ -939,99 +1017,183 @@
 
 .home-service {
   position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.125rem;
   block-size: 100%;
-  min-block-size: 13.5rem;
+  min-block-size: 11.25rem;
   padding: var(--space-card);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
   box-shadow: var(--shadow-card);
   transition:
-    transform 300ms var(--ease-out-expo),
-    box-shadow 300ms var(--ease-out-expo),
-    border-color 300ms var(--ease-out-expo);
+    transform 340ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    background-color 300ms var(--ease-out-expo);
 }
+
+.home-service::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 18%;
+  block-size: 2px;
+  border-radius: 0 0 999px 999px;
+  background: var(--gradient-heat-seam);
+  opacity: 0;
+  transform: scaleX(0.45);
+  transition:
+    opacity 320ms var(--ease-out-expo),
+    transform 420ms var(--ease-out-expo);
+}
+
 @media (min-width: 640px) {
   .home-service {
-    min-block-size: 14.5rem;
+    gap: 1.25rem;
+    min-block-size: 14.75rem;
   }
 }
+
 .home-service:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lift);
   border-color: var(--line-lava);
 }
+
+.home-service:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
 .home-service:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
 }
+
 .home-service__icon {
   display: inline-grid;
   place-items: center;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
-  border-radius: 12px;
+  inline-size: 2.875rem;
+  block-size: 2.875rem;
+  border-radius: 13px;
+  border: 1px solid color-mix(in oklab, var(--lava-500) 14%, transparent);
   background: var(--accent-soft);
   color: var(--accent-text);
-  transition: background-color 250ms ease;
+  transition:
+    background-color 280ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo),
+    transform 340ms var(--ease-out-expo),
+    box-shadow 300ms var(--ease-out-expo);
 }
+
 .home-service:hover .home-service__icon {
   background: var(--accent-soft-strong);
+  border-color: var(--line-lava);
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 8px 18px -10px color-mix(in oklab, var(--lava-500) 45%, transparent);
 }
+
 .home-service__arrow {
   display: inline-grid;
   place-items: center;
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: 2.125rem;
+  block-size: 2.125rem;
   border-radius: 999px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   color: var(--text-faint);
   transition:
-    color 250ms ease,
-    border-color 250ms ease,
-    background-color 250ms ease;
+    color 260ms var(--ease-out-expo),
+    border-color 260ms var(--ease-out-expo),
+    background-color 260ms var(--ease-out-expo),
+    transform 300ms var(--ease-out-expo);
 }
+
 .home-service:hover .home-service__arrow {
-  color: var(--accent-text);
-  border-color: var(--line-lava);
-  background: var(--accent-soft);
+  color: var(--on-accent);
+  border-color: transparent;
+  background: var(--gradient-cta);
+  box-shadow: var(--shadow-lava);
+  transform: scale(1.05);
 }
 
 .home-service--featured {
+  isolation: isolate;
   overflow: hidden;
-  border-color: color-mix(in oklab, var(--lava-500) 42%, transparent);
+  border-color: color-mix(in oklab, var(--lava-400) 44%, transparent);
   background:
-    radial-gradient(90% 80% at 92% 6%, color-mix(in oklab, var(--lava-500) 62%, transparent) 0%, color-mix(in oklab, var(--lava-600) 26%, transparent) 40%, transparent 74%),
-    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+    radial-gradient(95% 85% at 94% 4%, color-mix(in oklab, var(--lava-500) 64%, transparent) 0%, color-mix(in oklab, var(--lava-600) 28%, transparent) 38%, transparent 72%),
+    radial-gradient(70% 60% at 8% 100%, color-mix(in oklab, var(--lava-700) 24%, transparent) 0%, transparent 65%),
+    linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 56%, var(--ink-950) 100%);
   box-shadow:
-    0 20px 44px -18px color-mix(in oklab, var(--lava-600) 50%, transparent),
-    0 12px 30px -14px color-mix(in oklab, var(--ink-950) 45%, transparent);
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 22%, transparent),
+    0 22px 46px -18px color-mix(in oklab, var(--lava-600) 52%, transparent),
+    0 14px 32px -14px color-mix(in oklab, var(--ink-950) 48%, transparent);
 }
+
+.home-service--featured::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in oklab, var(--ash-50) 11%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(155deg, black 0%, transparent 62%);
+  -webkit-mask-image: linear-gradient(155deg, black 0%, transparent 62%);
+  opacity: 0.55;
+}
+
+.home-service--featured > * {
+  position: relative;
+  z-index: 1;
+}
+
 [dir="rtl"] .home-service--featured {
   background:
-    radial-gradient(90% 80% at 8% 6%, color-mix(in oklab, var(--lava-500) 62%, transparent) 0%, color-mix(in oklab, var(--lava-600) 26%, transparent) 40%, transparent 74%),
-    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+    radial-gradient(95% 85% at 6% 4%, color-mix(in oklab, var(--lava-500) 64%, transparent) 0%, color-mix(in oklab, var(--lava-600) 28%, transparent) 38%, transparent 72%),
+    radial-gradient(70% 60% at 92% 100%, color-mix(in oklab, var(--lava-700) 24%, transparent) 0%, transparent 65%),
+    linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 56%, var(--ink-950) 100%);
 }
+
+[dir="rtl"] .home-service--featured::before {
+  mask-image: linear-gradient(205deg, black 0%, transparent 62%);
+  -webkit-mask-image: linear-gradient(205deg, black 0%, transparent 62%);
+}
+
+.home-service--featured::after {
+  opacity: 0.7;
+  transform: scaleX(0.75);
+}
+
 .home-service--featured:hover {
-  border-color: color-mix(in oklab, var(--lava-400) 60%, transparent);
+  border-color: color-mix(in oklab, var(--lava-400) 68%, transparent);
   box-shadow:
-    0 24px 54px -16px color-mix(in oklab, var(--lava-600) 60%, transparent),
-    0 16px 36px -14px color-mix(in oklab, var(--ink-950) 52%, transparent);
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 32%, transparent),
+    0 28px 58px -16px color-mix(in oklab, var(--lava-600) 62%, transparent),
+    0 18px 38px -14px color-mix(in oklab, var(--ink-950) 55%, transparent);
 }
+
 .home-service--featured .home-service__icon,
 .home-service--featured:hover .home-service__icon {
-  background: color-mix(in oklab, var(--ink-800) 70%, transparent);
-  border: 1px solid color-mix(in oklab, var(--ash-50) 16%, transparent);
+  background: color-mix(in oklab, var(--ink-800) 76%, transparent);
+  border: 1px solid color-mix(in oklab, var(--lava-300) 32%, transparent);
   color: var(--lava-400);
 }
-.home-service--featured .home-service__arrow,
-.home-service--featured:hover .home-service__arrow {
-  border-color: color-mix(in oklab, var(--lava-400) 60%, transparent);
-  background: color-mix(in oklab, var(--lava-500) 24%, transparent);
+
+.home-service--featured .home-service__arrow {
+  border-color: color-mix(in oklab, var(--lava-400) 52%, transparent);
+  background: color-mix(in oklab, var(--lava-500) 22%, transparent);
   color: var(--lava-100);
+}
+
+.home-service--featured:hover .home-service__arrow {
+  border-color: transparent;
+  background: var(--gradient-cta);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-lava);
 }
 
 /* -------------------------------------------------------- featured project */
@@ -1040,22 +1202,94 @@
   position: relative;
   isolation: isolate;
 }
+
 .home-project-stage::before {
   content: "";
   position: absolute;
-  inset: 18% 6% -8%;
+  inset: 14% 4% -10%;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--lava-400) 30%, transparent), transparent);
-  filter: blur(26px);
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--lava-400) 34%, transparent), transparent);
+  filter: blur(28px);
 }
+
+.home-project-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in oklab, var(--ink-900) 10%, transparent);
+  background: var(--surface);
+  padding: 0.5rem;
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    var(--shadow-lift);
+  transition:
+    transform 460ms var(--ease-out-expo),
+    box-shadow 460ms var(--ease-out-expo),
+    border-color 320ms var(--ease-out-expo);
+}
+
+.home-project-frame:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-lava);
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    0 28px 66px -22px color-mix(in oklab, var(--ink-900) 28%, transparent),
+    0 12px 32px -18px color-mix(in oklab, var(--lava-500) 35%, transparent);
+}
+
+.home-project-badge {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition:
+    opacity 320ms var(--ease-out-expo),
+    transform 380ms var(--ease-out-expo);
+}
+
+.home-project-frame:hover .home-project-badge,
+.home-project-frame:focus-visible .home-project-badge {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
 .home-project-plate {
   background:
     radial-gradient(70% 90% at 80% 110%, color-mix(in oklab, var(--lava-500) 50%, transparent) 0%, transparent 70%),
     linear-gradient(150deg, var(--ink-800) 0%, var(--ink-950) 100%);
 }
 
+/* Achievements KPI card cells */
+.home-stat-cell {
+  position: relative;
+  background: var(--surface);
+  transition: background-color 280ms var(--ease-out-expo);
+}
+
+.home-stat-cell::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 22%;
+  block-size: 2px;
+  border-radius: 0 0 999px 999px;
+  background: var(--gradient-heat-seam);
+  opacity: 0;
+  transition: opacity 280ms var(--ease-out-expo);
+}
+
+.home-stat-cell:hover {
+  background: color-mix(in oklab, var(--lava-100) 14%, var(--surface));
+}
+
+.home-stat-cell:hover::after {
+  opacity: 0.9;
+}
+
 /* ---------------------------------------------------------------- process */
+
+.home-step {
+  transition: transform 340ms var(--ease-out-expo);
+}
 
 .home-step__tile {
   position: relative;
@@ -1064,15 +1298,78 @@
   inline-size: 3.75rem;
   block-size: 3.75rem;
   border-radius: 16px;
-  border: 1px solid color-mix(in oklab, var(--lava-400) 45%, transparent);
+  border: 1px solid color-mix(in oklab, var(--lava-400) 48%, transparent);
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--lava-500) 22%, transparent), transparent 70%),
+    radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--lava-500) 24%, transparent), transparent 70%),
     var(--ink-800);
   color: var(--lava-400);
   box-shadow:
     0 0 0 6px var(--ink-900),
     0 0 28px -4px color-mix(in oklab, var(--lava-500) 55%, transparent);
+  transition:
+    transform 360ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    box-shadow 360ms var(--ease-out-expo),
+    color 260ms ease;
 }
+
+.home-step:hover .home-step__tile {
+  transform: translateY(-3px) scale(1.04);
+  border-color: color-mix(in oklab, var(--ember) 72%, transparent);
+  color: var(--lava-300);
+  box-shadow:
+    0 0 0 6px var(--ink-900),
+    0 0 36px -2px color-mix(in oklab, var(--lava-500) 75%, transparent);
+}
+
+.home-step__num {
+  position: absolute;
+  inset-block-start: -0.5rem;
+  inset-inline-end: -0.5rem;
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 1.45rem;
+  block-size: 1.45rem;
+  padding-inline: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--lava-400) 45%, transparent);
+  background: var(--ink-950);
+  color: var(--lava-300);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 4px 12px -4px color-mix(in oklab, var(--obsidian-950) 80%, transparent);
+}
+
+.home-process-pulse {
+  stroke-dasharray: 96 904;
+  stroke-dashoffset: 1000;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-process-pulse {
+    animation: home-process-flow 5.5s var(--ease-lava) infinite;
+  }
+}
+
+@keyframes home-process-flow {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  88% {
+    opacity: 0.95;
+  }
+  100% {
+    stroke-dashoffset: -120;
+    opacity: 0;
+  }
+}
+
 .home-market__icon {
   display: grid;
   place-items: center;
@@ -1084,17 +1381,75 @@
   color: var(--lava-400);
 }
 
+/* ----------------------------------------------------------- technologies */
+
+.home-tech-tile {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 320ms var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo);
+}
+
+.home-tech-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-lava);
+  box-shadow: var(--shadow-lift);
+}
+
+.home-tech-tile:hover .home-tech-tile__logo {
+  transform: scale(1.07);
+}
+
+.home-tech-more {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--surface) 70%, transparent);
+  transition:
+    transform 320ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo),
+    background-color 280ms var(--ease-out-expo),
+    color 260ms ease,
+    box-shadow 320ms var(--ease-out-expo);
+}
+
+.home-tech-more:hover {
+  transform: translateY(-3px);
+  border-style: solid;
+  border-color: var(--line-lava-strong);
+  background: color-mix(in oklab, var(--lava-100) 20%, var(--surface));
+  color: var(--accent-text);
+  box-shadow: var(--shadow-card);
+}
+
 /* ----------------------------------------------------------- testimonials */
 
 .reviews-spotlight {
   background:
-    radial-gradient(60% 80% at 90% 0%, color-mix(in oklab, var(--platform-glow, var(--lava-500)) 18%, transparent), transparent 68%),
+    radial-gradient(62% 82% at 92% 0%, color-mix(in oklab, var(--platform-glow, var(--lava-500)) 22%, transparent), transparent 68%),
     linear-gradient(155deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
 }
+
 [dir="rtl"] .reviews-spotlight {
   background:
-    radial-gradient(60% 80% at 10% 0%, color-mix(in oklab, var(--platform-glow, var(--lava-500)) 18%, transparent), transparent 68%),
+    radial-gradient(62% 82% at 8% 0%, color-mix(in oklab, var(--platform-glow, var(--lava-500)) 22%, transparent), transparent 68%),
     linear-gradient(205deg, var(--ink-800) 0%, var(--ink-900) 58%, var(--ink-950) 100%);
+}
+
+.reviews-spotlight::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 12%;
+  block-size: 1px;
+  pointer-events: none;
+  background: var(--gradient-heat-seam);
+  opacity: 0.7;
 }
 
 .reviews-card::before {
@@ -1110,11 +1465,36 @@
   );
   transition: opacity 280ms ease;
 }
+
 .reviews-card:hover::before {
   opacity: 1;
 }
 
+/* Mobile horizontal scroll-snap rail for testimonials (prevents 3,600px vertical bloat) */
+.home-reviews-rail {
+  scrollbar-width: none;
+}
+
+.home-reviews-rail::-webkit-scrollbar {
+  display: none;
+}
+
 /* ------------------------------------------------------------ about visual */
+
+.home-key-art-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-key-art-stage::before {
+  content: "";
+  position: absolute;
+  inset: 14% 6% -8%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--lava-500) 28%, transparent), transparent);
+  filter: blur(30px);
+}
 
 .home-key-art {
   position: relative;
@@ -1123,11 +1503,54 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lift);
 }
+
 .home-key-art::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ash-50) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ash-50) 14%, transparent);
   pointer-events: none;
+}
+
+.home-value-item {
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  margin-inline: -0.75rem;
+  transition:
+    background-color 260ms var(--ease-out-expo),
+    transform 300ms var(--ease-out-expo);
+}
+
+.home-value-item:hover {
+  background: color-mix(in oklab, var(--surface) 85%, transparent);
+  transform: translateX(2px);
+}
+
+[dir="rtl"] .home-value-item:hover {
+  transform: translateX(-2px);
+}
+
+/* ------------------------------------------------------------ FAQ accents */
+
+.home-faq-list [data-state="open"] {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--lava-100) 16%, var(--surface)) 0%, var(--surface) 58%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-service:hover,
+  .home-project-frame:hover,
+  .home-step:hover .home-step__tile,
+  .home-tech-tile:hover,
+  .home-tech-more:hover,
+  .home-clients__item:hover,
+  .home-value-item:hover {
+    transform: none;
+  }
+
+  .home-process-pulse {
+    animation: none;
+    display: none;
+  }
 }

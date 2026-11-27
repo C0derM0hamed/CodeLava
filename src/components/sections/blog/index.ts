@@ -1,6 +1,7 @@
 export { ArticleCard, FeaturedArticle, ArticleMeta } from "./ArticleCard";
 export { ArticleCover, BracketOrnament } from "./ArticleCover";
 export { BlogHero } from "./BlogHero";
+export { BlogTopicFilter } from "./BlogTopicFilter";
 export { BlogEmpty } from "./BlogEmpty";
 export { BlogPagination } from "./BlogPagination";
 export { ArticleHeader } from "./ArticleHeader";

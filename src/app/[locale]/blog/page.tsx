@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { ArticleCard, BlogEmpty, BlogHero, BlogPagination, FeaturedArticle } from "@/components/sections/blog";
-import { FilterPills } from "@/components/sections/process/kit";
+import { ArticleCard, BlogEmpty, BlogHero, BlogPagination, BlogTopicFilter, FeaturedArticle } from "@/components/sections/blog";
 import { routing } from "@/i18n/routing";
 import { formatNumber } from "@/lib/i18n-content";
 import { breadcrumbListJsonLd, JsonLd } from "@/lib/jsonld";
@@ -88,7 +87,22 @@ export default async function BlogPage({ params, searchParams }: Props) {
         ])}
       />
 
-      <BlogHero eyebrow={hero?.eyebrow} title={hero?.title || t("title")} description={hero?.description} />
+      <BlogHero
+        eyebrow={hero?.eyebrow}
+        title={hero?.title || t("title")}
+        description={hero?.description}
+        stats={
+          hasArticles
+            ? {
+                articleCount: fmt(everything.total),
+                articleLabel: tNav("blog"),
+                topicCount: fmt(tags.length),
+                topicLabel: t("allTopics"),
+                topTopics: tags.slice(0, 4).map(([name]) => name),
+              }
+            : undefined
+        }
+      />
 
       <section className="pb-[var(--section-y)]">
         <div className="container-lava space-y-[var(--space-heading)]">
@@ -102,7 +116,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
           ) : (
             <>
               {tags.length > 0 ? (
-                <FilterPills
+                <BlogTopicFilter
                   ariaLabel={t("filterByTopic")}
                   value={tag}
                   options={[

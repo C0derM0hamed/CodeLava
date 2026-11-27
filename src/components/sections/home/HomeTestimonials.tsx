@@ -127,11 +127,13 @@ function SourcePill({
 function StreamCard({
   testimonial,
   labels,
+  formatRating,
   active,
   onSelect,
 }: {
   testimonial: Testimonial;
   labels: HomeTestimonialsLabels;
+  formatRating: (value: number) => string;
   active: boolean;
   onSelect: () => void;
 }) {
@@ -159,13 +161,19 @@ function StreamCard({
       }}
       data-cursor="pointer"
       className={cn(
-        "reviews-card group relative flex h-full flex-col gap-5 overflow-hidden rounded-[var(--radius-md)] border bg-surface p-[var(--space-card)] text-start transition-all duration-300",
+        "reviews-card group relative flex h-full flex-col gap-4 overflow-hidden rounded-[var(--radius-md)] border bg-surface p-5 text-start transition-all duration-300 sm:gap-5 sm:p-6",
         active
           ? "border-lava-500/60 shadow-[0_18px_42px_-16px_color-mix(in_oklab,var(--lava-500)_35%,transparent)]"
           : "border-line shadow-card hover:-translate-y-0.5 hover:border-line-lava hover:shadow-lift",
       )}
     >
-      <div className="flex items-center justify-between gap-3">
+      {active ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-0.5 [background-image:var(--gradient-heat-seam)]"
+        />
+      ) : null}
+      <div className="flex items-center justify-between gap-2.5">
         <span
           className="inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] px-2.5 py-1 text-xs font-semibold"
           style={{ background: meta.soft, color: meta.badgeText }}
@@ -175,9 +183,9 @@ function StreamCard({
         </span>
         {testimonial.rating !== null ? (
           <div className="inline-flex items-center gap-1.5">
-            <Stars rating={testimonial.rating} label={labels.rating.replace("{value}", String(testimonial.rating))} />
+            <Stars rating={testimonial.rating} label={labels.rating.replace("{value}", formatRating(testimonial.rating))} />
             <span dir="ltr" className="font-mono text-xs font-semibold text-text tabular-nums">
-              {testimonial.rating.toFixed(1)}
+              {formatRating(testimonial.rating)}
             </span>
           </div>
         ) : null}
@@ -185,14 +193,14 @@ function StreamCard({
 
       <blockquote
         lang={testimonial.quoteLocale} dir="auto"
-        className="line-clamp-4 text-[0.9375rem] leading-relaxed text-text/92"
+        className="line-clamp-4 text-[0.92rem] leading-relaxed text-text/92"
       >
         “{testimonial.quote}”
       </blockquote>
 
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-soft font-display text-sm font-bold text-accent-text ring-2 ring-bg">
+          <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-soft font-display text-xs font-bold text-accent-text ring-2 ring-bg sm:size-10 sm:text-sm">
             {testimonial.avatar ? (
               <Image src={testimonial.avatar.url} alt="" fill sizes="40px" className="object-cover" />
             ) : (
@@ -285,11 +293,24 @@ export function HomeTestimonials({
 
   const activeMeta = PLATFORM_META[activeItem.source] ?? PLATFORM_META.other;
   const activeRole = [activeItem.authorRole, activeItem.company].filter(Boolean).join(" · ");
+  const maxFive = formatNumber(5, locale, { useGrouping: false });
+  const slideCurrent = formatNumber(activeIndex + 1, locale, { minimumIntegerDigits: 2, useGrouping: false });
+  const slideTotal = formatNumber(filtered.length, locale, { minimumIntegerDigits: 2, useGrouping: false });
+
+  // Prevent orphan trailing cards on desktop grids while keeping mobile as a sleek snap-scroll rail.
+  const desktopGridCols =
+    filtered.length === 1
+      ? "sm:grid-cols-1 sm:max-w-xl"
+      : filtered.length === 2
+        ? "sm:grid-cols-2"
+        : filtered.length === 4 || filtered.length === 8 || filtered.length >= 12
+          ? "sm:grid-cols-2 xl:grid-cols-4"
+          : "sm:grid-cols-2 lg:grid-cols-3";
 
   return (
     <section
       aria-labelledby="home-testimonials-title"
-      className="section-y relative overflow-x-clip"
+      className="section-y home-band--tinted relative overflow-x-clip"
     >
       <div className="container-lava space-y-[var(--space-heading)]">
         {/* Heading and rating across the displayed reviews */}
@@ -305,23 +326,23 @@ export function HomeTestimonials({
           />
 
           {aggregateRating !== null && (
-            <div className="inline-flex flex-wrap items-center gap-4 self-start rounded-[var(--radius-lg)] border border-line bg-surface px-5 py-3.5 shadow-card lg:self-end">
-              <div className="flex items-baseline gap-1.5">
-                <span dir="ltr" className="font-display text-3xl font-bold leading-none text-text tabular-nums">
+            <div className="inline-flex max-w-full flex-nowrap items-center gap-3.5 self-start rounded-[var(--radius-lg)] border border-line bg-surface px-4 py-3 shadow-card sm:gap-4 sm:px-5 sm:py-3.5 lg:self-end">
+              <div className="flex shrink-0 items-baseline gap-1">
+                <span dir="ltr" className="font-display text-2xl font-bold leading-none text-text tabular-nums sm:text-3xl">
                   {displayRating(aggregateRating)}
                 </span>
-                <span dir="ltr" className="text-sm font-medium text-faint">
-                  / 5
+                <span dir="ltr" className="text-xs font-medium text-faint sm:text-sm">
+                  / {maxFive}
                 </span>
               </div>
-              <div className="h-9 w-px bg-line" aria-hidden="true" />
-              <div className="grid gap-1">
+              <div className="h-8 w-px shrink-0 bg-line sm:h-9" aria-hidden="true" />
+              <div className="grid min-w-0 gap-1">
                 <Stars
                   rating={aggregateRating}
                   label={labels.rating.replace("{value}", displayRating(aggregateRating))}
                   size="md"
                 />
-                <span className="text-xs font-medium text-muted">
+                <span className="truncate text-[0.72rem] font-medium text-muted sm:text-xs">
                   {labels.ratedReviewsLabel.replace("{count}", formatNumber(ratedCount, locale))}
                 </span>
               </div>
@@ -416,20 +437,27 @@ export function HomeTestimonials({
             className="pointer-events-none absolute -bottom-32 -start-16 size-80 rounded-full opacity-20 blur-3xl"
             style={{ background: "var(--lava-500)" }}
           />
+          {/* Subtle oversized editorial quotation watermark */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 end-8 select-none font-display text-[9rem] font-bold leading-none text-white/[0.04] sm:text-[12rem]"
+          >
+            “
+          </span>
 
-          <div className="relative z-10 grid gap-7">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-3">
+          <div className="relative z-10 flex min-w-0 flex-col gap-6 sm:gap-7">
+            <div className="flex min-w-0 flex-wrap items-center justify-between gap-3.5">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                 <SourcePill testimonial={activeItem} labels={labels} />
                 {activeItem.rating !== null ? (
                   <div className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-white/12 bg-white/6 px-3 py-1.5">
                     <Stars
                       rating={activeItem.rating}
-                      label={labels.rating.replace("{value}", String(activeItem.rating))}
+                      label={labels.rating.replace("{value}", displayRating(activeItem.rating))}
                       size="md"
                     />
                     <span dir="ltr" className="font-mono text-xs font-bold text-ash-50 tabular-nums">
-                      {activeItem.rating.toFixed(1)}
+                      {displayRating(activeItem.rating)}
                     </span>
                   </div>
                 ) : null}
@@ -439,11 +467,11 @@ export function HomeTestimonials({
                 <Link
                   href={`/work/${activeItem.project.slug}`}
                   data-cursor="pointer"
-                  className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-lava-400/35 bg-lava-500/12 px-3.5 py-1.5 text-xs font-semibold text-lava-100 transition-colors hover:border-lava-400/70 hover:bg-lava-500/20"
+                  className="inline-flex max-w-full items-center gap-2 rounded-[var(--radius-pill)] border border-lava-400/35 bg-lava-500/12 px-3.5 py-1.5 text-xs font-semibold text-lava-100 transition-colors hover:border-lava-400/70 hover:bg-lava-500/20"
                 >
-                  <span className="text-lava-300">{labels.deliveredProject}:</span>
-                  <span>{activeItem.project.title}</span>
-                  <ArrowUpRightIcon size={12} />
+                  <span className="shrink-0 text-lava-300">{labels.deliveredProject}:</span>
+                  <span className="truncate">{activeItem.project.title}</span>
+                  <ArrowUpRightIcon size={12} className="shrink-0" />
                 </Link>
               ) : null}
             </div>
@@ -451,25 +479,25 @@ export function HomeTestimonials({
             <blockquote
               aria-live="polite"
               lang={activeItem.quoteLocale} dir="auto"
-              className="max-w-4xl font-display text-xl font-medium leading-[1.55] text-ash-50 sm:text-2xl lg:text-[1.75rem]"
+              className="max-w-4xl break-words font-display text-lg font-medium leading-[1.6] text-ash-50 sm:text-2xl lg:text-[1.75rem]"
             >
               “{activeItem.quote}”
             </blockquote>
 
-            <div className="flex flex-wrap items-center justify-between gap-5 border-t border-white/10 pt-6">
-              <div className="flex items-center gap-4">
-                <span className="relative grid size-13 shrink-0 place-items-center overflow-hidden rounded-full bg-lava-500/20 font-display text-base font-bold text-lava-100 ring-2 ring-white/15">
+            <div className="flex min-w-0 flex-col gap-5 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
+                <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-lava-500/20 font-display text-sm font-bold text-lava-100 ring-2 ring-white/15 sm:size-13 sm:text-base">
                   {activeItem.avatar ? (
                     <Image src={activeItem.avatar.url} alt="" fill sizes="52px" className="object-cover" />
                   ) : (
                     <span aria-hidden="true">{initials(activeItem.authorName)}</span>
                   )}
                 </span>
-                <div>
-                  <p className="flex items-center gap-1.5 font-display text-base font-semibold text-ash-50">
-                    <span>{activeItem.authorName}</span>
+                <div className="min-w-0">
+                  <p className="font-display text-base font-semibold text-ash-50">
+                    {activeItem.authorName}
                   </p>
-                  <p className="text-sm text-ink-200">
+                  <p className="text-sm leading-snug text-ink-200">
                     {[activeRole, activeItem.countryName].filter(Boolean).join(" · ")}
                   </p>
                 </div>
@@ -477,15 +505,33 @@ export function HomeTestimonials({
 
               {filtered.length > 1 ? (
                 <div className="flex items-center gap-3">
+                  <div className="hidden items-center gap-1.5 sm:flex" aria-hidden="true">
+                    {filtered.map((item) => {
+                      const isCurrent = item.id === activeItem.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setActiveId(item.id)}
+                          data-cursor="pointer"
+                          className={cn(
+                            "h-1.5 rounded-full transition-all duration-300",
+                            isCurrent ? "w-6 bg-lava-400" : "w-1.5 bg-white/20 hover:bg-white/40",
+                          )}
+                        />
+                      );
+                    })}
+                  </div>
                   <span dir="ltr" className="font-mono text-xs text-ink-300 tabular-nums">
-                    {String(activeIndex + 1).padStart(2, "0")} / {String(filtered.length).padStart(2, "0")}
+                    {slideCurrent} / {slideTotal}
                   </span>
                   <button
                     type="button"
                     onClick={() => stepSpotlight(-1)}
                     aria-label={labels.previous}
                     data-cursor="pointer"
-                    className="grid size-11 place-items-center rounded-full border border-white/16 bg-white/6 text-ash-50 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/14"
+                    className="grid size-10 place-items-center rounded-full border border-white/16 bg-white/6 text-ash-50 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/14 sm:size-11"
                   >
                     <ArrowLeftIcon size={17} />
                   </button>
@@ -494,7 +540,7 @@ export function HomeTestimonials({
                     onClick={() => stepSpotlight(1)}
                     aria-label={labels.next}
                     data-cursor="pointer"
-                    className="grid size-11 place-items-center rounded-full text-white shadow-[var(--shadow-lava)] [background-image:var(--gradient-cta)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lava-hover)]"
+                    className="grid size-10 place-items-center rounded-full text-white shadow-[var(--shadow-lava)] [background-image:var(--gradient-cta)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lava-hover)] sm:size-11"
                   >
                     <ArrowRightIcon size={17} />
                   </button>
@@ -508,13 +554,17 @@ export function HomeTestimonials({
       <div className="container-lava mt-[var(--space-grid-lg)]">
         <ul
           aria-label={labels.region}
-          className="grid gap-[var(--space-grid)] sm:grid-cols-2 lg:grid-cols-3"
+          className={cn(
+            "home-reviews-rail flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:gap-[var(--space-grid)] sm:overflow-visible sm:pb-0",
+            desktopGridCols,
+          )}
         >
           {filtered.map((testimonial) => (
-            <li key={testimonial.id} className="min-w-0">
+            <li key={testimonial.id} className="w-[82vw] max-w-[20.5rem] shrink-0 snap-start sm:w-auto sm:max-w-none sm:min-w-0">
               <StreamCard
                 testimonial={testimonial}
                 labels={labels}
+                formatRating={displayRating}
                 active={testimonial.id === activeItem.id}
                 onSelect={() => setActiveId(testimonial.id)}
               />

@@ -73,7 +73,6 @@ export function WorkLedger({
     };
   }, []);
 
-  // GSAP ScrollTrigger subtle lift for rows
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -86,10 +85,10 @@ export function WorkLedger({
       for (const row of rows) {
         gsap.fromTo(
           row,
-          { y: 18 },
+          { y: 16 },
           {
             y: 0,
-            duration: 0.65,
+            duration: 0.62,
             ease: "power3.out",
             clearProps: "transform",
             scrollTrigger: {
@@ -131,14 +130,19 @@ export function WorkLedger({
       const targetTilt = Math.max(-4, Math.min(4, velX * 0.24));
       state.tilt += (targetTilt - state.tilt) * 0.18;
 
-      // Gentle decaying heat distortion pulse on movement / hover entry
-      state.heatScale = Math.max(1.2, state.heatScale * 0.92 + Math.min(4.5, Math.abs(dx) * 0.08));
+      state.heatScale = Math.max(
+        1.2,
+        state.heatScale * 0.92 + Math.min(4.5, Math.abs(dx) * 0.08),
+      );
       if (displacementRef.current) {
         displacementRef.current.setAttribute("scale", state.heatScale.toFixed(2));
       }
       if (turbulenceRef.current) {
         const freq = 0.016 + Math.sin(performance.now() * 0.0028) * 0.004;
-        turbulenceRef.current.setAttribute("baseFrequency", `${freq.toFixed(4)} ${(freq * 1.4).toFixed(4)}`);
+        turbulenceRef.current.setAttribute(
+          "baseFrequency",
+          `${freq.toFixed(4)} ${(freq * 1.4).toFixed(4)}`,
+        );
       }
 
       el.style.transform = `translate3d(${state.currX.toFixed(1)}px, ${state.currY.toFixed(1)}px, 0) rotate(${state.tilt.toFixed(2)}deg)`;
@@ -157,8 +161,14 @@ export function WorkLedger({
       const rawX = clientX + offsetX;
       const rawY = clientY - PREVIEW_HEIGHT * 0.52;
 
-      const clampedX = Math.max(margin, Math.min(window.innerWidth - PREVIEW_WIDTH - margin, rawX));
-      const clampedY = Math.max(margin, Math.min(window.innerHeight - PREVIEW_HEIGHT - margin, rawY));
+      const clampedX = Math.max(
+        margin,
+        Math.min(window.innerWidth - PREVIEW_WIDTH - margin, rawX),
+      );
+      const clampedY = Math.max(
+        margin,
+        Math.min(window.innerHeight - PREVIEW_HEIGHT - margin, rawY),
+      );
 
       pointerPos.current.targetX = clampedX;
       pointerPos.current.targetY = clampedY;
@@ -208,8 +218,7 @@ export function WorkLedger({
   const activeProject = projects.find((item) => item.slug === hoveredSlug) ?? null;
 
   return (
-    <section ref={rootRef} className="section-y">
-      {/* Subtle SVG turbulence filter for lava-tinted heat shimmer on floating preview */}
+    <section ref={rootRef} className="py-12 sm:py-16 lg:py-20">
       <svg aria-hidden="true" className="pointer-events-none fixed h-0 w-0 overflow-hidden">
         <defs>
           <filter id={heatFilterId} x="-8%" y="-8%" width="116%" height="116%">
@@ -235,15 +244,20 @@ export function WorkLedger({
 
       <div className="container-lava space-y-[var(--space-heading)]">
         {headingTitle ? (
-          <div className="flex flex-col items-start gap-[var(--space-copy)]">
-            {headingKicker ? <Kicker>{headingKicker}</Kicker> : null}
-            <h2 className="text-display-md text-text">{headingTitle}</h2>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-col items-start gap-[var(--space-copy)]">
+              {headingKicker ? <Kicker>{headingKicker}</Kicker> : null}
+              <h2 className="text-display-md text-text">{headingTitle}</h2>
+            </div>
+            <p className="hidden text-xs font-medium text-faint lg:block">
+              {isRtl ? "مرّر فوق أي مشروع لمعاينة سريعة" : "Hover any project for a live preview"}
+            </p>
           </div>
         ) : null}
 
         <div
           onPointerLeave={handleListPointerLeave}
-          className="divide-y divide-line overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface shadow-card"
+          className="divide-y divide-line overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface shadow-card"
         >
           {projects.map((project, idx) => {
             const isHovered = hoveredSlug === project.slug;
@@ -251,6 +265,7 @@ export function WorkLedger({
             const yearText = project.year
               ? formatNumber(project.year, locale, { useGrouping: false })
               : null;
+            const topMetric = project.metrics?.[0];
 
             return (
               <div key={project.id} data-ledger-row>
@@ -260,106 +275,121 @@ export function WorkLedger({
                   data-project-slug={project.slug}
                   onPointerEnter={(e) => handleRowPointerEnter(project.slug, e)}
                   onPointerMove={handleRowPointerMove}
-                  className={cn(
-                    "group relative grid grid-cols-1 gap-6 px-5 py-8 transition-colors duration-300 sm:px-8 sm:py-10 lg:grid-cols-12 lg:items-center lg:gap-10",
-                    "hover:bg-[color-mix(in_oklab,var(--lava-100)_22%,white)] focus-visible:bg-[color-mix(in_oklab,var(--lava-100)_30%,white)]",
-                  )}
+                  className="work-ledger-row group grid grid-cols-1 gap-5 px-4 py-6 sm:px-7 sm:py-8 lg:grid-cols-12 lg:items-center lg:gap-7"
                 >
                   {/* Hover molten start-edge seam */}
                   <span
                     aria-hidden="true"
                     className={cn(
                       "pointer-events-none absolute inset-y-0 start-0 w-[3px] origin-top transition-transform duration-300 ease-[var(--ease-out-expo)]",
-                      isHovered ? "scale-y-100" : "scale-y-0 group-hover:scale-y-100 group-focus-visible:scale-y-100",
+                      isHovered
+                        ? "scale-y-100"
+                        : "scale-y-0 group-hover:scale-y-100 group-focus-visible:scale-y-100",
                     )}
                     style={{ background: "var(--gradient-lava)" }}
                   />
 
-                  {/* Touch / Mobile / Coarse-pointer inline cover */}
-                  {project.cover ? (
-                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-md)] border border-line bg-pearl-300 lg:hidden">
-                      <Image
-                        src={project.cover.url}
-                        alt={project.cover.alt || project.title}
-                        width={project.cover.width ?? 1200}
-                        height={project.cover.height ?? 750}
-                        sizes="(max-width: 640px) 100vw, 640px"
-                        placeholder={project.cover.blurDataUrl ? "blur" : "empty"}
-                        blurDataURL={project.cover.blurDataUrl ?? undefined}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ) : null}
-
-                  {/* Index + Title + Mono Metadata */}
-                  <div className="flex items-start gap-4 ps-3 sm:gap-6 sm:ps-4 lg:col-span-7">
+                  {/* Unified visible cover thumbnail (full-width 16:10 on mobile, framed compact still on desktop) */}
+                  <div className="flex items-start gap-4 lg:col-span-7 lg:items-center lg:gap-5">
                     <span
                       dir="ltr"
-                      className="mt-2 shrink-0 text-xs font-semibold text-accent-text tabular-nums"
+                      className="hidden shrink-0 font-mono text-xs font-semibold text-accent-text tabular-nums lg:inline-block lg:w-6"
                     >
                       {rowNo}
                     </span>
 
-                    <div className="min-w-0 space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3
-                          className={cn(
-                            project.featured ? "text-display-md" : "text-display-sm",
-                            "text-text transition-colors duration-300 group-hover:text-accent-text",
-                          )}
-                        >
-                          {project.title}
-                        </h3>
-                        {project.featured ? (
-                          <Chip tone="accent">{isRtl ? "مميز" : "Featured"}</Chip>
-                        ) : null}
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-faint">
-                        {project.clientName ? (
-                          <span className="font-semibold text-text">{project.clientName}</span>
-                        ) : null}
-                        {project.industry ? (
-                          <>
-                            {project.clientName ? <span aria-hidden="true">/</span> : null}
-                            <span>{project.industry}</span>
-                          </>
-                        ) : null}
-                        {project.clientCountryName ? (
-                          <>
-                            <span aria-hidden="true">/</span>
-                            <span>{project.clientCountryName}</span>
-                          </>
-                        ) : null}
-                        {yearText ? (
-                          <>
-                            <span aria-hidden="true">/</span>
-                            <span className="tabular-nums text-muted">{yearText}</span>
-                          </>
-                        ) : null}
-                      </div>
-
-                      {project.summary ? (
-                        <p className="max-w-2xl text-sm leading-relaxed text-muted">
-                          {project.summary}
-                        </p>
+                    <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-5">
+                      {project.cover ? (
+                        <div className="work-ledger-thumb aspect-[16/10] w-full shrink-0 lg:h-[82px] lg:w-[132px] lg:aspect-auto">
+                          <Image
+                            src={project.cover.url}
+                            alt={project.cover.alt || project.title}
+                            width={project.cover.width ?? 1200}
+                            height={project.cover.height ?? 750}
+                            sizes="(max-width: 1023px) 92vw, 140px"
+                            placeholder={project.cover.blurDataUrl ? "blur" : "empty"}
+                            blurDataURL={project.cover.blurDataUrl ?? undefined}
+                            className="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
+                          />
+                        </div>
                       ) : null}
+
+                      <div className="min-w-0 flex-1 space-y-2">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <span
+                            dir="ltr"
+                            className="font-mono text-xs font-semibold text-accent-text tabular-nums lg:hidden"
+                          >
+                            {rowNo}
+                          </span>
+                          <h3
+                            className={cn(
+                              "text-display-sm text-text transition-colors duration-300 group-hover:text-accent-text",
+                            )}
+                          >
+                            {project.title}
+                          </h3>
+                          {project.featured ? (
+                            <Chip tone="accent">{isRtl ? "مميز" : "Featured"}</Chip>
+                          ) : null}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-faint sm:text-sm">
+                          {project.clientName ? (
+                            <span className="font-semibold text-text">{project.clientName}</span>
+                          ) : null}
+                          {project.industry ? (
+                            <>
+                              {project.clientName ? <span aria-hidden="true">·</span> : null}
+                              <span>{project.industry}</span>
+                            </>
+                          ) : null}
+                          {project.clientCountryName ? (
+                            <>
+                              <span aria-hidden="true">·</span>
+                              <span>{project.clientCountryName}</span>
+                            </>
+                          ) : null}
+                          {yearText ? (
+                            <>
+                              <span aria-hidden="true">·</span>
+                              <span className="tabular-nums text-muted">{yearText}</span>
+                            </>
+                          ) : null}
+                        </div>
+
+                        {project.summary ? (
+                          <p className="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted">
+                            {project.summary}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Category + Mono Tech Tags + Arrow */}
-                  <div className="flex flex-wrap items-center justify-between gap-4 ps-3 sm:ps-4 lg:col-span-5 lg:justify-end lg:ps-0 lg:pe-4">
-                    <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                  {/* Right rail: Outcome highlight + Category + Tech + Action */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4 lg:col-span-5 lg:flex-nowrap lg:justify-end lg:border-t-0 lg:pt-0">
+                    <div className="flex flex-wrap items-center gap-1.5 lg:justify-end">
+                      {topMetric ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-pearl-100 px-3 py-1 text-xs font-semibold text-text">
+                          <span dir="ltr" className="text-accent-text tabular-nums">
+                            {topMetric.value}
+                          </span>
+                          <span className="hidden text-muted 2xl:inline">{topMetric.label}</span>
+                        </span>
+                      ) : null}
                       {project.category ? <Chip tone="accent">{project.category.name}</Chip> : null}
-                      {project.technologies?.slice(0, 3).map((tech) => (
-                        <Chip key={tech.slug}>
+                      {project.technologies?.slice(0, 2).map((tech) => (
+                        <Chip key={tech.slug} className="bg-pearl-100">
                           <span dir="ltr">{tech.name}</span>
                         </Chip>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <span className="sr-only">{openLabel}</span>
+                    <div className="flex shrink-0 items-center gap-2.5">
+                      <span className="text-xs font-semibold text-accent-text lg:sr-only">
+                        {openLabel}
+                      </span>
                       <span
                         aria-hidden="true"
                         className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-muted transition-all duration-300 ease-[var(--ease-out-expo)] group-hover:border-transparent group-hover:bg-[image:var(--gradient-cta)] group-hover:text-white group-hover:shadow-lava"
@@ -393,7 +423,6 @@ export function WorkLedger({
           )}
           style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
         >
-          {/* Framed cover / video with lava-tinted heat distortion */}
           <div className="relative h-full w-full overflow-hidden rounded-[var(--radius-lg)] border-[6px] border-white bg-pearl-300 shadow-lift">
             {projects.map((item) => {
               const isCurrent = activeProject?.slug === item.slug;
@@ -433,7 +462,7 @@ export function WorkLedger({
                     />
                   ) : null}
 
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-ink-900/80 via-ink-900/35 to-transparent px-4 py-3 text-white">
+                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-ink-900/85 via-ink-900/40 to-transparent px-4 py-3 text-white">
                     <span className="truncate text-xs font-semibold text-white">{item.title}</span>
                     {item.category ? (
                       <span className="shrink-0 text-[11px] font-semibold text-lava-300">

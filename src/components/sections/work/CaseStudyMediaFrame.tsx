@@ -112,14 +112,15 @@ export function CaseStudyMediaFrame({
   if (!cover && !video) return null;
 
   return (
-    <div
-      ref={frameRef}
-      className="relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-2 shadow-lift sm:p-3"
-    >
+    <div className="case-media-stage">
       <div
-        ref={mediaInnerRef}
-        className="relative aspect-[16/9] w-full overflow-hidden rounded-[calc(var(--radius-xl)-10px)] bg-pearl-300 will-change-transform"
+        ref={frameRef}
+        className="relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface p-2 shadow-lift sm:p-3"
       >
+        <div
+          ref={mediaInnerRef}
+          className="relative aspect-[16/9] w-full overflow-hidden rounded-[calc(var(--radius-xl)-10px)] border border-line bg-pearl-300 will-change-transform"
+        >
         {/* Poster / Cover Image (always rendered as LCP anchor & reduced-motion fallback) */}
         {cover ? (
           <Image
@@ -174,6 +175,7 @@ export function CaseStudyMediaFrame({
         </button>
       ) : null}
 
+      </div>
     </div>
   );
 }

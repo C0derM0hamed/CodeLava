@@ -27,11 +27,17 @@ export function AboutProof({
   if (achievements.length === 0 && clients.length === 0) return null;
 
   return (
-    <>
+    <div className="space-y-16 py-10 sm:space-y-22 sm:py-16">
       {achievements.length > 0 ? (
-        <section aria-labelledby="about-achievements-title" className="section-y">
-          <div className="container-lava grid gap-[var(--space-heading)]">
-            <SectionHeading layout="split" size="md" kicker={achievementsKicker} title={achievementsTitle} titleId="about-achievements-title" />
+        <section aria-labelledby="about-achievements-title">
+          <div className="container-lava grid gap-8 sm:gap-10">
+            <SectionHeading
+              layout="split"
+              size="md"
+              kicker={achievementsKicker}
+              title={achievementsTitle}
+              titleId="about-achievements-title"
+            />
             <Reveal mode="block">
               <AchievementsCard achievements={achievements} locale={locale} layout="row" />
             </Reveal>
@@ -40,10 +46,16 @@ export function AboutProof({
       ) : null}
 
       {clients.length > 0 ? (
-        <section aria-labelledby="about-clients-title" className="section-y">
-          <div className="container-lava grid gap-[var(--space-heading)]">
-            <SectionHeading layout="split" size="md" kicker={clientsKicker} title={clientsTitle} titleId="about-clients-title" />
-            <ul className="grid grid-cols-2 gap-[var(--space-grid)] sm:grid-cols-3 lg:grid-cols-4">
+        <section aria-labelledby="about-clients-title">
+          <div className="container-lava grid gap-8 sm:gap-10">
+            <SectionHeading
+              layout="split"
+              size="md"
+              kicker={clientsKicker}
+              title={clientsTitle}
+              titleId="about-clients-title"
+            />
+            <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
               {clients.map((client) => {
                 const content = client.logo ? (
                   <Image
@@ -52,20 +64,25 @@ export function AboutProof({
                     width={client.logo.width ?? 180}
                     height={client.logo.height ?? 60}
                     sizes="180px"
-                    className="h-9 w-auto max-w-[10rem] object-contain opacity-75 grayscale transition-[opacity,filter] duration-300 group-hover:opacity-100 group-hover:grayscale-0"
+                    className="h-8 w-auto max-w-[9.5rem] object-contain opacity-85 grayscale transition-[opacity,filter,transform] duration-300 group-hover:scale-[1.03] group-hover:opacity-100 group-hover:grayscale-0 sm:h-9"
                   />
                 ) : (
-                  <span className="font-display text-lg font-semibold text-muted transition-colors group-hover:text-text">{client.name}</span>
+                  <span className="font-display text-base font-semibold text-muted transition-colors group-hover:text-text sm:text-lg">
+                    {client.name}
+                  </span>
                 );
                 return (
-                  <li key={client.id} className="group grid min-h-28 place-items-center rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card">
+                  <li
+                    key={client.id}
+                    className="about-client-tile group grid min-h-22 place-items-center px-5 py-4 sm:min-h-24"
+                  >
                     {isSafeHttpUrl(client.url) ? (
                       <a
                         href={client.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         data-cursor="pointer"
-                        className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
+                        className="grid size-full place-items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
                       >
                         {content}
                       </a>
@@ -79,6 +96,6 @@ export function AboutProof({
           </div>
         </section>
       ) : null}
-    </>
+    </div>
   );
 }

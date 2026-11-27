@@ -17,7 +17,6 @@ function parseMetricValue(raw: string): ParsedMetric {
   if (!match) return { kind: "static", text: trimmed };
 
   const [, prefix, numStr, suffix] = match;
-  // Avoid mangling compound expressions like "24/7" or "3-5x"
   if (/\d/.test(suffix)) {
     return { kind: "static", text: trimmed };
   }
@@ -45,38 +44,56 @@ export function CaseStudyMetricsBand({ locale, metrics }: CaseStudyMetricsBandPr
           : "sm:grid-cols-2 lg:grid-cols-4";
 
   return (
-    <section aria-label={isRtl ? "نتائج قابلة للقياس" : "Measured outcomes"} className="py-10 sm:py-14">
+    <section
+      aria-label={isRtl ? "نتائج قابلة للقياس" : "Measured outcomes"}
+      className="py-6 sm:py-10"
+    >
       <div className="container-lava">
-        <div className="surface-dark relative overflow-hidden rounded-[var(--radius-xl)] px-6 py-4 shadow-lift sm:px-10">
+        <div className="surface-dark case-metrics-band px-6 pt-5 pb-6 sm:px-10 sm:pt-6 sm:pb-8">
+          <div aria-hidden="true" className="work-heat-seam absolute inset-x-0 top-0" />
+
+          <div className="relative mb-2 flex items-center justify-between border-b border-line pb-4">
+            <p className="kicker-rule">
+              {isRtl ? "نتائج قابلة للقياس" : "Measured outcomes"}
+            </p>
+            <span
+              dir="ltr"
+              className="hidden font-mono text-[11px] font-medium tracking-[0.12em] text-ink-300 uppercase sm:inline"
+            >
+              KPI · IMPACT
+            </span>
+          </div>
+
           <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-24 end-0 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--lava-500)_26%,transparent),transparent)]"
-          />
-          <div className={`relative grid grid-cols-1 divide-y divide-line sm:divide-x sm:divide-y-0 ${gridColsClass}`}>
+            className={`relative grid grid-cols-1 divide-y divide-line sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse ${gridColsClass}`}
+          >
             {metrics.map((metric, idx) => {
               const parsed = parseMetricValue(metric.value);
               return (
                 <div
                   key={`${metric.label}-${idx}`}
-                  className="flex flex-col justify-between gap-3 py-8 sm:px-8 sm:first:ps-0 sm:last:pe-0 sm:py-10"
+                  className="flex flex-col justify-between gap-2.5 py-6 sm:px-8 sm:first:ps-0 sm:last:pe-0 sm:py-8"
                 >
-                  <div className="font-display text-4xl font-bold text-lava-gradient sm:text-5xl lg:text-6xl">
-                    {parsed.kind === "numeric" ? (
-                      <Counter
-                        value={parsed.value}
-                        decimals={parsed.decimals}
-                        prefix={parsed.prefix}
-                        suffix={parsed.suffix}
-                        locale={locale}
-                        useLocaleDigits={isRtl}
-                      />
-                    ) : (
-                      <span dir="ltr" className="tabular-nums">
-                        {parsed.text}
-                      </span>
-                    )}
+                  {/* Always isolate LTR around mathematical signs/units (+31%, 2.4x, 0.7s) so RTL bidi never scrambles them */}
+                  <div className="font-display text-4xl font-bold text-lava-gradient sm:text-5xl lg:text-[3.5rem] lg:leading-none">
+                    <span dir="ltr" className="inline-block tabular-nums">
+                      {parsed.kind === "numeric" ? (
+                        <Counter
+                          value={parsed.value}
+                          decimals={parsed.decimals}
+                          prefix={parsed.prefix}
+                          suffix={parsed.suffix}
+                          locale={locale}
+                          useLocaleDigits={false}
+                        />
+                      ) : (
+                        parsed.text
+                      )}
+                    </span>
                   </div>
-                  <p className="max-w-[28ch] text-sm leading-relaxed text-muted">{metric.label}</p>
+                  <p className="max-w-[26ch] text-sm font-medium leading-relaxed text-ink-200">
+                    {metric.label}
+                  </p>
                 </div>
               );
             })}

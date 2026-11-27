@@ -106,7 +106,8 @@ export function MobileMenu({
       )}
     >
       {/* Sheet header */}
-      <div className="container-lava flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line">
+      <div className="container-lava relative flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line bg-surface/65 backdrop-blur-md">
+        <span aria-hidden="true" className="lava-seam-hairline pointer-events-none absolute inset-x-0 bottom-0 h-px opacity-55" />
         <Link
           href="/"
           aria-label={t("homeAria")}
@@ -123,14 +124,14 @@ export function MobileMenu({
           type="button"
           aria-label={t("menuClose")}
           onClick={onClose}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong bg-surface text-text shadow-[var(--shadow-xs)] transition-colors hover:border-line-lava hover:text-accent-text"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong bg-surface text-text shadow-[var(--shadow-xs)] transition-[border-color,color,transform] duration-200 hover:border-line-lava hover:text-accent-text active:scale-95"
         >
           <CloseIcon size={18} />
         </button>
       </div>
 
       {/* Large nav */}
-      <nav aria-label={t("mainLabel")} className="container-lava flex-1 overflow-y-auto py-6">
+      <nav aria-label={t("mainLabel")} className="container-lava flex-1 overflow-y-auto py-5">
         <ul className="flex flex-col">
           {navItems.map((item, idx) => {
             const isActive =
@@ -143,7 +144,7 @@ export function MobileMenu({
                 key={item.key}
                 style={{ transitionDelay: open ? `${40 + idx * 35}ms` : "0ms" }}
                 className={cn(
-                  "border-b border-line transition-[opacity,transform] duration-500 ease-[var(--ease-out-expo)]",
+                  "border-b border-line/80 transition-[opacity,transform] duration-500 ease-[var(--ease-out-expo)]",
                   open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
                 )}
               >
@@ -154,34 +155,52 @@ export function MobileMenu({
                     onNavigate?.(item.href);
                     onClose();
                   }}
-                  className="group flex min-h-16 items-center justify-between gap-4 py-3"
+                  className={cn(
+                    "group flex min-h-14 items-center justify-between gap-4 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors duration-200",
+                    isActive ? "bg-accent-soft/75" : "hover:bg-surface/70",
+                  )}
                 >
+                  <span className="flex items-baseline gap-3.5">
+                    <span
+                      dir="ltr"
+                      aria-hidden="true"
+                      className={cn(
+                        "font-mono text-xs tabular-nums transition-colors",
+                        isActive ? "font-semibold text-accent-text" : "text-faint group-hover:text-accent-text",
+                      )}
+                    >
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-display text-[1.5rem] font-bold leading-tight tracking-[-0.02em] transition-colors rtl:tracking-normal",
+                        isActive ? "text-accent-text" : "text-text group-hover:text-accent-text",
+                      )}
+                    >
+                      {t(item.key)}
+                    </span>
+                  </span>
                   <span
                     className={cn(
-                      "font-display text-[1.75rem] font-bold leading-tight tracking-[-0.02em] transition-colors rtl:tracking-normal",
-                      isActive ? "text-accent-text" : "text-text group-hover:text-accent-text",
+                      "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-[background-color,color,transform] duration-300",
+                      isActive
+                        ? "bg-surface text-accent-text shadow-[var(--shadow-xs)]"
+                        : "text-faint group-hover:translate-x-0.5 group-hover:text-accent-text rtl:group-hover:-translate-x-0.5",
                     )}
                   >
-                    {t(item.key)}
+                    <ArrowRightIcon size={18} />
                   </span>
-                  <ArrowRightIcon
-                    size={20}
-                    className={cn(
-                      "transition-[translate,color] duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1",
-                      isActive ? "text-accent-text" : "text-faint group-hover:text-accent-text",
-                    )}
-                  />
                 </Link>
               </li>
             );
           })}
         </ul>
 
-        <div className="mt-6 flex items-center justify-between gap-3">
-          <span className="text-sm text-faint">{t("language")}</span>
+        <div className="mt-6 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-line bg-surface/85 px-4 py-3 shadow-[var(--shadow-xs)]">
+          <span className="text-sm font-medium text-muted">{t("language")}</span>
           <LocaleSwitch
-            size="md"
-            className="border-line-strong bg-surface"
+            size="sm"
+            className="border-line-strong bg-bg/70"
             onLocaleChange={
               onLocaleChange
                 ? (next) => {
@@ -195,8 +214,8 @@ export function MobileMenu({
       </nav>
 
       {/* Bottom CTA */}
-      <div className="container-lava shrink-0 border-t border-line bg-surface/80 py-5 backdrop-blur-md">
-        <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
+      <div className="container-lava shrink-0 border-t border-line bg-surface/90 py-4 backdrop-blur-md">
+        <div className="grid grid-cols-1 gap-2.5 min-[420px]:grid-cols-2">
           <ActionLink
             href="/quote"
             variant="primary"
