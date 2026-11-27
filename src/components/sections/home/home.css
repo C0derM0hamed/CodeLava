@@ -6,13 +6,22 @@
 
 /* ------------------------------------------------------------------ hero */
 
-/* 0. Composition stack & scroll-reactive GPU parallax layers (driven by HeroStage custom props) */
+/* 0. Composition stages: Phase A (0 → 0.43 drift & fade) + Phase B (0.80 → 1.00 calm return near logo) */
+.hero-copy-stages {
+  display: grid;
+  align-items: center;
+}
+
+.hero-copy-stages > * {
+  grid-area: 1 / 1;
+}
+
 .hero-copy-stack {
   --hero-drift-scale: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  max-inline-size: 38rem;
+  max-inline-size: 36rem;
 }
 
 .hero-scroll-layer {
@@ -32,6 +41,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
+}
+
+/* Phase B — calm, distilled closing composition (only active inside scroll-driven hero stage) */
+.hero-return-stack {
+  display: none;
 }
 
 @media (min-width: 640px) {
@@ -64,6 +78,7 @@
     transform-origin: right center;
   }
 
+  /* Phase A: staggered lift & fade-out so the eruption and code ribbon stay unobstructed */
   .dl-stage[data-story] .hero-scroll-layer--eyebrow {
     opacity: calc(1 - var(--hero-t-eyebrow, 0));
     transform: translate3d(0, calc(var(--hero-t-eyebrow, 0) * -58px * var(--hero-drift-scale)), 0)
@@ -92,6 +107,123 @@
     opacity: calc(1 - var(--hero-t-cta, 0));
     transform: translate3d(0, calc(var(--hero-t-cta, 0) * -28px * var(--hero-drift-scale)), 0)
       scale(calc(1 - var(--hero-t-cta, 0) * 0.05));
+  }
+
+  /* Phase B: calm closing lockup beside the logo (desktop) or centered under the logo (mobile) */
+  .dl-stage[data-story] .hero-return-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-inline-size: 30rem;
+    align-self: center;
+  }
+
+  .dl-stage[data-story] .hero-return-rule {
+    display: block;
+    inline-size: 3.25rem;
+    block-size: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--gradient-lava);
+    margin-block-end: 1.25rem;
+    transform-origin: left center;
+    opacity: var(--hero-return-rule, 0);
+    transform: scaleX(var(--hero-return-rule, 0));
+    box-shadow: 0 0 14px color-mix(in oklab, var(--lava-500) 48%, transparent);
+    will-change: transform, opacity;
+  }
+
+  .dl-stage[data-story][dir="rtl"] .hero-return-rule {
+    transform-origin: right center;
+  }
+
+  .dl-stage[data-story] .hero-return-title {
+    font-family: var(--font-hero-display);
+    font-size: clamp(1.75rem, 1.15rem + 1.55vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.024em;
+    font-optical-sizing: auto;
+    font-variation-settings: "opsz" 48;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-wrap: balance;
+    margin-block-end: 1.75rem;
+  }
+
+  .dl-stage[data-story] .hero-return-title .hero-word--accent-dark {
+    font-weight: 600;
+  }
+
+  .dl-stage[data-story][dir="rtl"] .hero-return-title {
+    font-size: clamp(1.625rem, 1.05rem + 1.38vw, 2.48rem);
+    font-weight: 500;
+    line-height: 1.44;
+    letter-spacing: 0;
+    font-variation-settings: normal;
+    font-feature-settings: "kern" 1, "liga" 1, "mark" 1, "mkmk" 1;
+  }
+
+  .dl-stage[data-story][dir="rtl"] .hero-return-title .hero-word--accent-dark {
+    font-weight: 600;
+  }
+
+  /* Word-by-word scroll-staggered reveal (pure reversible CSS smoothstep per word) */
+  .dl-stage[data-story] .hero-return-word {
+    --w-raw: clamp(
+      0,
+      calc(
+        (var(--hero-return-p, 0) - var(--word-idx, 0) / max(1, var(--word-total, 1)) * 0.56) / 0.44
+      ),
+      1
+    );
+    --w: calc(var(--w-raw) * var(--w-raw) * (3 - 2 * var(--w-raw)));
+    animation: none;
+    opacity: var(--w);
+    transform: translate3d(0, calc((1 - var(--w)) * 18px), 0);
+    filter: blur(calc((1 - var(--w)) * 3.5px));
+    will-change: transform, opacity, filter;
+  }
+
+  .dl-stage[data-story] .hero-return-word.hero-word--accent-dark {
+    filter: blur(calc((1 - var(--w)) * 3.5px))
+      drop-shadow(0 8px 24px color-mix(in oklab, var(--lava-500) 28%, transparent));
+  }
+
+  .dl-stage[data-story] .hero-return-actions {
+    opacity: var(--hero-return-cta, 0);
+    transform: translate3d(0, calc((1 - var(--hero-return-cta, 0)) * 14px), 0);
+    will-change: transform, opacity;
+  }
+
+  /* Mobile (<= 900px): center Phase B cleanly underneath the CodeLava logo in the lower stage */
+  @media (max-width: 900px) {
+    .dl-stage[data-story] .hero-return-stack {
+      align-items: center;
+      text-align: center;
+      justify-self: center;
+      align-self: end;
+      max-inline-size: 22rem;
+      padding-block-end: 3rem;
+    }
+
+    .dl-stage[data-story] .hero-return-rule,
+    .dl-stage[data-story][dir="rtl"] .hero-return-rule {
+      transform-origin: center center;
+      margin-block-end: 1rem;
+    }
+
+    .dl-stage[data-story] .hero-return-title {
+      font-size: clamp(1.55rem, 1.15rem + 2vw, 2.05rem);
+      margin-block-end: 1.35rem;
+    }
+
+    .dl-stage[data-story][dir="rtl"] .hero-return-title {
+      font-size: clamp(1.48rem, 1.12rem + 1.8vw, 1.92rem);
+      line-height: 1.46;
+    }
+
+    .dl-stage[data-story] .hero-return-actions {
+      justify-content: center;
+    }
   }
 }
 
@@ -228,9 +360,9 @@
 }
 
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow__label {
-  font-family: var(--font-sans);
+  font-family: var(--font-hero-display);
   font-size: 0.84rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -248,21 +380,24 @@
 
   .hero-eyebrow__label {
     font-size: 0.8125rem;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.115em;
   }
 
   :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow__label {
-    font-size: 0.925rem;
+    font-size: 0.9rem;
   }
 }
 
-/* 2. Editorial display typography + split-word entrance */
+/* 2. Editorial display typography (Bricolage Grotesque Latin + Alexandria Arabic) + split-word entrance */
 .home-hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.3rem, 1.4rem + 2.55vw, 4.15rem);
-  font-weight: 600;
-  line-height: 1.03;
+  font-family: var(--font-hero-display);
+  font-size: clamp(2.4rem, 1.45rem + 2.75vw, 4.3rem);
+  font-weight: 700;
+  line-height: 1.01;
   letter-spacing: -0.036em;
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 72;
+  font-feature-settings: "kern" 1, "liga" 1;
   text-wrap: balance;
   margin-block-end: 1.25rem;
 }
@@ -274,32 +409,41 @@
 }
 
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .home-hero-title {
-  font-size: clamp(2.1rem, 1.32rem + 2.25vw, 3.65rem);
-  font-weight: 600;
-  line-height: 1.28;
+  font-family: var(--font-hero-display);
+  font-size: clamp(2.15rem, 1.3rem + 2.4vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.36;
   letter-spacing: 0;
+  font-variation-settings: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "mark" 1, "mkmk" 1;
 }
 
 .home-hero-title--dark {
-  filter: drop-shadow(0 10px 30px color-mix(in oklab, var(--obsidian-950) 62%, transparent));
+  filter: drop-shadow(0 10px 30px color-mix(in oklab, var(--obsidian-950) 70%, transparent));
 }
 
 .hero-word-clip {
   display: inline-block;
   vertical-align: top;
   overflow-y: clip;
-  padding-block: 0.16em;
-  margin-block: -0.16em;
+  padding-block: 0.18em;
+  margin-block: -0.18em;
 }
 
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-word-clip {
-  padding-block: 0.28em;
-  margin-block: -0.28em;
+  padding-block: 0.42em;
+  margin-block: -0.42em;
 }
 
 .hero-word {
   display: inline-block;
   will-change: transform, opacity;
+}
+
+/* Preserve full vertical headroom for Arabic harakat/diacritics (e.g. تُبنى) inside gradient-clipped text */
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-word {
+  padding-block: 0.16em;
+  margin-block: -0.16em;
 }
 
 .hero-word--base-dark {
@@ -361,19 +505,19 @@
   font-size: clamp(0.985rem, 0.92rem + 0.22vw, 1.125rem);
   font-weight: 400;
   line-height: 1.65;
-  max-inline-size: 48ch;
+  max-inline-size: 46ch;
   text-wrap: pretty;
   color: var(--text-muted);
 }
 
 .hero-lead[data-tone="dark"] {
-  color: color-mix(in oklab, var(--ash-50) 80%, var(--ash-200));
-  text-shadow: 0 2px 14px color-mix(in oklab, var(--obsidian-950) 65%, transparent);
+  color: color-mix(in oklab, var(--ash-50) 86%, var(--ash-200));
+  text-shadow: 0 2px 16px color-mix(in oklab, var(--obsidian-950) 78%, transparent);
 }
 
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-lead {
-  line-height: 1.84;
-  max-inline-size: 45ch;
+  line-height: 1.86;
+  max-inline-size: 42ch;
   letter-spacing: 0;
 }
 
@@ -689,6 +833,11 @@
   .dl-stage .hero-scroll-layer {
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+
+  .dl-stage .hero-return-stack {
+    display: none;
   }
 
   .hero-cta:hover {

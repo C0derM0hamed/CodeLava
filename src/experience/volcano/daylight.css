@@ -79,18 +79,18 @@
   background:
     linear-gradient(
       180deg,
-      rgba(7, 6, 10, 0.72) 0%,
-      rgba(7, 6, 10, 0.28) 16%,
+      color-mix(in oklab, var(--obsidian-950) 72%, transparent) 0%,
+      color-mix(in oklab, var(--obsidian-950) 28%, transparent) 16%,
       transparent 34%,
       transparent 72%,
-      rgba(7, 6, 10, 0.78) 100%
+      color-mix(in oklab, var(--obsidian-950) 78%, transparent) 100%
     ),
     linear-gradient(
       96deg,
-      rgba(8, 9, 15, 0.84) 0%,
-      rgba(8, 9, 15, 0.62) 34%,
-      rgba(8, 9, 15, 0.2) 58%,
-      rgba(8, 9, 15, 0.04) 82%,
+      color-mix(in oklab, var(--obsidian-950) 84%, transparent) 0%,
+      color-mix(in oklab, var(--obsidian-950) 62%, transparent) 34%,
+      color-mix(in oklab, var(--obsidian-950) 20%, transparent) 58%,
+      color-mix(in oklab, var(--obsidian-950) 4%, transparent) 82%,
       transparent 100%
     );
 }
@@ -99,18 +99,18 @@
   background:
     linear-gradient(
       180deg,
-      rgba(7, 6, 10, 0.72) 0%,
-      rgba(7, 6, 10, 0.28) 16%,
+      color-mix(in oklab, var(--obsidian-950) 72%, transparent) 0%,
+      color-mix(in oklab, var(--obsidian-950) 28%, transparent) 16%,
       transparent 34%,
       transparent 72%,
-      rgba(7, 6, 10, 0.78) 100%
+      color-mix(in oklab, var(--obsidian-950) 78%, transparent) 100%
     ),
     linear-gradient(
       264deg,
-      rgba(8, 9, 15, 0.84) 0%,
-      rgba(8, 9, 15, 0.62) 34%,
-      rgba(8, 9, 15, 0.2) 58%,
-      rgba(8, 9, 15, 0.04) 82%,
+      color-mix(in oklab, var(--obsidian-950) 84%, transparent) 0%,
+      color-mix(in oklab, var(--obsidian-950) 62%, transparent) 34%,
+      color-mix(in oklab, var(--obsidian-950) 20%, transparent) 58%,
+      color-mix(in oklab, var(--obsidian-950) 4%, transparent) 82%,
       transparent 100%
     );
 }
@@ -129,13 +129,12 @@
 }
 
 .dl-copy {
-  max-inline-size: 38.5rem;
-  transform: translate3d(0, var(--dl-copy-y, 0px), 0);
-  will-change: transform;
+  position: relative;
+  max-inline-size: 36rem;
 }
 
-.dl-copy[data-hero-faded="true"],
-.dl-copy[data-hero-faded="true"] * {
+.dl-copy [data-hero-hidden="true"],
+.dl-copy [data-hero-hidden="true"] * {
   pointer-events: none;
 }
 
@@ -301,20 +300,19 @@
 
   .dl-scrim,
   [dir="rtl"] .dl-scrim {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(7, 6, 10, 0.75) 0%,
-        rgba(7, 6, 10, 0.25) 20%,
-        rgba(7, 6, 10, 0.42) 48%,
-        rgba(7, 6, 10, 0.86) 80%,
-        rgba(7, 6, 10, 0.94) 100%
-      );
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--obsidian-950) 75%, transparent) 0%,
+      color-mix(in oklab, var(--obsidian-950) 25%, transparent) 20%,
+      color-mix(in oklab, var(--obsidian-950) 42%, transparent) 48%,
+      color-mix(in oklab, var(--obsidian-950) 86%, transparent) 80%,
+      color-mix(in oklab, var(--obsidian-950) 94%, transparent) 100%
+    );
   }
 
   .dl-overlay {
     align-self: end;
-    padding-block: calc(var(--header-h) + 1rem) 5.5rem;
+    padding-block: calc(var(--header-h) + 1rem) 5.25rem;
   }
 
   .dl-stage {

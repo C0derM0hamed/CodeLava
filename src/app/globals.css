@@ -141,6 +141,7 @@
   );
 
   /* Fluid editorial type scale */
+  --font-hero-display: var(--font-hero-latin), var(--font-hero-arabic), var(--font-display-latin), ui-sans-serif, system-ui, sans-serif;
   --text-display-xl: clamp(2.6rem, 1.4rem + 4.2vw, 5.25rem);  /* 42px → 84px — hero */
   --text-display-lg: clamp(2.2rem, 1.3rem + 3vw, 4rem);        /* 35px → 64px  */
   --text-display-md: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);  /* 28px → 44px — section titles */
@@ -314,6 +315,7 @@
 :root:lang(ar),
 [lang="ar"],
 [dir="rtl"] {
+  --font-hero-display: var(--font-hero-arabic), var(--font-hero-latin), var(--font-display-arabic), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-arabic), var(--font-display-latin), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-body-arabic), var(--font-body-latin), ui-sans-serif, system-ui, sans-serif;
 }

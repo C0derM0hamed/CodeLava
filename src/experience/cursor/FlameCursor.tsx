@@ -228,7 +228,7 @@ export function FlameCursor({
       }
 
       isDarkSurface = Boolean(target.closest(DARK_SURFACE_SELECTOR));
-      pointerEl.dataset.surface = isDarkSurface ? "dark" : "light";
+      pointerEl.dataset.cursorTone = isDarkSurface ? "dark" : "light";
 
       const dirHost = target.closest("[dir]");
       isRtlContext = (dirHost?.getAttribute("dir") ?? document.documentElement.dir) === "rtl";
@@ -330,10 +330,6 @@ export function FlameCursor({
           const sx = tipX - dx * frac * 0.65;
           const sy = tipY - dy * frac * 0.65;
           spawnParticle(sx, sy, dx, dy, intensity, false);
-          // Grey smoke reads as dirt on white — only on dark bands.
-          if (isDarkSurface && Math.random() < 0.2) {
-            spawnParticle(sx + 2, sy + 4, dx * 0.4, dy * 0.4, intensity * 0.5, true);
-          }
         }
       }
 
@@ -580,7 +576,7 @@ export function FlameCursor({
       {/* Natural crisp SVG arrow pointer + contextual View/عرض badge */}
       <div
         ref={pointerRef}
-        className="fixed left-0 top-0 opacity-0 will-change-transform"
+        className="fixed left-0 top-0 bg-transparent opacity-0 will-change-transform"
         style={{ transition: "opacity 140ms ease-out" }}
       >
         <div
@@ -600,7 +596,7 @@ export function FlameCursor({
               d="M2.2 1.8L20.4 15.1L12.1 16.4L15.7 23.6L12.7 25.1L9.1 17.8L3.4 22.7L2.2 1.8Z"
               strokeWidth="1.6"
               strokeLinejoin="round"
-              className="fill-ink-900 stroke-pearl-50 transition-[fill,stroke] duration-200 group-data-[hot='1']/arrow:fill-lava-600 [[data-surface='dark']_&]:fill-pearl-50 [[data-surface='dark']_&]:stroke-ink-900 [[data-surface='dark']_&]:group-data-[hot='1']/arrow:fill-lava-400"
+              className="fill-ink-900 stroke-pearl-50 transition-[fill,stroke] duration-200 group-data-[hot='1']/arrow:fill-lava-600 [[data-cursor-tone='dark']_&]:fill-pearl-50 [[data-cursor-tone='dark']_&]:stroke-ink-900 [[data-cursor-tone='dark']_&]:group-data-[hot='1']/arrow:fill-lava-400"
             />
             {/* Ember glint at the tip */}
             <circle cx="3.6" cy="4.4" r="1.35" fill="var(--lava-400)" />

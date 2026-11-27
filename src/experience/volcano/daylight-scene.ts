@@ -1,4 +1,5 @@
 import manifest from "../../../public/media/hero/seq/manifest.json";
+import { createVolcanoFire } from "./volcano-fire";
 
 type Tier = keyof typeof manifest.tiers;
 type Frame = { index: number; tier: Tier; bitmap: ImageBitmap };
@@ -19,22 +20,24 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
   const phases = Array.from(stage.querySelectorAll<HTMLElement>("[data-dl-phase]"));
   const rtl = stage.dir === "rtl";
   const backdrop = getComputedStyle(pin).backgroundColor;
+  const fire = createVolcanoFire();
   const cache = new Map<string, Frame>();
   const pending = new Map<string, AbortController>();
   const failures = new Map<string, number>();
   let tier: Tier = "desktop";
+  let currentDpr = 1;
   let active = false;
   let disposed = false;
   let raf = 0;
+  let lastTick = 0;
   let target = 0;
   let direction = 1;
   let start = 0;
   let travel = 1;
   let progress = -1;
-  let drawn = "";
   let phase = -1;
 
-  function paint() {
+  function paint(dt: number) {
     let best: Frame | undefined;
     for (const frame of cache.values()) {
       const distance = Math.abs(frame.index - target);
@@ -43,7 +46,6 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
     }
     if (!best || !context || !canvas) return;
     const id = key(best);
-    if (drawn === id) return;
     cache.delete(id);
     cache.set(id, best);
     const { width: w, height: h } = canvas;
@@ -65,6 +67,21 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
     const x = coverX + (endX - coverX) * reveal;
     const y = coverY + (endY - coverY) * reveal;
     context.drawImage(img, x, y, width, height);
+
+    const frameRect = {
+      x,
+      y,
+      width,
+      height,
+      reveal,
+      progress: Math.max(0, progress),
+      compact,
+      dpr: currentDpr,
+    };
+
+    // Volumetric crater bloom, heat shimmer & smooth ballistic lava arcs
+    fire.renderCraterLayer(context, dt, frameRect);
+
     if (reveal > 0) {
       // Feather the exposed film edges into the stage as the logo comes into view.
       context.globalAlpha = reveal;
@@ -80,7 +97,9 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
       }
       context.globalAlpha = 1;
     }
-    drawn = id;
+
+    // Subtle breathing glow & delicate rising embers from the settled CodeLava logo volcano
+    fire.renderIdentityLayer(context, frameRect);
     art.dataset.sequenceReady = "";
   }
 
@@ -128,9 +147,12 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
     }
   }
 
-  function update() {
+  function update(now: number) {
     raf = 0;
     if (!active || disposed) return;
+    const dt = lastTick > 0 ? Math.min((now - lastTick) / 1000, 0.05) : 1 / 60;
+    lastTick = now;
+
     const next = clamp((scrollY - start) / travel);
     if (progress !== next) {
       direction = next >= progress ? 1 : -1;
@@ -145,12 +167,14 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
         phase = index;
       }
     }
-    paint();
+    paint(dt);
     for (const frame of wanted()) {
       if (pending.size >= 2) break;
       const id = key(frame);
       if (!cache.has(id) && !pending.has(id) && (failures.get(id) ?? 0) < 2) void load(frame);
     }
+    // Keep the single rAF loop running while visible so live fire, shimmer & embers stay fluid
+    schedule();
   }
 
   function schedule() {
@@ -160,13 +184,13 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
   function measure() {
     if (!canvas || !pin || !stage) return;
     const w = art.clientWidth, h = art.clientHeight;
-    const dpr = Math.min(devicePixelRatio || 1, 3840 / Math.max(1, w, h));
+    const dpr = Math.min(devicePixelRatio || 1, 2, 3840 / Math.max(1, w, h));
+    currentDpr = dpr;
     const width = Math.max(1, Math.round(w * dpr)), height = Math.max(1, Math.round(h * dpr));
     tier = w <= 900 ? "mobile" : width > 2100 ? "hidpi" : "desktop";
     if (width !== canvas.width || height !== canvas.height) {
       canvas.width = width;
       canvas.height = height;
-      drawn = "";
     }
     const pinHeight = pin.offsetHeight;
     stage.style.setProperty("--dl-pin-height", pinHeight + "px");
@@ -184,11 +208,13 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
     if (disposed || active === value) return;
     active = value;
     if (value) {
+      lastTick = 0;
       if (stage!.hasAttribute("data-daylight-stage")) stage!.dataset.story = "";
       measure();
     } else {
       cancelAnimationFrame(raf);
       raf = 0;
+      lastTick = 0;
       pending.forEach(controller => controller.abort());
     }
   }
@@ -196,6 +222,7 @@ export function mountDaylight(art: HTMLElement, signal: AbortSignal, onProgress?
   function dispose() {
     setVisible(false);
     disposed = true;
+    fire.reset();
     observer.disconnect();
     window.removeEventListener("resize", measure);
     window.removeEventListener("scroll", schedule);

@@ -12,12 +12,19 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
   return t * t * (3 - 2 * t);
 }
 
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
 const HERO_SCROLL_PROPS = [
   "--hero-t-eyebrow",
   "--hero-t-line1",
   "--hero-t-line2",
   "--hero-t-lead",
   "--hero-t-cta",
+  "--hero-return-p",
+  "--hero-return-rule",
+  "--hero-return-cta",
 ] as const;
 
 export function HeroStage({ locale, children, className, titleId, soundLabels }: Props) {
@@ -30,7 +37,11 @@ export function HeroStage({ locale, children, className, titleId, soundLabels }:
     line2: -1,
     lead: -1,
     cta: -1,
-    faded: false,
+    returnP: -1,
+    returnRule: -1,
+    returnCta: -1,
+    phaseAHidden: false,
+    phaseBVisible: false,
   });
   const sound = useVolcanoSound({ stageRef });
   const { setProgress } = sound;
@@ -43,11 +54,31 @@ export function HeroStage({ locale, children, className, titleId, soundLabels }:
   useEffect(() => {
     const resetCopy = () => {
       const copyEl = copyRef.current;
-      if (!copyEl) return;
-      for (const prop of HERO_SCROLL_PROPS) copyEl.style.removeProperty(prop);
-      copyEl.inert = false;
-      delete copyEl.dataset.heroFaded;
-      lastStateRef.current = { eyebrow: -1, line1: -1, line2: -1, lead: -1, cta: -1, faded: false };
+      if (copyEl) {
+        for (const prop of HERO_SCROLL_PROPS) copyEl.style.removeProperty(prop);
+        const phaseA = copyEl.querySelector<HTMLElement>('[data-hero-phase="a"]');
+        const phaseB = copyEl.querySelector<HTMLElement>('[data-hero-phase="b"]');
+        if (phaseA) {
+          phaseA.inert = false;
+          delete phaseA.dataset.heroHidden;
+        }
+        if (phaseB) {
+          phaseB.inert = true;
+          phaseB.dataset.heroHidden = "true";
+        }
+      }
+      lastStateRef.current = {
+        eyebrow: -1,
+        line1: -1,
+        line2: -1,
+        lead: -1,
+        cta: -1,
+        returnP: -1,
+        returnRule: -1,
+        returnCta: -1,
+        phaseAHidden: false,
+        phaseBVisible: false,
+      };
     };
 
     const query =
@@ -74,12 +105,18 @@ export function HeroStage({ locale, children, className, titleId, soundLabels }:
       const copyEl = copyRef.current;
       if (!copyEl || reducedMotionRef.current) return;
 
-      // Staggered smoothstep curves: copy lifts & clears cleanly before code flow / logo reveal.
+      // Phase A (0 → 0.43): staggered drift & fade-out as the volcano erupts, keeping the middle scene clean.
       const eyebrow = smoothstep(0.04, 0.34, p);
       const line1 = smoothstep(0.07, 0.40, p);
       const line2 = smoothstep(0.10, 0.43, p);
       const lead = smoothstep(0.08, 0.39, p);
       const cta = smoothstep(0.06, 0.36, p);
+
+      // Phase B (0.80 → 1.00): after the CodeLava logo finishes forming (reveal reaches 1.0 at p=0.82
+      // in daylight-scene.ts), reveal a calmer closing composition word-by-word plus both CTAs.
+      const returnP = clamp01((p - 0.80) / 0.14);
+      const returnRule = smoothstep(0.80, 0.87, p);
+      const returnCta = smoothstep(0.87, 0.97, p);
 
       const prev = lastStateRef.current;
       if (prev.eyebrow !== eyebrow) {
@@ -102,16 +139,45 @@ export function HeroStage({ locale, children, className, titleId, soundLabels }:
         copyEl.style.setProperty("--hero-t-cta", cta.toFixed(4));
         prev.cta = cta;
       }
+      if (prev.returnP !== returnP) {
+        copyEl.style.setProperty("--hero-return-p", returnP.toFixed(4));
+        prev.returnP = returnP;
+      }
+      if (prev.returnRule !== returnRule) {
+        copyEl.style.setProperty("--hero-return-rule", returnRule.toFixed(4));
+        prev.returnRule = returnRule;
+      }
+      if (prev.returnCta !== returnCta) {
+        copyEl.style.setProperty("--hero-return-cta", returnCta.toFixed(4));
+        prev.returnCta = returnCta;
+      }
 
-      // Disable pointer & keyboard focus once CTAs fade past visibility; restore when scrolling back.
-      const faded = cta >= 0.85;
-      if (prev.faded !== faded) {
-        prev.faded = faded;
-        copyEl.inert = faded;
-        if (faded) {
-          copyEl.dataset.heroFaded = "true";
-        } else {
-          delete copyEl.dataset.heroFaded;
+      // Interactive whenever visible; inert only while hidden in between (fully reversible).
+      const phaseAHidden = cta >= 0.85;
+      if (prev.phaseAHidden !== phaseAHidden) {
+        prev.phaseAHidden = phaseAHidden;
+        const phaseA = copyEl.querySelector<HTMLElement>('[data-hero-phase="a"]');
+        if (phaseA) {
+          phaseA.inert = phaseAHidden;
+          if (phaseAHidden) {
+            phaseA.dataset.heroHidden = "true";
+          } else {
+            delete phaseA.dataset.heroHidden;
+          }
+        }
+      }
+
+      const phaseBVisible = returnP >= 0.08;
+      if (prev.phaseBVisible !== phaseBVisible) {
+        prev.phaseBVisible = phaseBVisible;
+        const phaseB = copyEl.querySelector<HTMLElement>('[data-hero-phase="b"]');
+        if (phaseB) {
+          phaseB.inert = !phaseBVisible;
+          if (phaseBVisible) {
+            delete phaseB.dataset.heroHidden;
+          } else {
+            phaseB.dataset.heroHidden = "true";
+          }
         }
       }
     },
