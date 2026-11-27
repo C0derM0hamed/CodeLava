@@ -71,7 +71,7 @@ export function Reveal({
           }
         }
       },
-      { threshold: 0.14, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.03, rootMargin: "0px 0px -2% 0px" },
     );
 
     observer.observe(node);
@@ -148,7 +148,7 @@ export function Reveal({
       style={{
         transform: shown ? "translate3d(0, 0, 0)" : "translate3d(0, 20px, 0)",
         opacity: shown ? 1 : 0,
-        transition: `transform 720ms var(--ease-out-expo) ${delay}ms, opacity 600ms ease-out ${delay}ms`,
+        transition: `transform 580ms var(--ease-out-expo) ${delay}ms, opacity 460ms ease-out ${delay}ms`,
       }}
     >
       {children}

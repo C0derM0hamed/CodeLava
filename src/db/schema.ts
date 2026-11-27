@@ -43,7 +43,17 @@ const sortOrder = () => integer("sort_order").notNull().default(0);
 
 export const contentStatus = pgEnum("content_status", ["draft", "published", "archived"]);
 export const mediaKind = pgEnum("media_kind", ["image", "video", "document", "other"]);
-export const testimonialSource = pgEnum("testimonial_source", ["upwork", "mostaql", "direct", "other"]);
+export const testimonialSource = pgEnum("testimonial_source", [
+  "upwork",
+  "mostaql",
+  "khamsat",
+  "fiverr",
+  "bahr",
+  "freelancer",
+  "clutch",
+  "direct",
+  "other",
+]);
 export const leadType = pgEnum("lead_type", ["contact", "quote"]);
 export const leadStatus = pgEnum("lead_status", ["new", "contacted", "qualified", "proposal", "won", "lost", "spam"]);
 

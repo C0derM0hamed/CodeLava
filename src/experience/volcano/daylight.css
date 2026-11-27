@@ -1,104 +1,433 @@
-.dl-stage { --dl-travel: 126svh; position: relative; isolation: isolate; background: var(--bg); }
+/*
+ * CodeLava Full-Bleed Cinematic Volcano Hero.
+ * Edge-to-edge photorealistic basalt terrain + scrubbed 24fps eruption footage +
+ * live GPU WebGL volcanic embers + ballistic multilingual code stream + overlaid hero copy.
+ */
+
+.dl-stage {
+  --dl-travel: 155svh;
+  --dl-progress: 0.05;
+  --dl-zoom: 1;
+  --dl-pan-y: 0px;
+  --dl-mx: 0px;
+  --dl-my: 0px;
+  --dl-heat: 0.42;
+  --dl-copy-y: 0px;
+  position: relative;
+  isolation: isolate;
+  background: var(--obsidian-950);
+  color: var(--ash-50);
+}
+
 .dl-pin {
-  position: relative; display: grid; align-items: center; box-sizing: border-box;
-  min-block-size: min(100svh, 65rem); padding: calc(var(--header-h) + 1rem) 0 4rem;
-  overflow: clip; background: var(--gradient-page-wash);
+  position: relative;
+  display: grid;
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 100svh;
+  min-block-size: min(100svh, 46rem);
+  overflow: clip;
+  background: var(--obsidian-950);
 }
-.dl-columns {
-  inline-size: min(100%, var(--container)); padding-inline: var(--gutter); margin-inline: auto;
-  display: grid; align-items: center; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
-}
-.dl-copy { position: relative; z-index: 1; min-inline-size: 0; }
-.dl-stage .dl-art { inline-size: 123%; margin-inline-start: -9%; }
+
+/* Full-bleed stage layers */
 .dl-art {
-  position: relative; isolation: isolate; inline-size: 100%; aspect-ratio: 3/2;
-  pointer-events: none; user-select: none; container-type: inline-size;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
 }
-.dl-landscape, .dl-terrain, .dl-orbit, .dl-ejecta, .dl-orbit svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dl-landscape { transform: translate3d(var(--dl-ground-x, 0px), var(--dl-ground-y, 0px), 0); }
-.dl-terrain {
-  /* The feathered, nine-slice centre is decorative paint, including before hydration. */
-  border-image: url("/media/hero/daylight.webp") 0 fill / 0;
+
+.dl-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
-.dl-fissures {
-  position: absolute; left: 10%; top: 41.5%; width: 80%; height: 52.5%; opacity: 0;
+
+.dl-media-frame {
+  position: absolute;
+  inset: -3.5%;
+  width: 107%;
+  height: 107%;
+  transform-origin: 50% 44%;
+  transform: translate3d(var(--dl-mx, 0px), calc(var(--dl-my, 0px) + var(--dl-pan-y, 0px)), 0)
+    scale(var(--dl-zoom, 1));
+  will-change: transform;
 }
-.dl-art[data-enhanced] .dl-fissures {
-  border-image: url("/media/hero/daylight-fissures.webp") 0 fill / 0;
-  opacity: var(--dl-heat, .12); animation: dl-breathe 4.8s ease-in-out infinite alternate;
+
+.dl-poster,
+.dl-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Keep volcano peak majestically framed to the visual end side on desktop while filling 100% edge-to-edge */
+  object-position: 34% 46%;
+  filter: contrast(1.06) saturate(1.1);
 }
-@keyframes dl-breathe { from { opacity: calc(var(--dl-heat, .12) * .38); } }
-.dl-film { opacity: var(--dl-film, 0); position: absolute; left: 39.068%; top: 22.404%; width: 22.939%; height: 23.256%; }
-.dl-film canvas { display: block; width: 100%; height: 100%; }
-.dl-orbit {
-  opacity: var(--dl-ring, .85); transform-origin: 50% 43%;
-  transform: translate3d(var(--dl-air-x, 0px), var(--dl-air-y, 0px), 0) scale(var(--dl-scale, 1)) rotate(var(--dl-angle, 0deg));
+
+[dir="rtl"] .dl-poster,
+[dir="rtl"] .dl-video {
+  object-position: 66% 46%;
 }
-.dl-inscription, .dl-token { font-family: var(--font-code), ui-monospace, monospace; }
-.dl-packets { opacity: .65; stroke-dashoffset: var(--dl-offset, 0); }
-.dl-art[data-enhanced] .dl-packets { animation: dl-orbit 18s linear infinite; }
-@keyframes dl-orbit { to { stroke-dashoffset: calc(var(--dl-offset, 0) - 300); } }
-.dl-brand {
-  position: absolute; left: 50%; top: 31.4%; width: 16%; display: grid; justify-items: center;
-  transform: translate(-50%, -50%) translate(var(--dl-air-x, 0px), var(--dl-brand-y, 0px));
-  opacity: var(--dl-logo, 1);
+
+.dl-video {
+  opacity: 0;
+  transition: opacity 260ms ease-out;
 }
-.dl-brackets { width: 100%; overflow: visible; transform: rotate(-7deg); }
-.dl-left { filter: drop-shadow(0 0 5px var(--syntax-cyan)); transform: translateX(var(--dl-split, 0px)); }
-.dl-right { filter: drop-shadow(0 0 5px var(--lava-300)); transform: translateX(calc(0px - var(--dl-split, 0px))); }
-.dl-slash { filter: drop-shadow(0 0 5px var(--lava-100)); }
-.dl-word {
-  position: absolute; top: 97%; font: 700 3.45cqw/1 var(--font-display-latin), sans-serif;
-  letter-spacing: -.055em; color: var(--ink-900); opacity: var(--dl-word, 1);
-  text-shadow: 0 1px 7px var(--lava-100); transform: translateY(var(--dl-word-y, 0px));
+
+.dl-art[data-video-ready] .dl-video {
+  opacity: 1;
 }
-.dl-word > span { color: var(--lava-600); }
-.dl-ejecta { transform: translate(var(--dl-air-x, 0px), var(--dl-air-y, 0px)); }
-.dl-token {
-  position: absolute; left: 0; top: 0; opacity: 0; line-height: 1; white-space: nowrap;
-  font-weight: 550; font-size: clamp(10px, 2.15cqw, 21px); direction: ltr;
-  color: var(--code-blue); text-shadow: 0 1px 3px var(--pearl-50);
+
+/* Live atmospheric magma warmth breathing above the crater */
+.dl-crater-glow {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: var(--dl-heat, 0.42);
+  background:
+    radial-gradient(
+      26% 24% at 54% 40%,
+      color-mix(in srgb, var(--ember) 34%, transparent) 0%,
+      color-mix(in srgb, var(--lava-500) 24%, transparent) 38%,
+      transparent 74%
+    ),
+    radial-gradient(
+      52% 28% at 52% 96%,
+      color-mix(in srgb, var(--lava-600) 28%, transparent) 0%,
+      transparent 70%
+    );
+  animation: dl-magma-breathe 5.2s ease-in-out infinite alternate;
 }
-.dl-token:nth-child(4n + 2) { color: var(--accent-text); }
-.dl-token:nth-child(4n + 3) { color: var(--code-cyan); }
-.dl-token:nth-child(4n) { color: color-mix(in oklab, var(--syntax-green), var(--ink-900) 46%); }
-.dl-ember {
-  position: absolute; left: 50%; top: 44%; width: 2px; height: 3px; border-radius: 50%;
-  background: var(--ember); box-shadow: 0 0 3px var(--lava-500); opacity: 0;
-  animation: dl-rise var(--life) ease-out var(--delay) infinite;
+
+[dir="rtl"] .dl-crater-glow {
+  background:
+    radial-gradient(
+      26% 24% at 46% 40%,
+      color-mix(in srgb, var(--ember) 34%, transparent) 0%,
+      color-mix(in srgb, var(--lava-500) 24%, transparent) 38%,
+      transparent 74%
+    ),
+    radial-gradient(
+      52% 28% at 48% 96%,
+      color-mix(in srgb, var(--lava-600) 28%, transparent) 0%,
+      transparent 70%
+    );
 }
-@keyframes dl-rise {
-  0% { transform: translate(0,0); opacity: 0; }
-  12% { opacity: .9; }
-  100% { transform: translate(var(--drift), var(--rise)); opacity: 0; }
-}
-.dl-art:not([data-moving]) * { animation-play-state: paused !important; }
-.dl-cue { display: none; }
-.dl-skip {
-  position: absolute; z-index: 3; inset-inline-start: var(--gutter); inset-block-start: calc(var(--header-h) + 8px);
-  padding: .4rem 1rem; border-radius: var(--radius-pill); color: var(--text); background: var(--surface);
-}
-.dl-skip:not(:focus-visible) { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
-.dl-stage:not([data-story]) .dl-skip { display: none; }
-.dl-end { height: 0; outline: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .dl-stage[data-story] { block-size: calc(var(--dl-pin-height, 100svh) + var(--dl-travel)); }
-  .dl-stage[data-story] .dl-pin { position: sticky; top: min(0px, calc(100svh - var(--dl-pin-height, 100svh))); }
-  .dl-stage[data-story] .dl-cue {
-    position: absolute; bottom: clamp(1.5rem, 4vh, 3.5rem); inset-inline-start: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
-    display: flex; gap: .8rem; align-items: center; color: var(--text-muted); font-size: .78rem; font-weight: 500;
+
+@keyframes dl-magma-breathe {
+  0% {
+    filter: brightness(0.92);
+    transform: scale(1);
   }
-  .dl-track { position: relative; inline-size: 3rem; block-size: 2px; background: var(--line-strong); }
-  .dl-track i { display: block; height: 100%; background: var(--accent); transform: scaleX(var(--dl-progress, .07)); transform-origin: left; }
-  [dir="rtl"] .dl-track i { transform-origin: right; }
+  100% {
+    filter: brightness(1.18);
+    transform: scale(1.04);
+  }
 }
-@media (max-width: 760px) {
-  .dl-stage { --dl-travel: 80svh; }
-  .dl-pin { padding-block: calc(var(--header-h) + 1.25rem) 3.3rem; }
-  .dl-columns { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
-  .dl-stage .dl-art { inline-size: min(115%, 72svh); margin-inline: 0; justify-self: center; }
-  .dl-stage .dl-cue { bottom: 1.15rem; }
+
+.dl-art:not([data-moving]) .dl-crater-glow {
+  animation-play-state: paused;
 }
-@media (max-width: 760px), (pointer: coarse) {
-  .dl-terrain { border-image-source: url("/media/hero/daylight-small.webp"); }
+
+.dl-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.dl-embers {
+  z-index: 1;
+}
+
+.dl-code {
+  z-index: 2;
+}
+
+/* Cinematic readability scrims: crisp top nav legibility + directional veil behind overlaid hero text */
+.dl-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 6, 10, 0.72) 0%,
+      rgba(7, 6, 10, 0.28) 16%,
+      transparent 34%,
+      transparent 72%,
+      rgba(7, 6, 10, 0.78) 100%
+    ),
+    linear-gradient(
+      96deg,
+      rgba(8, 9, 15, 0.84) 0%,
+      rgba(8, 9, 15, 0.62) 34%,
+      rgba(8, 9, 15, 0.2) 58%,
+      rgba(8, 9, 15, 0.04) 82%,
+      transparent 100%
+    );
+}
+
+[dir="rtl"] .dl-scrim {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 6, 10, 0.72) 0%,
+      rgba(7, 6, 10, 0.28) 16%,
+      transparent 34%,
+      transparent 72%,
+      rgba(7, 6, 10, 0.78) 100%
+    ),
+    linear-gradient(
+      264deg,
+      rgba(8, 9, 15, 0.84) 0%,
+      rgba(8, 9, 15, 0.62) 34%,
+      rgba(8, 9, 15, 0.2) 58%,
+      rgba(8, 9, 15, 0.04) 82%,
+      transparent 100%
+    );
+}
+
+/* Overlaid Hero Copy */
+.dl-overlay {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-block: calc(var(--header-h) + 1.25rem) 5.5rem;
+}
+
+.dl-copy-grid {
+  display: grid;
+  align-items: center;
+}
+
+.dl-copy {
+  max-inline-size: 38.5rem;
+  transform: translate3d(0, var(--dl-copy-y, 0px), 0);
+  will-change: transform;
+}
+
+/* Glowing bottom horizon seam separating the dark cinematic volcano from the pearl daylight canvas */
+.dl-horizon-rim {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 4;
+  height: 2px;
+  pointer-events: none;
+  background: var(--gradient-heat-seam);
+  opacity: 0.75;
+}
+
+/* Skip link */
+.dl-skip {
+  position: absolute;
+  z-index: 10;
+  inset-inline-start: var(--gutter);
+  inset-block-start: calc(var(--header-h) + 10px);
+  padding: 0.45rem 1.05rem;
+  border-radius: var(--radius-pill);
+  color: var(--ink-900);
+  background: var(--pearl-50);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.dl-skip:not(:focus-visible) {
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.dl-stage:not([data-story]) .dl-skip {
+  display: none;
+}
+
+.dl-end {
+  height: 0;
+  outline: none;
+}
+
+/* Bottom Scroll Cue + Volcanic Phase Bar */
+.dl-cue {
+  display: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: clamp(1.25rem, 3.2svh, 2.25rem);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.dl-cue-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(251, 247, 242, 0.76);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.dl-cue-left,
+.dl-cue-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dl-mouse {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  inline-size: 1.2rem;
+  block-size: 1.85rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(251, 247, 242, 0.42);
+  padding-top: 0.3rem;
+}
+
+.dl-mouse i {
+  display: block;
+  inline-size: 2.5px;
+  block-size: 6px;
+  border-radius: 999px;
+  background: var(--lava-400);
+  animation: dl-wheel 1.8s ease-in-out infinite;
+}
+
+@keyframes dl-wheel {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.dl-phases {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lava-300);
+}
+
+[dir="rtl"] .dl-phases {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.8125rem;
+}
+
+.dl-track {
+  position: relative;
+  inline-size: 5.5rem;
+  block-size: 3px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(251, 247, 242, 0.16);
+}
+
+.dl-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--lava-500), var(--ember));
+  transform: scaleX(var(--dl-progress, 0.05));
+  transform-origin: left;
+  box-shadow: 0 0 10px var(--lava-400);
+}
+
+[dir="rtl"] .dl-track i {
+  transform-origin: right;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dl-stage[data-story] {
+    block-size: calc(var(--dl-pin-height, 100svh) + var(--dl-travel));
+  }
+  .dl-stage[data-story] .dl-pin {
+    position: sticky;
+    top: min(0px, calc(100svh - var(--dl-pin-height, 100svh)));
+  }
+  .dl-stage[data-story] .dl-cue {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  .dl-poster,
+  .dl-video,
+  [dir="rtl"] .dl-poster,
+  [dir="rtl"] .dl-video {
+    object-position: 50% 42%;
+  }
+
+  .dl-crater-glow,
+  [dir="rtl"] .dl-crater-glow {
+    background:
+      radial-gradient(
+        40% 28% at 50% 38%,
+        color-mix(in srgb, var(--ember) 34%, transparent) 0%,
+        color-mix(in srgb, var(--lava-500) 24%, transparent) 40%,
+        transparent 74%
+      );
+  }
+
+  .dl-scrim,
+  [dir="rtl"] .dl-scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(7, 6, 10, 0.75) 0%,
+        rgba(7, 6, 10, 0.25) 20%,
+        rgba(7, 6, 10, 0.42) 48%,
+        rgba(7, 6, 10, 0.86) 80%,
+        rgba(7, 6, 10, 0.94) 100%
+      );
+  }
+
+  .dl-overlay {
+    align-self: end;
+    padding-block: calc(var(--header-h) + 1rem) 4.75rem;
+  }
+
+  .dl-stage {
+    --dl-travel: 105svh;
+  }
+
+  .dl-track {
+    inline-size: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dl-crater-glow,
+  .dl-mouse i {
+    animation: none;
+  }
+  .dl-media-frame {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
 }

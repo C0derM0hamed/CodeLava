@@ -108,9 +108,20 @@
     "testimonialsRegion": "Client testimonials",
     "rating": "Rated {value} out of 5",
     "viewReview": "Read the review on {source}",
+    "allPlatforms": "All platforms",
+    "verifiedPlatforms": "Verified on freelance platforms",
+    "averageRating": "Average rating",
+    "reviewsCount": "{count, plural, one {# verified review} other {# verified reviews}}",
+    "verifiedOn": "Verified on {source}",
+    "deliveredProject": "Project",
     "sources": {
       "upwork": "Upwork",
       "mostaql": "Mostaql",
+      "khamsat": "Khamsat",
+      "fiverr": "Fiverr",
+      "bahr": "Bahr",
+      "freelancer": "Freelancer",
+      "clutch": "Clutch",
       "direct": "Direct client",
       "other": "Verified review"
     },
@@ -140,11 +151,15 @@
   },
   "services": {
     "title": "Services",
-    "viewService": "Explore this service",
+    "viewService": "Explore service & projects",
     "allServices": "All services",
     "features": "What’s included",
     "deliverables": "Deliverables",
-    "relatedProjects": "Related work",
+    "relatedProjects": "Projects built in this service",
+    "relatedProjectsLead": "Explore real software products delivered by our team under this discipline.",
+    "viewServiceProjects": "View projects",
+    "allInPortfolio": "Browse in portfolio",
+    "projectsBadge": "{count, plural, one {# project} other {# projects}}",
     "empty": "Services will appear here as they’re published.",
     "relatedServices": "More ways we can help",
     "technologies": "Technologies we use for this service"
@@ -152,10 +167,12 @@
   "work": {
     "title": "Our work",
     "allCategories": "All categories",
+    "allServices": "All services",
     "openCaseStudy": "Read the case study",
     "filterByCategory": "Filter by category",
+    "filterByService": "Filter by service",
     "empty": "Case studies will appear here as they’re published.",
-    "noResults": "No projects match this category."
+    "noResults": "No projects match this filter."
   },
   "caseStudy": {
     "backToWork": "Back to work",

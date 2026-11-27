@@ -10,11 +10,12 @@ import {
   AboutTeam,
   AboutValues,
 } from "@/components/sections/about";
+import { HomeTestimonials } from "@/components/sections/home";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { countryName } from "@/lib/i18n-content";
 import { JsonLd, breadcrumbListJsonLd } from "@/lib/jsonld";
 import { buildMetadata, localizedPath } from "@/lib/seo";
-import { getAchievements, getClientLogos, getPageMeta, getPageSections, getTeam } from "@/server/queries";
+import { getAchievements, getClientLogos, getPageMeta, getPageSections, getTeam, getTestimonials } from "@/server/queries";
 import "@/components/sections/home/home.css";
 
 type AboutParams = { params: Promise<{ locale: string }> };
@@ -52,14 +53,16 @@ export default async function AboutPage({ params }: AboutParams) {
   const locale: AppLocale = rawLocale;
   setRequestLocale(locale);
 
-  const [t, tHome, tNav, sections, team, achievements, clients] = await Promise.all([
+  const [t, tHome, tNav, tA11y, sections, team, achievements, clients, testimonials] = await Promise.all([
     getTranslations({ locale, namespace: "about" }),
     getTranslations({ locale, namespace: "home" }),
     getTranslations({ locale, namespace: "nav" }),
+    getTranslations({ locale, namespace: "a11y" }),
     getPageSections("about", locale),
     getTeam(locale),
     getAchievements(locale),
     getClientLogos(locale),
+    getTestimonials({ limit: 16 }, locale),
   ]);
 
   const section = (key: string) => sections.find((s) => s.sectionKey === key)?.content;
@@ -133,6 +136,39 @@ export default async function AboutPage({ params }: AboutParams) {
         achievements={achievements}
         clients={clients}
       />
+
+      {testimonials.length > 0 ? (
+        <HomeTestimonials
+          locale={locale}
+          eyebrow={tHome("verifiedPlatforms")}
+          title={t("testimonials")}
+          testimonials={testimonials}
+          labels={{
+            previous: tA11y("previousSlide"),
+            next: tA11y("nextSlide"),
+            rating: tHome.raw("rating") as string,
+            viewSource: tHome.raw("viewReview") as string,
+            region: tHome("testimonialsRegion"),
+            allPlatforms: tHome("allPlatforms"),
+            verifiedPlatforms: tHome("verifiedPlatforms"),
+            averageRating: tHome("averageRating"),
+            verifiedOn: tHome.raw("verifiedOn") as string,
+            deliveredProject: tHome("deliveredProject"),
+            reviewsCountLabel: tHome("reviewsCount", { count: testimonials.length }),
+            sources: {
+              upwork: tHome("sources.upwork"),
+              mostaql: tHome("sources.mostaql"),
+              khamsat: tHome("sources.khamsat"),
+              fiverr: tHome("sources.fiverr"),
+              bahr: tHome("sources.bahr"),
+              freelancer: tHome("sources.freelancer"),
+              clutch: tHome("sources.clutch"),
+              direct: tHome("sources.direct"),
+              other: tHome("sources.other"),
+            },
+          }}
+        />
+      ) : null}
     </main>
   );
 }

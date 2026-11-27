@@ -6,25 +6,66 @@ type Props = { locale: "en" | "ar"; children: ReactNode; className?: string; tit
 export function HeroStage({ locale, children, className, titleId }: Props) {
   const after = useId();
   const ar = locale === "ar";
+  const phases = ar
+    ? ["سكون", "اشتعال", "ثوران", "تدفّق الكود"]
+    : ["Stillness", "Ignition", "Eruption", "Code flow"];
+
   return (
     <>
       <section
         data-daylight-stage=""
-        className={["dl-stage", className].filter(Boolean).join(" ")}
+        data-hero-dark="true"
+        data-surface="dark"
+        className={["dl-stage surface-dark", className].filter(Boolean).join(" ")}
         dir={ar ? "rtl" : "ltr"}
         lang={locale}
         aria-labelledby={titleId || undefined}
         aria-label={titleId ? undefined : ar ? "مقدمة" : "Introduction"}
       >
         <div className="dl-pin">
-          <a className="dl-skip" href={"#" + after}>{ar ? "تخطّ المشهد" : "Skip the animation"}</a>
-          <div className="dl-columns">
-            <div className="dl-copy">{children}</div>
-            <HeroVolcano locale={locale} />
+          <a className="dl-skip" href={"#" + after}>
+            {ar ? "تخطّ المشهد" : "Skip the animation"}
+          </a>
+
+          {/* Full-bleed photorealistic volcano, scrubbed eruption video, WebGL embers & code stream */}
+          <HeroVolcano locale={locale} />
+
+          {/* Cinematic readability & framing scrims */}
+          <div className="dl-scrim" aria-hidden="true" />
+
+          {/* Hero copy directly overlaid on the full-bleed volcano */}
+          <div className="dl-overlay">
+            <div className="container-lava dl-copy-grid">
+              <div className="dl-copy">{children}</div>
+            </div>
           </div>
+
+          {/* Bottom scroll progress rail & volcanic phase indicator */}
           <div className="dl-cue" aria-hidden="true">
-            <span className="dl-track"><i /></span>{ar ? "مرّر للاستكشاف" : "Scroll to explore"}
+            <div className="container-lava dl-cue-inner">
+              <div className="dl-cue-left">
+                <span className="dl-mouse">
+                  <i />
+                </span>
+                <span className="dl-cue-label">{ar ? "مرّر لإشعال البركان" : "Scroll to erupt"}</span>
+              </div>
+
+              <div className="dl-cue-right">
+                <span className="dl-phases">
+                  {phases.map((label, idx) => (
+                    <span key={label} data-dl-phase={idx} hidden={idx !== 0}>
+                      {label}
+                    </span>
+                  ))}
+                </span>
+                <span className="dl-track">
+                  <i />
+                </span>
+              </div>
+            </div>
           </div>
+
+          <div className="dl-horizon-rim" aria-hidden="true" />
         </div>
       </section>
       <div id={after} tabIndex={-1} className="dl-end" />

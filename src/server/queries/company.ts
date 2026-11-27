@@ -14,7 +14,7 @@ export type TestimonialFilters = {
   limit?: number;
 };
 
-export const getTestimonials = publicQuery("public-testimonials", ["testimonials", "media"], async (
+export const getTestimonials = publicQuery("public-testimonials-v2", ["testimonials", "projects", "media"], async (
   draft, filters: TestimonialFilters = {}, locale: AppLocale = "en",
 ) => {
   const rows = await db.query.testimonials.findMany({
@@ -23,22 +23,32 @@ export const getTestimonials = publicQuery("public-testimonials", ["testimonials
       filters.featured === undefined ? undefined : eq(table.featured, filters.featured),
       filters.source ? eq(table.source, filters.source) : undefined,
     ),
-    with: { avatar: true },
+    with: { avatar: true, project: { columns: { slug: true, title: true, status: true } } },
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
     limit: filters.limit,
   });
-  return rows.map((row) => testimonialView(row, locale));
+  return rows.map((row) => testimonialView(row, locale, draft));
 }, []);
 
 export function testimonialView(
-  row: typeof testimonials.$inferSelect & { avatar: Parameters<typeof mediaView>[0] }, locale: AppLocale,
+  row: typeof testimonials.$inferSelect & {
+    avatar: Parameters<typeof mediaView>[0];
+    project?: { slug: string; title: { en: string; ar: string }; status: string } | null;
+  },
+  locale: AppLocale,
+  draft = false,
 ) {
+  const linkedProject =
+    row.project && (row.project.status === "published" || (draft && row.project.status === "draft"))
+      ? { slug: row.project.slug, title: t(row.project.title, locale) ?? "" }
+      : null;
   return {
     id: row.id, featured: row.featured, source: row.source, sourceUrl: row.sourceUrl, authorName: row.authorName,
     authorRole: t(row.authorRole, locale) || null, company: row.company, country: row.country,
     countryName: row.country ? countryName(row.country, locale) : null, rating: row.rating,
     quote: t(row.quote, locale) ?? "", quoteLocale: row.quoteLocale, avatar: mediaView(row.avatar, locale),
     reviewDate: row.reviewDate?.toISOString() ?? null,
+    project: linkedProject,
   };
 }
 

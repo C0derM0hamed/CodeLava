@@ -49,7 +49,12 @@ export default async function ServicesPage({ params }: Props) {
           </div>
           <div className="min-w-0 lg:col-span-8">
             {services.length ? (
-              <ServiceTiles services={services} actionLabel={t("viewService")} featuredFirst />
+              <ServiceTiles
+                services={services}
+                actionLabel={t("viewService")}
+                projectsBadge={(count) => t("projectsBadge", { count })}
+                featuredFirst
+              />
             ) : (
               <Panel className="grid min-h-48 place-items-center text-center text-muted">
                 <p>{t("empty")}</p>

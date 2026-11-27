@@ -14,14 +14,24 @@ export interface HomeServicesProps {
   description?: string;
   exploreLabel: string;
   moreLabel: string;
+  projectsBadge?: (count: number) => string;
   services: Service[];
 }
 
 /**
- * Services split intro + compact tiles (reference). The first tile is the single dark ink tile
- * with an orange glow; when there are more services than fit, the last slot links to /services.
+ * Services split intro + compact tiles. Each tile links into `/services/[slug]` where
+ * the projects built under that service are showcased prominently, displaying a live
+ * project counter badge when published projects exist.
  */
-export function HomeServices({ eyebrow, title, description, exploreLabel, moreLabel, services }: HomeServicesProps) {
+export function HomeServices({
+  eyebrow,
+  title,
+  description,
+  exploreLabel,
+  moreLabel,
+  projectsBadge,
+  services,
+}: HomeServicesProps) {
   if (services.length === 0) return null;
   const overflow = services.length > MAX_TILES;
   const tiles = overflow ? services.slice(0, MAX_TILES - 1) : services;
@@ -47,11 +57,25 @@ export function HomeServices({ eyebrow, title, description, exploreLabel, moreLa
                     data-cursor="pointer"
                     className={cn("home-service group", featured && "home-service--featured surface-dark")}
                   >
-                    <span aria-hidden="true" className="home-service__icon">
-                      <ServiceIcon name={service.icon} size={22} />
-                    </span>
+                    <div className="flex items-start justify-between gap-2">
+                      <span aria-hidden="true" className="home-service__icon">
+                        <ServiceIcon name={service.icon} size={22} />
+                      </span>
+                      {service.projectCount > 0 && projectsBadge ? (
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-[var(--radius-pill)] border px-2.5 py-0.5 text-[0.72rem] font-semibold tabular-nums",
+                            featured
+                              ? "border-lava-400/35 bg-lava-500/18 text-lava-100"
+                              : "border-line-lava bg-accent-soft text-accent-text",
+                          )}
+                        >
+                          {projectsBadge(service.projectCount)}
+                        </span>
+                      ) : null}
+                    </div>
                     <span className="grid gap-1.5">
-                      <span className="font-display text-[1.0625rem] font-semibold leading-snug text-text">
+                      <span className="font-display text-[1.0625rem] font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-accent-text">
                         {service.title}
                       </span>
                       {service.tagline ? (
@@ -59,7 +83,10 @@ export function HomeServices({ eyebrow, title, description, exploreLabel, moreLa
                       ) : null}
                     </span>
                     <span aria-hidden="true" className="home-service__arrow mt-auto self-end">
-                      <ArrowRightIcon size={14} />
+                      <ArrowRightIcon
+                        size={14}
+                        className="transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
+                      />
                     </span>
                   </Link>
                 </Reveal>

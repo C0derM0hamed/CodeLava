@@ -21,6 +21,10 @@ export function CaseStudyTestimonial({
   if (!testimonial) return null;
 
   const isRtl = locale === "ar";
+  const sourceLabels: Record<string, string> = isRtl
+    ? { upwork: "Upwork", mostaql: "مستقل", khamsat: "خمسات", fiverr: "Fiverr", bahr: "بحر", freelancer: "Freelancer", clutch: "Clutch", direct: "عميل مباشر", other: "تقييم موثّق" }
+    : { upwork: "Upwork", mostaql: "Mostaql", khamsat: "Khamsat", fiverr: "Fiverr", bahr: "Bahr", freelancer: "Freelancer", clutch: "Clutch", direct: "Direct client", other: "Verified review" };
+  const sourceName = sourceLabels[testimonial.source] ?? testimonial.source;
   const ratingText =
     typeof testimonial.rating === "number"
       ? `${formatNumber(testimonial.rating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} / ${formatNumber(5, locale)}`
@@ -81,9 +85,9 @@ export function CaseStudyTestimonial({
                   <TextLink
                     href={testimonial.sourceUrl}
                     icon="up-right"
-                    aria-label={`${testimonial.source} (${openInNewTabLabel})`}
+                    aria-label={`${sourceName} (${openInNewTabLabel})`}
                   >
-                    {testimonial.source}
+                    {sourceName}
                   </TextLink>
                 ) : null}
               </div>

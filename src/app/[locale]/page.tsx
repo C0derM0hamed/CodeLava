@@ -41,11 +41,6 @@ import "@/components/sections/home/home.css";
 type HomeParams = { params: Promise<{ locale: string }> };
 type SectionCopy = Record<string, string>;
 
-/**
- * Section keys the homepage knows how to render (page_sections.section_key for page "home").
- * Order, visibility and copy come directly from the DB via getPageSections (sortOrder asc,
- * hidden excluded), controlled in the Admin Homepage Builder.
- */
 const HOME_SECTION_KEYS = [
   "hero",
   "clients",
@@ -95,6 +90,7 @@ export default async function HomePage({ params }: HomeParams) {
 
   const [
     t,
+    tServices,
     tCommon,
     tA11y,
     sections,
@@ -110,6 +106,7 @@ export default async function HomePage({ params }: HomeParams) {
     faqs,
   ] = await Promise.all([
     getTranslations({ locale, namespace: "home" }),
+    getTranslations({ locale, namespace: "services" }),
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "a11y" }),
     getPageSections("home", locale),
@@ -117,7 +114,7 @@ export default async function HomePage({ params }: HomeParams) {
     getServices(locale),
     getProjects({ featured: true, limit: 1 }, locale),
     getProcessSteps(locale),
-    getTestimonials({ limit: 8 }, locale),
+    getTestimonials({ limit: 16 }, locale),
     getAchievements(locale),
     getClientLogos(locale),
     getTechnologies({}, locale),
@@ -125,7 +122,6 @@ export default async function HomePage({ params }: HomeParams) {
     getFaqs({}, locale),
   ]);
 
-  // Featured project: the first featured one, else the latest published project.
   const project = featured[0] ?? (await getProjects({ limit: 1 }, locale))[0] ?? null;
   const projectDetail = project ? await getProjectBySlug(project.slug, locale) : null;
 
@@ -138,6 +134,7 @@ export default async function HomePage({ params }: HomeParams) {
     hero: (copy) => (
       <HomeHero locale={locale}>
         <HomeHeroCopy
+          tone="dark"
           eyebrow={copy.eyebrow || tCommon("tagline")}
           title={copy.title || t("title")}
           description={copy.description || t("description")}
@@ -156,6 +153,7 @@ export default async function HomePage({ params }: HomeParams) {
         description={copy.description}
         exploreLabel={t("exploreServices")}
         moreLabel={t("moreServices")}
+        projectsBadge={(count) => tServices("projectsBadge", { count })}
         services={services}
       />
     ),
@@ -200,7 +198,8 @@ export default async function HomePage({ params }: HomeParams) {
     proof: (copy) =>
       testimonials.length > 0 ? (
         <HomeTestimonials
-          eyebrow={copy.eyebrow}
+          locale={locale}
+          eyebrow={copy.eyebrow || t("verifiedPlatforms")}
           title={copy.title || t("clientPerspectives")}
           description={copy.description}
           testimonials={testimonials}
@@ -210,9 +209,20 @@ export default async function HomePage({ params }: HomeParams) {
             rating: t.raw("rating") as string,
             viewSource: t.raw("viewReview") as string,
             region: t("testimonialsRegion"),
+            allPlatforms: t("allPlatforms"),
+            verifiedPlatforms: t("verifiedPlatforms"),
+            averageRating: t("averageRating"),
+            verifiedOn: t.raw("verifiedOn") as string,
+            deliveredProject: t("deliveredProject"),
+            reviewsCountLabel: t("reviewsCount", { count: testimonials.length }),
             sources: {
               upwork: t("sources.upwork"),
               mostaql: t("sources.mostaql"),
+              khamsat: t("sources.khamsat"),
+              fiverr: t("sources.fiverr"),
+              bahr: t("sources.bahr"),
+              freelancer: t("sources.freelancer"),
+              clutch: t("sources.clutch"),
               direct: t("sources.direct"),
               other: t("sources.other"),
             },
@@ -263,7 +273,7 @@ export default async function HomePage({ params }: HomeParams) {
           ? { href: "/quote", label: copy.ctaLabel }
           : undefined;
       return (
-        <div className="container-lava relative z-10 py-[clamp(2.5rem,5vw,4.5rem)]">
+        <div className="container-lava relative z-10 py-[clamp(2rem,4vw,3.5rem)]">
           <CtaBanner title={customTitle} lead={customLead} primary={customPrimary} />
         </div>
       );

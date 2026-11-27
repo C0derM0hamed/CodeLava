@@ -16,7 +16,13 @@ export interface WorkHeroProps {
 export function WorkHero({ locale, hero, intro, ctaLabel, totalCount, fallbackTitle }: WorkHeroProps) {
   const isRtl = locale === "ar";
   const countLabel = isRtl
-    ? `${formatNumber(totalCount, locale)} مشاريع منشورة`
+    ? totalCount === 1
+      ? "مشروع واحد منشور"
+      : totalCount === 2
+        ? "مشروعان منشوران"
+        : totalCount <= 10
+          ? `${formatNumber(totalCount, locale, { useGrouping: false })} مشاريع منشورة`
+          : `${formatNumber(totalCount, locale, { useGrouping: false })} مشروعًا منشورًا`
     : `${formatNumber(totalCount, locale)} published ${totalCount === 1 ? "case study" : "case studies"}`;
 
   return (

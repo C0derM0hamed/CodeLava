@@ -56,7 +56,7 @@ export const catalog: Record<Entity, Config> = {
     text("authorName", "Author name", 120, true), status, featured, local("authorRole", "Author role", 160),
     text("company", "Company"), countryField(), copy("quote", "Quote", true),
     select("quoteLocale", "Original language", ["en", "ar"]), num("rating", "Rating (out of 5)", 0, 5),
-    select("source", "Source", ["direct", "upwork", "mostaql", "other"]), url("sourceUrl", "Source link"),
+    select("source", "Source", ["upwork", "mostaql", "khamsat", "fiverr", "bahr", "freelancer", "clutch", "direct", "other"]), url("sourceUrl", "Source link"),
     asset("avatarMediaId", "Avatar"), link("projectId", "Project", "projects"), dateField("reviewDate", "Review date"),
   ] },
   client_logos: { table: t.clientLogos, label: "Client logos", title: "name", ordered: true, publicPath: "about", fields: [

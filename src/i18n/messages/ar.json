@@ -105,12 +105,23 @@
     "seeProcess": "تعرّف على طريقة عملنا",
     "exploreTechnologies": "تعرّف على تقنياتنا",
     "moreTechnologies": "+ {count} أخرى",
-    "testimonialsRegion": "آراء العملاء",
+    "testimonialsRegion": "تقييمات العملاء على منصات العمل الحر",
     "rating": "التقييم {value} من 5",
-    "viewReview": "اقرأ التقييم على {source}",
+    "viewReview": "اقرأ التقييم الموثّق على {source}",
+    "allPlatforms": "جميع المنصات",
+    "verifiedPlatforms": "تقييمات موثّقة من منصات العمل الحر",
+    "averageRating": "متوسط التقييم",
+    "reviewsCount": "{count, plural, one {تقييم واحد موثّق} two {تقييمان موثّقان} few {# تقييمات موثّقة} many {# تقييمًا موثّقًا} other {# تقييم موثّق}}",
+    "verifiedOn": "موثّق على {source}",
+    "deliveredProject": "المشروع",
     "sources": {
       "upwork": "Upwork",
       "mostaql": "مستقل",
+      "khamsat": "خمسات",
+      "fiverr": "Fiverr",
+      "bahr": "بحر",
+      "freelancer": "Freelancer",
+      "clutch": "Clutch",
       "direct": "عميل مباشر",
       "other": "تقييم موثّق"
     },
@@ -140,11 +151,15 @@
   },
   "services": {
     "title": "خدماتنا",
-    "viewService": "استكشف هذه الخدمة",
+    "viewService": "استكشف الخدمة والمشاريع",
     "allServices": "جميع الخدمات",
     "features": "ماذا تشمل الخدمة؟",
     "deliverables": "المخرجات",
-    "relatedProjects": "أعمال ذات صلة",
+    "relatedProjects": "مشاريعنا في هذا القسم",
+    "relatedProjectsLead": "تصفّح أبرز المنتجات الرقمية التي صمّمناها وطوّرناها ضمن هذا التخصص.",
+    "viewServiceProjects": "استعرض المشاريع",
+    "allInPortfolio": "عرض في معرض الأعمال",
+    "projectsBadge": "{count, plural, one {مشروع واحد} two {مشروعان} few {# مشاريع} many {# مشروعًا} other {# مشروع}}",
     "empty": "ستظهر تفاصيل الخدمات هنا عند نشرها.",
     "relatedServices": "خدمات أخرى قد تهمّك",
     "technologies": "التقنيات التي نعتمد عليها في هذه الخدمة"
@@ -152,10 +167,12 @@
   "work": {
     "title": "أعمالنا",
     "allCategories": "جميع الفئات",
+    "allServices": "جميع الأقسام",
     "openCaseStudy": "اقرأ دراسة الحالة",
     "filterByCategory": "التصفية حسب الفئة",
+    "filterByService": "التصفية حسب القسم",
     "empty": "ستظهر دراسات الحالة هنا عند نشرها.",
-    "noResults": "لا توجد مشاريع ضمن هذه الفئة."
+    "noResults": "لا توجد مشاريع مطابقة لهذا التصفية."
   },
   "caseStudy": {
     "backToWork": "العودة إلى أعمالنا",

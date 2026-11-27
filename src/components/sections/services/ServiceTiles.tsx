@@ -5,22 +5,25 @@ import type { Service } from "@/server/queries/types";
 import { ServiceIcon } from "./service-icons";
 import "./services.css";
 
-type TileService = Pick<Service, "id" | "slug" | "title" | "tagline" | "summary" | "icon">;
+type TileService = Pick<Service, "id" | "slug" | "title" | "tagline" | "summary" | "icon"> & {
+  projectCount?: number;
+};
 
 /**
- * The reference's service tiles: white rounded cards with an orange line icon, title, one-line
- * summary and an arrow. `featuredFirst` turns the first tile into the dark-ink tile with an
- * orange glow (max one dark tile per grid).
+ * Service tiles: rounded cards with icon, live project count pill (when published projects exist),
+ * title, summary, and arrow linking to `/services/[slug]` where the service's projects open first.
  */
 export function ServiceTiles({
   services,
   actionLabel,
+  projectsBadge,
   featuredFirst = false,
   columns = 3,
   className,
 }: {
   services: TileService[];
   actionLabel: string;
+  projectsBadge?: (count: number) => string;
   featuredFirst?: boolean;
   columns?: 2 | 3;
   className?: string;
@@ -35,6 +38,7 @@ export function ServiceTiles({
     >
       {services.map((service, index) => {
         const featured = featuredFirst && index === 0;
+        const count = service.projectCount ?? 0;
         return (
           <li key={service.id} className="min-w-0">
             <Link
@@ -42,9 +46,23 @@ export function ServiceTiles({
               data-cursor="pointer"
               className={cn("service-tile group", featured && "service-tile--featured surface-dark")}
             >
-              <span aria-hidden="true" className="service-tile-icon">
-                <ServiceIcon name={service.icon} size={featured ? 26 : 24} />
-              </span>
+              <div className="flex items-start justify-between gap-3">
+                <span aria-hidden="true" className="service-tile-icon">
+                  <ServiceIcon name={service.icon} size={featured ? 26 : 24} />
+                </span>
+                {count > 0 && projectsBadge ? (
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded-[var(--radius-pill)] border px-2.5 py-1 text-xs font-semibold tabular-nums",
+                      featured
+                        ? "border-lava-400/35 bg-lava-500/20 text-lava-100"
+                        : "border-line-lava bg-accent-soft text-accent-text",
+                    )}
+                  >
+                    {projectsBadge(count)}
+                  </span>
+                ) : null}
+              </div>
               <span className="grid gap-2">
                 <span className="font-display text-[1.1875rem] font-semibold leading-snug text-text transition-colors duration-300 group-hover:text-accent-text">
                   {service.title}

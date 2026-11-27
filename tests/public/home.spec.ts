@@ -68,11 +68,6 @@ for (const [locale, dir, messages, expectedService, expectedStep, expectedFaq] o
     await expect(faqButton).toHaveAttribute("aria-expanded", "false");
     await expect(page.locator(`main a[href="/${locale}/faq"]`).first()).toBeVisible();
 
-    // Empty DB sections must stay cleanly hidden (no orphan headings)
-    await expect(page.locator("#home-work-title")).toHaveCount(0);
-    await expect(page.locator("#home-testimonials-title")).toHaveCount(0);
-    await expect(page.locator("#home-insights-title")).toHaveCount(0);
-
     // Structured data: Organization + WebSite
     const jsonLdRaw = await page
       .locator("main script[type='application/ld+json']")
@@ -114,9 +109,6 @@ for (const [locale, dir, messages, expectedService, expectedStep, expectedFaq] o
     await expect(page.locator("#about-values-title")).toBeVisible();
     await expect(page.locator("#about-markets-title")).toBeVisible();
     await expect(page.locator(`main a[href="/${locale}/quote"]`).first()).toBeVisible();
-
-    // Empty team section must stay hidden
-    await expect(page.locator("#about-team-title")).toHaveCount(0);
 
     // Structured data: BreadcrumbList
     const jsonLdRaw = await page

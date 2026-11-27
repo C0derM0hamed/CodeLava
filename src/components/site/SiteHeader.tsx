@@ -29,7 +29,7 @@ export function isNavActive(pathname: string, href: string) {
 export interface SiteHeaderProps {
   /** Defaults to "fixed". Use "sticky" or "static" for embedded previews. */
   position?: "fixed" | "sticky" | "static";
-  /** Transparent at the very top (over the hero wash), white glass once scrolled. Default true. */
+  /** Transparent at the very top (over the hero), glass once scrolled. Default true. */
   transparentOverHero?: boolean;
   /** Slides away when scrolling down, returns on scroll up. Default true. */
   hideOnScrollDown?: boolean;
@@ -45,9 +45,9 @@ export interface SiteHeaderProps {
 }
 
 /**
- * Light sticky site header (v2): logo start · centred nav with orange active underline ·
- * globe language switch + "Get a quote" pill at the end. Transparent over the hero, then
- * white glass + hairline + soft shadow on scroll. Below lg → burger + full-height light sheet.
+ * Adaptive sticky site header: switches seamlessly between dark-hero overlay mode
+ * (crisp white wordmark & links over the full-bleed volcano hero) and daylight frosted
+ * white glass across the rest of the site.
  */
 export function SiteHeader({
   position = "fixed",
@@ -64,17 +64,27 @@ export function SiteHeader({
   const menuId = useId();
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
+  const isHomeRoute = pathname === "/" || pathname === "";
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [overDarkHero, setOverDarkHero] = useState(isHomeRoute && !forceElevated);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     if (position === "static" || typeof window === "undefined") return;
 
-    const onScroll = () => {
+    const evaluate = () => {
       const y = window.scrollY;
       setScrolled(y > 12);
+
+      const darkHero = document.querySelector<HTMLElement>('[data-hero-dark="true"]');
+      if (darkHero && !forceElevated) {
+        const rect = darkHero.getBoundingClientRect();
+        setOverDarkHero(rect.bottom > 76 && rect.top <= 76);
+      } else {
+        setOverDarkHero(false);
+      }
 
       if (hideOnScrollDown && !menuOpen) {
         const delta = y - lastScrollY.current;
@@ -86,10 +96,14 @@ export function SiteHeader({
       lastScrollY.current = y;
     };
 
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [hideOnScrollDown, menuOpen, position]);
+    evaluate();
+    window.addEventListener("scroll", evaluate, { passive: true });
+    window.addEventListener("resize", evaluate, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", evaluate);
+      window.removeEventListener("resize", evaluate);
+    };
+  }, [forceElevated, hideOnScrollDown, menuOpen, pathname, position]);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -97,11 +111,13 @@ export function SiteHeader({
   };
 
   const isElevated = forceElevated || scrolled || !transparentOverHero;
+  const darkChrome = overDarkHero && !forceElevated;
 
   return (
     <>
       <header
         data-elevated={isElevated ? "true" : "false"}
+        data-surface={darkChrome ? "dark" : undefined}
         aria-hidden={menuOpen || undefined}
         inert={menuOpen || undefined}
         className={cn(
@@ -109,8 +125,11 @@ export function SiteHeader({
           "z-[var(--z-header)] border-b transition-[transform,background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-[var(--ease-out-expo)]",
           "focus-within:translate-y-0",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
+          darkChrome && "surface-dark !bg-transparent",
           isElevated
-            ? "border-line bg-surface-glass shadow-[var(--shadow-header)] backdrop-blur-xl backdrop-saturate-150"
+            ? darkChrome
+              ? "border-white/10 !bg-ink-950/75 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.7)] backdrop-blur-xl backdrop-saturate-150"
+              : "border-line bg-surface-glass shadow-[var(--shadow-header)] backdrop-blur-xl backdrop-saturate-150"
             : "border-transparent bg-transparent",
           className,
         )}
@@ -123,7 +142,7 @@ export function SiteHeader({
             onClick={() => onNavigate?.("/")}
             className="shrink-0 rounded-md"
           >
-            <Logo size="md" tone="light" />
+            <Logo size="md" tone={darkChrome ? "dark" : "light"} />
           </Link>
 
           <nav aria-label={t("mainLabel")} className="hidden lg:block">
@@ -139,7 +158,13 @@ export function SiteHeader({
                       onClick={() => onNavigate?.(item.href)}
                       className={cn(
                         "group relative inline-flex h-11 items-center rounded-md px-2.5 text-[0.9rem] font-medium transition-colors duration-200 xl:px-3",
-                        active ? "text-accent-text" : "text-text/80 hover:text-text",
+                        darkChrome
+                          ? active
+                            ? "text-lava-300"
+                            : "text-ash-50/88 hover:text-white"
+                          : active
+                            ? "text-accent-text"
+                            : "text-text/80 hover:text-text",
                       )}
                     >
                       <span>{t(item.key)}</span>
@@ -160,7 +185,14 @@ export function SiteHeader({
 
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden sm:block">
-              <LocaleSwitch onLocaleChange={onLocaleChange} />
+              <LocaleSwitch
+                onLocaleChange={onLocaleChange}
+                className={
+                  darkChrome
+                    ? "text-ash-50/90 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                    : undefined
+                }
+              />
             </div>
             <div className="hidden md:block">
               <ActionLink href="/quote" variant="primary" size="sm" onClick={() => onNavigate?.("/quote")}>
@@ -176,7 +208,12 @@ export function SiteHeader({
               aria-label={t("menuOpen")}
               onClick={() => setMenuOpen((v) => !v)}
               data-cursor="pointer"
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-text shadow-[var(--shadow-xs)] transition-colors hover:border-line-lava hover:text-accent-text lg:hidden"
+              className={cn(
+                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-[var(--shadow-xs)] transition-colors lg:hidden",
+                darkChrome
+                  ? "border-white/20 bg-white/10 text-ash-50 backdrop-blur-md hover:border-lava-400/60 hover:text-lava-300"
+                  : "border-line-strong bg-surface text-text hover:border-line-lava hover:text-accent-text",
+              )}
             >
               <MenuIcon size={20} />
             </button>

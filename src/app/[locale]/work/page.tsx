@@ -19,11 +19,12 @@ import {
   getProjectBySlug,
   getProjectCategories,
   getProjects,
+  getServices,
 } from "@/server/queries";
 
 type WorkPageParams = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; service?: string | string[] }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -58,22 +59,33 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
   const rawCategory = Array.isArray(resolvedSearch.category)
     ? resolvedSearch.category[0]
     : resolvedSearch.category;
+  const rawService = Array.isArray(resolvedSearch.service)
+    ? resolvedSearch.service[0]
+    : resolvedSearch.service;
   const activeCategory = rawCategory?.trim() || "";
+  const activeService = rawService?.trim() || "";
 
-  const [tWork, tCommon, tNav, allProjects, categories, sections] = await Promise.all([
+  const [tWork, tCommon, tNav, allProjects, categories, services, sections] = await Promise.all([
     getTranslations({ locale, namespace: "work" }),
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "nav" }),
     getProjects({}, locale),
     getProjectCategories(locale),
+    getServices(locale),
     getPageSections("work", locale),
   ]);
 
-  const filteredBase = activeCategory
-    ? await getProjects({ category: activeCategory }, locale)
-    : allProjects;
+  const filteredBase =
+    activeCategory || activeService
+      ? await getProjects(
+          {
+            category: activeCategory || undefined,
+            serviceSlug: activeService || undefined,
+          },
+          locale,
+        )
+      : allProjects;
 
-  // Enrich listed projects from cached detail query to display mono tech tags, featured highlight metric, and hover video
   const details = await Promise.all(
     filteredBase.slice(0, 24).map((project) => getProjectBySlug(project.slug, locale)),
   );
@@ -95,33 +107,48 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
   const introContent = sections.find((s) => s.sectionKey === "intro")?.content;
   const ctaContent = sections.find((s) => s.sectionKey === "cta")?.content ?? {};
 
-  const visibleCategories = categories.filter(
-    (cat) => cat.count > 0 || cat.slug === activeCategory,
-  );
+  const servicesWithProjects = services.filter((svc) => svc.projectCount > 0 || svc.slug === activeService);
+  const visibleCategories = categories.filter((cat) => cat.count > 0 || cat.slug === activeCategory);
 
-  const filterOptions: FilterPillOption[] = [
-    {
-      value: "",
-      label: tWork("allCategories"),
-      count: formatNumber(allProjects.length, locale, { useGrouping: false }),
-      href: "/work",
-    },
-    ...visibleCategories.map((cat) => ({
-      value: cat.slug,
-      label: cat.name,
-      count: formatNumber(cat.count, locale, { useGrouping: false }),
-      href: `/work?category=${encodeURIComponent(cat.slug)}`,
-    })),
-  ];
+  const useServicePills = servicesWithProjects.length > 0 && !activeCategory;
+  const activeFilterValue = useServicePills ? activeService : activeCategory;
+  const filterOptions: FilterPillOption[] = useServicePills
+    ? [
+        {
+          value: "",
+          label: tWork("allServices"),
+          count: formatNumber(allProjects.length, locale, { useGrouping: false }),
+          href: "/work",
+        },
+        ...servicesWithProjects.map((svc) => ({
+          value: svc.slug,
+          label: svc.title,
+          count: formatNumber(svc.projectCount, locale, { useGrouping: false }),
+          href: `/work?service=${encodeURIComponent(svc.slug)}`,
+        })),
+      ]
+    : [
+        {
+          value: "",
+          label: tWork("allCategories"),
+          count: formatNumber(allProjects.length, locale, { useGrouping: false }),
+          href: "/work",
+        },
+        ...visibleCategories.map((cat) => ({
+          value: cat.slug,
+          label: cat.name,
+          count: formatNumber(cat.count, locale, { useGrouping: false }),
+          href: `/work?category=${encodeURIComponent(cat.slug)}`,
+        })),
+      ];
 
-  // Unfiltered view splits top featured flagships into asymmetric spotlight + remainder into interactive ledger.
-  // Filtered view presents all matches directly in the editorial ledger for crisp comparison.
-  const featuredFlagships = !activeCategory
-    ? enrichedProjects.filter((p) => p.featured).slice(0, 2)
-    : [];
+  const hasFilter = Boolean(activeCategory || activeService);
+  const featuredFlagships = !hasFilter ? enrichedProjects.filter((p) => p.featured).slice(0, 2) : [];
   const featuredIds = new Set(featuredFlagships.map((p) => p.id));
   const ledgerProjects = enrichedProjects.filter((p) => !featuredIds.has(p.id));
 
+  const activeServiceLabel = servicesWithProjects.find((s) => s.slug === activeService)?.title;
+  const activeCategoryLabel = visibleCategories.find((c) => c.slug === activeCategory)?.name;
   const isRtl = locale === "ar";
   const showingText = isRtl
     ? `عرض ${formatNumber(enrichedProjects.length, locale, { useGrouping: false })} من ${formatNumber(allProjects.length, locale, { useGrouping: false })}`
@@ -153,11 +180,14 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
         </section>
       ) : (
         <>
-          {/* Category Filters Bar */}
-          {visibleCategories.length > 0 ? (
+          {filterOptions.length > 1 ? (
             <section className="pb-4 sm:pb-6">
               <div className="container-lava flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <FilterPills options={filterOptions} value={activeCategory} ariaLabel={tWork("filterByCategory")} />
+                <FilterPills
+                  options={filterOptions}
+                  value={activeFilterValue}
+                  ariaLabel={useServicePills ? tWork("filterByService") : tWork("filterByCategory")}
+                />
                 <p role="status" className="shrink-0 text-sm text-faint tabular-nums">
                   {showingText}
                 </p>
@@ -190,15 +220,13 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
                 locale={locale}
                 projects={ledgerProjects}
                 headingKicker={
-                  activeCategory
-                    ? visibleCategories.find((c) => c.slug === activeCategory)?.name
-                    : isRtl
-                      ? "جميع المشاريع"
-                      : "All projects"
+                  activeServiceLabel ||
+                  activeCategoryLabel ||
+                  (isRtl ? "جميع المشاريع" : "All projects")
                 }
                 headingTitle={
-                  activeCategory
-                    ? tWork("title")
+                  hasFilter
+                    ? activeServiceLabel || activeCategoryLabel || tWork("title")
                     : featuredFlagships.length > 0
                       ? isRtl
                         ? "المزيد من أعمالنا."
@@ -213,7 +241,6 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
           )}
         </>
       )}
-
     </main>
   );
 }
