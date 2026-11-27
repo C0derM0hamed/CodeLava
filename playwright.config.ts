@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 const baseURL = process.env.BASE_URL ?? "http://localhost:3101";
 
 export default defineConfig({
-  testDir: "tests/admin",
+  testDir: "tests",
   timeout: 120_000,
   expect: { timeout: 15_000 },
   workers: 1,
