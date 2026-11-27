@@ -1,6 +1,6 @@
-import type { CSSProperties } from "react";
-import { ActionLink } from "@/components/ui/ActionLink";
+import { Fragment, type CSSProperties } from "react";
 import { cn } from "@/components/ui/cn";
+import { HeroCta } from "./HeroCta";
 import { splitHeadline } from "./utils";
 
 export interface HomeHeroCopyProps {
@@ -17,10 +17,33 @@ export interface HomeHeroCopyProps {
   tone?: "light" | "dark";
 }
 
+function renderSplitWords(
+  text: string,
+  startIndex: number,
+  wordClassName: string,
+) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  return words.map((word, index) => (
+    <Fragment key={`${startIndex + index}-${word}`}>
+      {index > 0 ? " " : null}
+      <span className="hero-word-clip">
+        <span
+          className={cn("hero-word", wordClassName)}
+          style={{ "--word-idx": startIndex + index } as CSSProperties}
+        >
+          {word}
+        </span>
+      </span>
+    </Fragment>
+  ));
+}
+
 /**
- * Self-contained hero copy block: kicker chip · two-line headline (second line in the lava
- * gradient) · intro · "Start your project" molten pill + secondary "View our work" pill.
- * The H1 paints immediately (LCP); only the supporting lines animate in.
+ * Self-contained hero copy block:
+ * - Precision molten-glass technical eyebrow chip with live beacon + `</>` code glyph
+ * - Editorial two-line headline with subtle split-word rise & incandescent magma highlight
+ * - Refined subcopy with controlled measure
+ * - Hero-scoped magnetic primary & frosted-glass secondary CTAs with circular sliding arrow wells
  */
 export function HomeHeroCopy({
   eyebrow,
@@ -32,50 +55,50 @@ export function HomeHeroCopy({
   tone = "light",
 }: HomeHeroCopyProps) {
   const [first, second] = splitHeadline(title);
+  const firstWordsCount = first.trim().split(/\s+/).filter(Boolean).length;
   const dark = tone === "dark";
 
   return (
-    <div className="flex max-w-[38.5rem] flex-col items-start gap-4 sm:gap-6">
+    <div className="flex max-w-[36.5rem] flex-col items-start gap-5 sm:gap-6">
       {eyebrow ? (
-        <p
-          className={cn(
-            "home-hero-enter inline-flex max-w-full items-center gap-2.5 rounded-[var(--radius-pill)] border py-1.5 ps-2 pe-4 text-[0.8125rem] font-semibold backdrop-blur-md",
-            dark
-              ? "border-white/15 bg-ink-950/60 text-ash-50 shadow-[0_8px_28px_-10px_rgba(0,0,0,0.65)]"
-              : "border-line bg-surface/85 text-text shadow-[var(--shadow-xs)]",
-          )}
+        <div
+          className="home-hero-enter hero-eyebrow"
+          data-tone={tone}
+          style={{ "--enter-delay": "20ms" } as CSSProperties}
         >
-          <span
-            aria-hidden="true"
-            className={cn(
-              "relative grid size-5 shrink-0 place-items-center rounded-full",
-              dark ? "bg-lava-500/20" : "bg-accent-soft",
-            )}
-          >
-            <span className="size-2 rounded-full [background-image:var(--gradient-cta)]" />
+          <span aria-hidden="true" className="hero-eyebrow__beacon">
+            <span className="hero-eyebrow__pulse" />
+            <span className="hero-eyebrow__core" />
           </span>
-          <span className="truncate">{eyebrow}</span>
-        </p>
+          <span aria-hidden="true" className="hero-eyebrow__sep" />
+          <span aria-hidden="true" dir="ltr" className="hero-eyebrow__code">
+            &lt;/&gt;
+          </span>
+          <span className="hero-eyebrow__label">{eyebrow}</span>
+        </div>
       ) : null}
 
       <h1
         id={titleId}
-        className={cn(
-          "home-hero-title",
-          dark ? "text-ash-50 drop-shadow-[0_6px_24px_rgba(7,6,10,0.65)]" : "text-text",
-        )}
+        data-tone={tone}
+        className={cn("home-hero-title", dark ? "home-hero-title--dark" : "home-hero-title--light")}
       >
-        <span className="block">{first}</span>
+        <span className="block">
+          {renderSplitWords(
+            first,
+            0,
+            dark ? "hero-word--base-dark" : "hero-word--base-light",
+          )}
+        </span>
         {second ? (
           <>
             {" "}
-            <span
-              className={cn(
-                "text-lava-gradient block pb-[0.06em]",
-                dark && "drop-shadow-[0_6px_28px_rgba(255,106,0,0.28)]",
+            <span className="block">
+              {renderSplitWords(
+                second,
+                firstWordsCount,
+                dark ? "hero-word--accent-dark" : "hero-word--accent-light",
               )}
-            >
-              {second}
             </span>
           </>
         ) : null}
@@ -83,37 +106,24 @@ export function HomeHeroCopy({
 
       {description ? (
         <p
-          className={cn(
-            "home-hero-enter text-lead max-w-[46ch]",
-            dark && "text-ash-200/95 drop-shadow-[0_2px_12px_rgba(7,6,10,0.55)]",
-          )}
-          style={{ "--enter-delay": "120ms" } as CSSProperties}
+          data-tone={tone}
+          className="home-hero-enter hero-lead"
+          style={{ "--enter-delay": "150ms" } as CSSProperties}
         >
           {description}
         </p>
       ) : null}
 
       <div
-        className="home-hero-enter flex flex-wrap items-center gap-x-4 gap-y-3 pt-1 sm:pt-2"
-        style={{ "--enter-delay": "220ms" } as CSSProperties}
+        className="home-hero-enter flex flex-wrap items-center gap-2.5 pt-1 sm:gap-4 sm:pt-2"
+        style={{ "--enter-delay": "240ms" } as CSSProperties}
       >
-        <ActionLink href="/quote" variant="primary" size="lg">
+        <HeroCta href="/quote" variant="primary" tone={tone}>
           {primaryLabel}
-        </ActionLink>
-        {dark ? (
-          <ActionLink
-            href="/work"
-            variant="outline"
-            size="lg"
-            className="border-white/25 bg-white/10 text-ash-50 backdrop-blur-md hover:border-lava-400/70 hover:bg-white/16 hover:text-white"
-          >
-            {secondaryLabel}
-          </ActionLink>
-        ) : (
-          <ActionLink href="/work" variant="secondary" size="lg">
-            {secondaryLabel}
-          </ActionLink>
-        )}
+        </HeroCta>
+        <HeroCta href="/work" variant="secondary" tone={tone}>
+          {secondaryLabel}
+        </HeroCta>
       </div>
     </div>
   );

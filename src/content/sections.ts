@@ -49,13 +49,13 @@ export const sectionRegistry = {
   home: {
     hero: section("Home hero", {
       ...block(
-        copy("Software & AI Solutions", "ابتكار يتدفق برمجياً"),
-        copy("We turn ideas into\nreal digital products.", "نحوّل الأفكار\nإلى منتجات رقمية حقيقية."),
-        copy("CodeLava designs and engineers digital products, custom software and AI solutions around the way your business works.",
-          "نصمّم ونطوّر في CodeLava منتجات رقمية وبرمجيات مخصّصة وحلول ذكاء اصطناعي تنسجم مع طريقة عملك."),
+        copy("Software & Applied AI", "البرمجيات والذكاء الاصطناعي"),
+        copy("Digital products,\nengineered to last.", "منتجات رقمية\nتُبنى لتدوم."),
+        copy("CodeLava designs and builds custom software, digital platforms, and applied AI shaped around the way your business runs.",
+          "في CodeLava نصمّم ونطوّر برمجيات مخصّصة ومنصّات رقمية وحلول ذكاء اصطناعي تنسجم مع أسلوب عملك وتنمو معه."),
       ),
       ctaLabel: copy("Start your project", "ابدأ مشروعك"),
-      secondaryCtaLabel: copy("View our work", "شاهد أعمالنا"),
+      secondaryCtaLabel: copy("View our work", "استعرض أعمالنا"),
     }),
     clients: section("Client logos", {
       eyebrow: copy("Trusted by teams across the Gulf and beyond", "شركاء نجاح في الخليج وخارجه"),

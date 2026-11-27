@@ -6,31 +6,648 @@
 
 /* ------------------------------------------------------------------ hero */
 
+/* 1. Eyebrow — precision frosted-glass technical chip with hairline gradient border & live ember */
+.hero-eyebrow {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-inline-size: 100%;
+  padding-block: 0.375rem;
+  padding-inline: 0.65rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--obsidian-950) 56%, transparent);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
+  color: var(--ash-50);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--ash-50) 14%, transparent),
+    0 12px 30px -14px color-mix(in oklab, var(--obsidian-950) 85%, transparent);
+}
+
+.hero-eyebrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    color-mix(in oklab, var(--lava-300) 52%, transparent) 0%,
+    color-mix(in oklab, var(--ash-50) 22%, transparent) 38%,
+    color-mix(in oklab, var(--ash-50) 8%, transparent) 72%,
+    color-mix(in oklab, var(--lava-500) 32%, transparent) 100%
+  );
+  -webkit-mask:
+    linear-gradient(var(--pearl-50) 0 0) content-box,
+    linear-gradient(var(--pearl-50) 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(var(--pearl-50) 0 0) content-box,
+    linear-gradient(var(--pearl-50) 0 0);
+  mask-composite: exclude;
+}
+
+.hero-eyebrow::after {
+  content: "";
+  position: absolute;
+  inset-block: -40%;
+  left: -60%;
+  inline-size: 46%;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in oklab, var(--ash-50) 14%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translate3d(-120%, 0, 0) skewX(-18deg);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-eyebrow::after {
+    animation: hero-chip-shimmer 7.5s var(--ease-out-expo) 1.6s infinite;
+  }
+}
+
+@keyframes hero-chip-shimmer {
+  0%, 76% {
+    transform: translate3d(-120%, 0, 0) skewX(-18deg);
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(520%, 0, 0) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+.hero-eyebrow[data-tone="light"] {
+  background: var(--surface-glass);
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    var(--shadow-xs);
+}
+
+.hero-eyebrow[data-tone="light"]::before {
+  background: linear-gradient(
+    115deg,
+    color-mix(in oklab, var(--lava-500) 45%, transparent) 0%,
+    color-mix(in oklab, var(--ink-900) 14%, transparent) 45%,
+    color-mix(in oklab, var(--ink-900) 8%, transparent) 100%
+  );
+}
+
+.hero-eyebrow__beacon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  flex: none;
+}
+
+.hero-eyebrow__core {
+  inline-size: 0.4375rem;
+  block-size: 0.4375rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, var(--ember) 0%, var(--lava-400) 58%, var(--lava-500) 100%);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--lava-400) 80%, transparent);
+}
+
+.hero-eyebrow[data-tone="light"] .hero-eyebrow__core {
+  background: var(--accent-text);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--lava-500) 45%, transparent);
+}
+
+.hero-eyebrow__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--lava-400) 45%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-eyebrow__pulse {
+    animation: hero-beacon-ping 2.8s var(--ease-out-expo) infinite;
+  }
+}
+
+@keyframes hero-beacon-ping {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.75;
+  }
+  70%, 100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+
+.hero-eyebrow__sep {
+  inline-size: 1px;
+  block-size: 0.75rem;
+  flex: none;
+  background: color-mix(in oklab, var(--ash-50) 18%, transparent);
+}
+
+.hero-eyebrow[data-tone="light"] .hero-eyebrow__sep {
+  background: var(--line-strong);
+}
+
+.hero-eyebrow__code {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--lava-300);
+  flex: none;
+}
+
+.hero-eyebrow[data-tone="light"] .hero-eyebrow__code {
+  color: var(--accent-text);
+}
+
+.hero-eyebrow__label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ash-50) 94%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-eyebrow[data-tone="light"] .hero-eyebrow__label {
+  color: var(--text);
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-eyebrow__label {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* 2. Editorial display typography + split-word entrance */
 .home-hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 1.45rem + 3.1vw, 4.6rem);
-  font-weight: 700;
+  font-size: clamp(2.25rem, 1.4rem + 2.4vw, 3.85rem);
+  font-weight: 600;
   line-height: 1.04;
-  letter-spacing: -0.032em;
+  letter-spacing: -0.036em;
   text-wrap: balance;
 }
+
 :is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .home-hero-title {
-  font-size: clamp(2.2rem, 1.3rem + 2.7vw, 4rem);
+  font-size: clamp(2.05rem, 1.3rem + 2.15vw, 3.45rem);
+  font-weight: 600;
   line-height: 1.24;
   letter-spacing: 0;
 }
 
-/* Gentle entrance for hero support content (never the H1 — it is the LCP element). */
+.home-hero-title--dark {
+  filter: drop-shadow(0 10px 30px color-mix(in oklab, var(--obsidian-950) 62%, transparent));
+}
+
+.hero-word-clip {
+  display: inline-block;
+  vertical-align: top;
+  overflow-y: clip;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.hero-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.hero-word--base-dark {
+  background-image: linear-gradient(
+    180deg,
+    var(--pearl-50) 18%,
+    color-mix(in oklab, var(--ash-200) 90%, var(--lava-100)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-word--base-light {
+  color: var(--text);
+}
+
+.hero-word--accent-dark {
+  background-image: linear-gradient(
+    168deg,
+    var(--lava-100) 0%,
+    var(--ember) 18%,
+    var(--lava-400) 56%,
+    var(--lava-500) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 26px color-mix(in oklab, var(--lava-500) 30%, transparent));
+}
+
+.hero-word--accent-light {
+  background-image: var(--gradient-lava-wordmark-deep);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-word {
+    animation: hero-word-reveal 620ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--word-idx, 0) * 52ms);
+  }
+}
+
+@keyframes hero-word-reveal {
+  from {
+    opacity: 0.01;
+    transform: translate3d(0, 38%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-lead {
+  font-family: var(--font-sans);
+  font-size: clamp(0.975rem, 0.92rem + 0.22vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.64;
+  max-inline-size: 44ch;
+  color: var(--text-muted);
+}
+
+.hero-lead[data-tone="dark"] {
+  color: color-mix(in oklab, var(--ash-200) 90%, transparent);
+  text-shadow: 0 2px 14px color-mix(in oklab, var(--obsidian-950) 65%, transparent);
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-lead {
+  line-height: 1.82;
+  letter-spacing: 0;
+}
+
+/* 3. Hero-scoped tactile CTA buttons */
+.hero-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  min-block-size: 3.25rem;
+  padding-block: 0.375rem;
+  padding-inline: 1.5rem 0.5rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.008em;
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+  transition:
+    transform 340ms var(--ease-out-expo),
+    box-shadow 340ms var(--ease-out-expo),
+    background-color 300ms var(--ease-out-expo),
+    color 260ms var(--ease-out-expo);
+}
+
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .hero-cta {
+  letter-spacing: 0;
+  font-size: 0.96rem;
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px);
+}
+
+.hero-cta:active {
+  transform: translateY(0);
+  transition-duration: 120ms;
+}
+
+.hero-cta__label {
+  position: relative;
+  z-index: 1;
+}
+
+/* Primary CTA — layered molten fill, inner specular bevel, hover glow & circular arrow well */
+.hero-cta--primary {
+  background-image: var(--gradient-cta);
+  color: var(--on-accent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 48%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--lava-900) 58%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--lava-400) 42%, transparent),
+    0 12px 30px -10px color-mix(in oklab, var(--lava-600) 68%, transparent),
+    0 4px 12px -4px color-mix(in oklab, var(--obsidian-950) 55%, transparent);
+}
+
+.hero-cta--primary:hover {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 68%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--lava-900) 50%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--lava-300) 65%, transparent),
+    0 18px 40px -8px color-mix(in oklab, var(--lava-500) 72%, transparent),
+    0 6px 18px -4px color-mix(in oklab, var(--obsidian-950) 60%, transparent);
+}
+
+.hero-cta__sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--pearl-50) 18%, transparent) 0%,
+    transparent 34%
+  );
+}
+
+.hero-cta__sheen::after {
+  content: "";
+  position: absolute;
+  inset-block: -30%;
+  inset-inline-start: -55%;
+  inline-size: 48%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in oklab, var(--lava-100) 32%, transparent) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translate3d(-120%, 0, 0) skewX(-20deg);
+  transition:
+    transform 680ms var(--ease-out-expo),
+    opacity 220ms ease;
+}
+
+[dir="rtl"] .hero-cta__sheen::after {
+  transform: translate3d(120%, 0, 0) skewX(20deg);
+}
+
+.hero-cta--primary:hover .hero-cta__sheen::after {
+  opacity: 1;
+  transform: translate3d(380%, 0, 0) skewX(-20deg);
+}
+
+[dir="rtl"] .hero-cta--primary:hover .hero-cta__sheen::after {
+  opacity: 1;
+  transform: translate3d(-380%, 0, 0) skewX(20deg);
+}
+
+.hero-cta--primary .hero-cta__well {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  background: color-mix(in oklab, var(--obsidian-950) 24%, transparent);
+  border: 1px solid color-mix(in oklab, var(--pearl-50) 18%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--pearl-50) 20%, transparent);
+  color: var(--on-accent);
+}
+
+.hero-cta--primary:hover .hero-cta__well {
+  background: color-mix(in oklab, var(--obsidian-950) 14%, var(--pearl-50) 14%);
+  border-color: color-mix(in oklab, var(--lava-100) 42%, transparent);
+}
+
+/* Secondary CTA — frosted obsidian glass with directional hairline gradient border */
+.hero-cta--secondary {
+  background: color-mix(in oklab, var(--obsidian-950) 46%, transparent);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
+  color: var(--ash-50);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--ash-50) 16%, transparent),
+    0 12px 28px -14px color-mix(in oklab, var(--obsidian-950) 80%, transparent);
+}
+
+.hero-cta--secondary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    130deg,
+    color-mix(in oklab, var(--ash-50) 36%, transparent) 0%,
+    color-mix(in oklab, var(--ash-50) 12%, transparent) 46%,
+    color-mix(in oklab, var(--lava-400) 34%, transparent) 100%
+  );
+  -webkit-mask:
+    linear-gradient(var(--pearl-50) 0 0) content-box,
+    linear-gradient(var(--pearl-50) 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(var(--pearl-50) 0 0) content-box,
+    linear-gradient(var(--pearl-50) 0 0);
+  mask-composite: exclude;
+  transition: opacity 280ms var(--ease-out-expo);
+}
+
+.hero-cta--secondary:hover {
+  background: color-mix(in oklab, var(--obsidian-900) 64%, var(--lava-900) 14%);
+  color: var(--pearl-50);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--lava-100) 28%, transparent),
+    0 16px 34px -14px color-mix(in oklab, var(--obsidian-950) 88%, transparent),
+    0 0 24px -8px color-mix(in oklab, var(--lava-500) 32%, transparent);
+}
+
+.hero-cta--secondary:hover::before {
+  background: linear-gradient(
+    130deg,
+    color-mix(in oklab, var(--lava-300) 62%, transparent) 0%,
+    color-mix(in oklab, var(--ash-50) 24%, transparent) 48%,
+    color-mix(in oklab, var(--lava-400) 56%, transparent) 100%
+  );
+}
+
+.hero-cta--secondary .hero-cta__well {
+  inline-size: 2.125rem;
+  block-size: 2.125rem;
+  background: color-mix(in oklab, var(--ash-50) 7%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ash-50) 16%, transparent);
+  color: var(--ash-200);
+}
+
+.hero-cta--secondary:hover .hero-cta__well {
+  background: color-mix(in oklab, var(--lava-500) 18%, transparent);
+  border-color: color-mix(in oklab, var(--lava-300) 50%, transparent);
+  color: var(--lava-100);
+}
+
+/* Secondary CTA light-surface adaptation (e.g. /about) */
+.hero-cta--secondary[data-tone="light"] {
+  background: color-mix(in oklab, var(--pearl-50) 88%, transparent);
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 var(--pearl-50),
+    var(--shadow-xs);
+}
+
+.hero-cta--secondary[data-tone="light"]::before {
+  background: linear-gradient(
+    130deg,
+    color-mix(in oklab, var(--ink-900) 18%, transparent) 0%,
+    color-mix(in oklab, var(--ink-900) 10%, transparent) 55%,
+    color-mix(in oklab, var(--lava-500) 34%, transparent) 100%
+  );
+}
+
+.hero-cta--secondary[data-tone="light"]:hover {
+  background: var(--pearl-50);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+}
+
+.hero-cta--secondary[data-tone="light"] .hero-cta__well {
+  background: var(--accent-soft);
+  border-color: var(--line-lava);
+  color: var(--accent-text);
+}
+
+.hero-cta--secondary[data-tone="light"]:hover .hero-cta__well {
+  background: var(--accent-soft-strong);
+  border-color: var(--line-lava-strong);
+  color: var(--accent-text);
+}
+
+/* Circular sliding icon well */
+.hero-cta__well {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  border-radius: 999px;
+  transition:
+    background-color 280ms var(--ease-out-expo),
+    border-color 280ms var(--ease-out-expo),
+    color 260ms var(--ease-out-expo);
+}
+
+.hero-cta__arrow {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  transition:
+    transform 360ms var(--ease-out-expo),
+    opacity 260ms var(--ease-out-expo);
+}
+
+.hero-cta__arrow--out {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.hero-cta__arrow--in {
+  transform: translate3d(-150%, 0, 0);
+  opacity: 0;
+}
+
+[dir="rtl"] .hero-cta__arrow--in {
+  transform: translate3d(150%, 0, 0);
+}
+
+.hero-cta:is(:hover, :focus-visible) .hero-cta__arrow--out {
+  transform: translate3d(150%, 0, 0);
+  opacity: 0;
+}
+
+[dir="rtl"] .hero-cta:is(:hover, :focus-visible) .hero-cta__arrow--out {
+  transform: translate3d(-150%, 0, 0);
+}
+
+.hero-cta:is(:hover, :focus-visible) .hero-cta__arrow--in {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+@media (max-width: 479.98px) {
+  .hero-cta {
+    min-block-size: 3rem;
+    padding-inline: 1.05rem 0.375rem;
+    gap: 0.55rem;
+    font-size: 0.875rem;
+  }
+
+  .hero-cta--primary .hero-cta__well,
+  .hero-cta--secondary .hero-cta__well {
+    inline-size: 1.9rem;
+    block-size: 1.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-eyebrow::after,
+  .hero-eyebrow__pulse,
+  .hero-word {
+    animation: none;
+  }
+
+  .hero-cta:hover {
+    transform: none;
+  }
+
+  .hero-cta__sheen::after {
+    display: none;
+  }
+
+  .hero-cta:is(:hover, :focus-visible) .hero-cta__arrow--out {
+    transform: none;
+    opacity: 1;
+  }
+
+  .hero-cta__arrow--in,
+  .hero-cta:is(:hover, :focus-visible) .hero-cta__arrow--in {
+    opacity: 0;
+  }
+}
+
+/* Gentle entrance for hero support content */
 @media (prefers-reduced-motion: no-preference) {
   .home-hero-enter {
-    animation: home-rise 820ms var(--ease-out-expo) both;
+    animation: home-rise 760ms var(--ease-out-expo) both;
     animation-delay: var(--enter-delay, 0ms);
   }
 }
 @keyframes home-rise {
   from {
     opacity: 0;
-    transform: translate3d(0, 14px, 0);
+    transform: translate3d(0, 12px, 0);
   }
   to {
     opacity: 1;

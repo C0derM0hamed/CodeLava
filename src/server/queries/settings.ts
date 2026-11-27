@@ -26,7 +26,7 @@ function mergeSection(base: SectionContent, content: unknown): SectionContent {
   return result;
 }
 
-const readSections = publicQuery("public-page-sections-v2", ["page-sections"], async (draft, pageKey: string) => {
+const readSections = publicQuery("public-page-sections-v3", ["page-sections"], async (draft, pageKey: string) => {
   const keys = pageKey === "work" || pageKey === "portfolio" ? ["work", "portfolio"] : [pageKey];
   const rows = await db.select({
     id: pageSections.id, pageKey: pageSections.pageKey, sectionKey: pageSections.sectionKey,
