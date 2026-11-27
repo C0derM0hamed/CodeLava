@@ -96,7 +96,7 @@ export function TechnologyLogo({
             "font-mono font-bold tracking-tight",
             size === "lg" ? "text-xl" : size === "sm" ? "text-[0.8125rem]" : "text-base",
           )}
-          style={{ color: brand }}
+          style={{ color: `color-mix(in oklab, ${brand} 45%, var(--ink-900))` }}
         >
           {glyph}
         </span>

@@ -160,9 +160,10 @@ function ToastCard({
 export interface ToastProviderProps {
   children: ReactNode;
   closeLabel?: string;
+  notificationsLabel?: string;
 }
 
-export function ToastProvider({ children, closeLabel = "Close" }: ToastProviderProps) {
+export function ToastProvider({ children, closeLabel = "Close", notificationsLabel = "Notifications" }: ToastProviderProps) {
   const [items, setItems] = useState<ToastItem[]>([]);
   const seqRef = useRef(0);
 
@@ -193,7 +194,8 @@ export function ToastProvider({ children, closeLabel = "Close" }: ToastProviderP
     <ToastContext.Provider value={value}>
       {children}
       <div
-        aria-label="Notifications"
+        role="region"
+        aria-label={notificationsLabel}
         className="pointer-events-none fixed bottom-5 end-5 z-[var(--z-toast)] flex w-[calc(100vw-2.5rem)] max-w-sm flex-col gap-2.5"
       >
         {items.map((item) => (

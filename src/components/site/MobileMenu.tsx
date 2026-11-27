@@ -99,10 +99,10 @@ export function MobileMenu({
       aria-hidden={!open}
       inert={!open || undefined}
       className={cn(
-        "page-wash fixed inset-0 z-[var(--z-drawer)] flex flex-col bg-bg transition-[opacity,transform,visibility] duration-400 ease-[var(--ease-out-expo)] lg:hidden",
+        "page-wash fixed inset-0 z-[var(--z-drawer)] flex flex-col bg-bg duration-400 ease-[var(--ease-out-expo)] lg:hidden",
         open
-          ? "pointer-events-auto visible translate-y-0 opacity-100"
-          : "pointer-events-none invisible -translate-y-3 opacity-0",
+          ? "pointer-events-auto visible translate-y-0 opacity-100 transition-[opacity,transform]"
+          : "pointer-events-none invisible -translate-y-3 opacity-0 transition-[opacity,transform,visibility]",
       )}
     >
       {/* Sheet header */}

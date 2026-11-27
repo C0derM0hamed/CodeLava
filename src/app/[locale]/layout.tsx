@@ -54,7 +54,7 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
     <html lang={locale} dir={dirOf(locale)} className={fontVariables}>
       <body>
         <NextIntlClientProvider>
-          <ToastProvider closeLabel={tc("close")}>
+          <ToastProvider closeLabel={tc("close")} notificationsLabel={tc("notifications")}>
             <SkipLink />
             <SmoothScrollProvider>
               <SiteHeader />

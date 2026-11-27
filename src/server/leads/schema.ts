@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Public forms share this schema. Disable Zod's runtime code generation under the browser CSP.
+if (typeof window !== "undefined") z.config({ jitless: true });
+
 const optionalText = (max: number) => z.string().trim().max(max).optional();
 const optionalCode = (pattern: RegExp) => z.string().trim().toUpperCase().regex(pattern).optional();
 const optionalHttp = z.url({ protocol: /^https?$/ }).max(2048).optional();

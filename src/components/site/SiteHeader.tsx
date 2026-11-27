@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
@@ -105,10 +105,10 @@ export function SiteHeader({
     };
   }, [forceElevated, hideOnScrollDown, menuOpen, pathname, position]);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setMenuOpen(false);
     requestAnimationFrame(() => menuTriggerRef.current?.focus());
-  };
+  }, []);
 
   const isElevated = forceElevated || scrolled || !transparentOverHero;
   const darkChrome = overDarkHero && !forceElevated;

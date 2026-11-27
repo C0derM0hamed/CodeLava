@@ -125,11 +125,15 @@
 
 /* Micro 3-bar acoustic waveform indicator */
 .cl-sound-eq {
-  display: inline-flex;
+  display: none;
   align-items: flex-end;
   gap: 2px;
   block-size: 11px;
   inline-size: 11px;
+}
+
+.cl-sound-eq[data-active="true"] {
+  display: inline-flex;
 }
 
 .cl-sound-eq i {
