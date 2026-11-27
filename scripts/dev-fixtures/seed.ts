@@ -1,11 +1,9 @@
-import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import sharp from "sharp";
-import { z } from "zod";
 import {
   achievements,
   articles,
@@ -17,26 +15,20 @@ import {
   projectServices,
   projectTechnologies,
   services,
-  siteSettings,
   teamMembers,
   technologies,
   testimonials,
   type Localized,
   type MediaVariant,
-} from "../src/db/schema";
+} from "../../src/db/schema";
+import { fixtureIdPrefix } from "../../src/lib/developer-fixtures";
+import { clearFixtures } from "./clean";
+import { fixtureDatabase, fixtureStorage, readFixtureTarget } from "./target";
 
-const env = z
-  .object({
-    DATABASE_URL: z.string().min(1),
-    STORAGE_LOCAL_PUBLIC_DIR: z.string().optional(),
-  })
-  .parse(process.env);
-
-const PUBLIC_STORAGE_DIR = resolve(env.STORAGE_LOCAL_PUBLIC_DIR || "storage/public");
-const ASSETS_DIR = resolve("scripts/demo-assets");
+const ASSETS_DIR = resolve("scripts/dev-fixtures/assets");
 const L = (en: string, ar: string): Localized => ({ en, ar });
 const demoId = (ns: string, index: number) =>
-  `d3000000-0000-4000-8000-${ns}${String(index + 1).padStart(10, "0")}`;
+  `${fixtureIdPrefix}${ns}${String(index + 1).padStart(10, "0")}`;
 
 type Db = ReturnType<typeof drizzle>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
@@ -56,12 +48,12 @@ async function storeImageBuffer(
 ) {
   const width = options.width ?? 1600;
   const height = options.height ?? 1000;
-  await mkdir(PUBLIC_STORAGE_DIR, { recursive: true });
+  await mkdir(fixtureStorage, { recursive: true });
 
   const existing = await tx.select().from(media).where(eq(media.id, options.id));
   if (existing.length > 0) return existing[0];
 
-  const baseUuid = randomUUID();
+  const baseUuid = options.id;
   const storageKey = `${baseUuid}.webp`;
   const pipeline = sharp(buffer, { density: 160 });
 
@@ -76,7 +68,7 @@ async function storeImageBuffer(
     .webp({ quality: 88 })
     .toBuffer({ resolveWithObject: true });
 
-  await writeFile(resolve(PUBLIC_STORAGE_DIR, storageKey), main.data);
+  await writeFile(resolve(fixtureStorage, storageKey), main.data);
 
   const variants: MediaVariant[] = [];
   const widths = width <= 500 ? [width] : [480, 960, Math.min(1600, width)];
@@ -98,7 +90,7 @@ async function storeImageBuffer(
         .resize({ width: targetW, withoutEnlargement: true })
         .toFormat(format, { quality: format === "avif" ? 58 : 84 })
         .toBuffer({ resolveWithObject: true });
-      await writeFile(resolve(PUBLIC_STORAGE_DIR, key), out.data);
+      await writeFile(resolve(fixtureStorage, key), out.data);
       variants.push({
         width: out.info.width,
         height: out.info.height,
@@ -250,12 +242,14 @@ function buildLogoSvg(name: string, mark: "hex" | "arc" | "grid" | "prism" | "bo
 </svg>`.trim();
 }
 
-async function seedDemo() {
-  const sqlClient = postgres(env.DATABASE_URL, { max: 1 });
+async function seedDemo(databaseUrl: string) {
+  const sqlClient = postgres(databaseUrl, { max: 1 });
   try {
     const db = drizzle(sqlClient);
     await db.transaction(async (tx) => {
-      await tx.execute(sql`select pg_advisory_xact_lock(420299)`);
+      const result = await tx.execute<{ name: string }>(sql`select current_database() as name`);
+      if (result[0]?.name !== fixtureDatabase) throw new Error("The connection resolved to a different database.");
+      await tx.execute(sql`select pg_advisory_xact_lock(420233)`);
 
       // Lookup existing starter services, categories, technologies
       const svcRows = await tx.select().from(services);
@@ -274,7 +268,7 @@ async function seedDemo() {
             slug: "cloud-devops",
             name: L("Cloud & DevOps", "الحوسبة السحابية وDevOps"),
             sortOrder: 5,
-            visible: true,
+            visible: false,
           })
           .onConflictDoNothing()
           .returning();
@@ -325,180 +319,6 @@ async function seedDemo() {
           alt: L(card.title, card.title),
         });
         mediaMap.set(card.key, row.id);
-      }
-
-      // 3. Enrich starter services with covers, deliverables, and features so every service detail page shines
-      const serviceEnrichments: Record<
-        string,
-        {
-          coverKey: string;
-          deliverables: { en: string[]; ar: string[] };
-          features: { title: Localized; description: Localized; icon: string }[];
-        }
-      > = {
-        "custom-web-platforms": {
-          coverKey: "webLogistics",
-          deliverables: {
-            en: [
-              "Bilingual (EN/AR) responsive web platform & admin console",
-              "Role-based access control, audit trails & secure authentication",
-              "PostgreSQL relational schema, API contracts & integrations",
-              "Automated CI/CD deployment pipeline & observability setup",
-              "Complete codebase documentation & engineering handover",
-            ],
-            ar: [
-              "منصة ويب متجاوبة ثنائية اللغة (عربي/إنجليزي) ولوحة إدارة متكاملة",
-              "نظام صلاحيات دقيق وسجل تدقيق ومصادقة آمنة",
-              "قاعدة بيانات PostgreSQL وتكاملات API موثوقة",
-              "مسار نشر تلقائي CI/CD ومراقبة فورية للأداء",
-              "توثيق برمجي كامل وتسليم منظم لفريقك",
-            ],
-          },
-          features: [
-            { title: L("Workflow-First Architecture", "بنية متمحورة حول مسارات العمل"), description: L("Every screen mirrors real operational roles instead of forcing teams into rigid templates.", "كل شاشة تُصمّم لتلائم دور فريقك الفعلي بدلًا من القوالب الجامدة."), icon: "PanelsTopLeft" },
-            { title: L("Enterprise Security & RBAC", "أمان مؤسسي وصلاحيات دقيقة"), description: L("Granular permissions, session hygiene, rate limiting and full audit logs built in.", "صلاحيات تفصيلية، جلسات آمنة، حماية من الطلبات المتكررة وسجل تدقيق شامل."), icon: "ShieldCheck" },
-            { title: L("Native RTL + LTR Parity", "دعم أصيل للعربية والإنجليزية"), description: L("True bidirectional layouts, localized numbers and crisp Arabic typography from day one.", "تخطيطات متكاملة للاتجاهين وأرقام وخطوط عربية واضحة منذ اليوم الأول."), icon: "Globe" },
-            { title: L("API & ERP Integrations", "تكامل سلس مع الأنظمة القائمة"), description: L("Clean connectors for payment gateways, ERPs, CRMs and regional compliance platforms.", "ربط موثوق مع بوابات الدفع وأنظمة ERP والجهات التنظيمية."), icon: "Workflow" },
-          ],
-        },
-        "mobile-apps": {
-          coverKey: "mobileCourier",
-          deliverables: {
-            en: [
-              "iOS & Android production apps (Flutter or native Swift/Kotlin)",
-              "Real-time push notifications, live maps & offline resilience",
-              "Local payment integrations (Mada, Apple Pay, KNET, cards)",
-              "App Store & Google Play review submission & release kit",
-              "Crash monitoring, performance telemetry & post-launch support",
-            ],
-            ar: [
-              "تطبيقات جاهزة للإنتاج على iOS وAndroid (Flutter أو Native)",
-              "إشعارات لحظية وخرائط مباشرة والعمل بسلاسة عند ضعف الاتصال",
-              "ربط بوابات الدفع المحلية (مدى، Apple Pay، KNET والبطاقات)",
-              "تجهيز النشر ومراجعة متجري App Store وGoogle Play",
-              "مراقبة الأعطال والأداء ودعم ما بعد الإطلاق",
-            ],
-          },
-          features: [
-            { title: L("60fps Native-Feel UX", "سلاسة فائقة بسرعة 60 إطارًا"), description: L("Fluid transitions, tactile micro-interactions and zero-jank scrolling on real devices.", "انتقالات ناعمة وتفاعلات دقيقة مختبرة على الأجهزة الفعلية."), icon: "Smartphone" },
-            { title: L("Live Tracking & Maps", "تتبّع لحظي وخرائط ذكية"), description: L("Sub-second courier, fleet or field-agent positioning with battery-friendly telemetry.", "تتبع فوري للمندوبين والأساطيل بكفاءة عالية لاستهلاك البطارية."), icon: "Compass" },
-            { title: L("Regional Checkout Ready", "جاهز لبوابات الدفع الإقليمية"), description: L("One-tap Apple Pay, Mada, STC Pay and multi-currency checkout flows.", "دفع بضغطة واحدة عبر Apple Pay ومدى والعملات الخليجية والمحلية."), icon: "Zap" },
-            { title: L("Store Release Management", "إدارة كاملة للنشر بالمتاجر"), description: L("We handle provisioning, compliance questionnaires and phased rollouts.", "نتولى إجراءات الاعتماد والنشر المرحلي على المتاجر بسلاسة."), icon: "Rocket" },
-          ],
-        },
-        "ai-solutions-automation": {
-          coverKey: "aiCopilot",
-          deliverables: {
-            en: [
-              "Production Arabic/English RAG knowledge copilot or agent",
-              "Evaluation benchmark dataset with measurable accuracy metrics",
-              "Human-in-the-loop review workflows & audit logging",
-              "Secure private data connectors & role-scoped retrieval",
-              "Cost-controlled LLM routing & fallback orchestration",
-            ],
-            ar: [
-              "مساعد ذكاء اصطناعي أو وكيل أتمتة ثنائي اللغة جاهز للإنتاج",
-              "مجموعة اختبارات قياسية لضمان دقة المخرجات وقابليتها للقياس",
-              "مسارات مراجعة بشرية وسجل تدقيق كامل للقرارات",
-              "ربط آمن بالبيانات الداخلية مع احترام صلاحيات كل مستخدم",
-              "تحسين تكلفة استدعاء النماذج مع خطط بديلة تلقائية",
-            ],
-          },
-          features: [
-            { title: L("Arabic-First RAG Retrieval", "استرجاع معرفي دقيق للعربية"), description: L("Hybrid semantic + keyword retrieval tuned for Arabic legal, finance and ops documents.", "بحث دلالي وهجين مضبوط خصيصًا للمستندات العربية والإنجليزية."), icon: "Sparkles" },
-            { title: L("Measurable Evaluations", "تقييم مستمر وقابل للقياس"), description: L("Every prompt and pipeline change is benchmarked before hitting production.", "نختبر كل تحديث على حالات عمل فعلية قبل وصوله للإنتاج."), icon: "BarChart3" },
-            { title: L("Document & ERP Automation", "أتمتة المستندات وأنظمة ERP"), description: L("Extract structured data from invoices, contracts and forms directly into your ERP.", "استخراج تلقائي لبيانات الفواتير والعقود وربطها مباشرة بنظامك."), icon: "Bot" },
-            { title: L("Guardrails & Privacy", "ضوابط أمان وخصوصية كاملة"), description: L("PII redaction, citation grounding and strict tenant isolation.", "توثيق المصادر وعزل كامل لبيانات كل عميل دون تسريب."), icon: "Lock" },
-          ],
-        },
-        "product-design": {
-          coverKey: "designSystem",
-          deliverables: {
-            en: [
-              "User journey mapping, information architecture & UX audit",
-              "Interactive clickable Figma prototypes in English & Arabic",
-              "Tokenized Figma + code design system with dark/light modes",
-              "WCAG 2.2 AA accessibility & RTL visual specification",
-              "Developer-ready component specs & motion guidelines",
-            ],
-            ar: [
-              "رسم رحلات المستخدم وهندسة المعلومات وتدقيق تجربة الاستخدام",
-              "نماذج أولية تفاعلية على Figma باللغتين العربية والإنجليزية",
-              "نظام تصميم متكامل بالمتغيرات جاهز للبرمجة",
-              "توافق كامل مع معايير إتاحة الوصول WCAG 2.2 AA واتجاه RTL",
-              "مواصفات دقيقة للمكونات والحركة لتسليم سلس للمطورين",
-            ],
-          },
-          features: [
-            { title: L("Bilingual Design Systems", "أنظمة تصميم ثنائية اللغة"), description: L("Mirrored grids, calibrated Arabic type scales and tokenized spacing built to scale.", "شبكات متناظرة ومقاييس خطوط عربية مضبوطة قابلة للتوسع."), icon: "PenTool" },
-            { title: L("Interactive Prototyping", "نماذج أولية تفاعلية"), description: L("Validate critical user flows with real stakeholders before a line of code is written.", "اختبر التجربة فعليًا مع عملائك وفريقك قبل بدء التطوير."), icon: "Layers" },
-            { title: L("Conversion-Focused Flows", "مسارات تركّز على التحويل"), description: L("Eliminate friction across onboarding, checkout and enterprise dashboards.", "تبسيط خطوات التسجيل والدفع ولوحات التحكم المعقدة."), icon: "Palette" },
-            { title: L("Engineering Handover", "تسليم هندسي منضبط"), description: L("Every component ships with hover, focus, empty, error and RTL states defined.", "كل مكون يوثّق حالات التفاعل والأخطاء والفراغ بوضوح تام."), icon: "Boxes" },
-          ],
-        },
-        ecommerce: {
-          coverKey: "ecommerceLuxury",
-          deliverables: {
-            en: [
-              "Fast headless bilingual storefront (Next.js) with SEO schema",
-              "Mada, Apple Pay, Tamara, Tabby & multi-currency checkout",
-              "Real-time ERP / inventory sync & fulfillment dashboard",
-              "Localized promotions, loyalty rules & abandoned cart flows",
-              "Analytics, conversion tracking & speed optimization",
-            ],
-            ar: [
-              "متجر إلكتروني فائق السرعة ثنائي اللغة مهيّأ لمحركات البحث",
-              "دفع محلي وعالمي (مدى، Apple Pay، تمارا، تابي وعملات متعددة)",
-              "مزامنة لحظية للمخزون والطلبات مع أنظمة ERP والشحن",
-              "نظام عروض وخصومات مرن واستعادة السلات المتروكة",
-              "تتبع التحويلات وتحسين سرعة التصفح على الجوال",
-            ],
-          },
-          features: [
-            { title: L("Instant Mobile Storefront", "تصفّح فوري على الجوال"), description: L("Sub-second product pages engineered to maximize mobile conversion across GCC networks.", "صفحات منتجات فائقة السرعة لرفع معدل الشراء عبر الجوال."), icon: "ShoppingCart" },
-            { title: L("BNPL & Local Payments", "الدفع بالتقسيط والبوابات المحلية"), description: L("Seamless integration with Tamara, Tabby, Moyasar, Tap, HyperPay and Stripe.", "تكامل مباشر مع تمارا وتابي وميسّر وتاب وStripe."), icon: "Zap" },
-            { title: L("Inventory & Shipping Sync", "ربط المخزون وشركات الشحن"), description: L("Automated waybills with Aramex, SMSA and DHL plus live stock control.", "إصدار تلقائي لبوالص الشحن ومزامنة فورية مع المخزون."), icon: "Boxes" },
-            { title: L("Editorial Merchandising", "عرض فاخر للمنتجات"), description: L("Rich lookbooks, custom variants and effortless CMS control for your team.", "عرض جذاب للمنتجات مع تحكم كامل وسهل لفريق التسويق."), icon: "Sparkles" },
-          ],
-        },
-        "cloud-devops": {
-          coverKey: "cloudDevops",
-          deliverables: {
-            en: [
-              "Containerized production architecture (Docker / Kubernetes / Terraform)",
-              "Zero-downtime CI/CD pipelines with automated rollback",
-              "24/7 observability dashboards, alerts & uptime SLAs",
-              "Cloudflare edge security, WAF & DDoS hardening",
-              "Disaster recovery runbooks & regional data residency compliance",
-            ],
-            ar: [
-              "بنية سحابية حديثة بالحاويات (Docker / Kubernetes / Terraform)",
-              "مسارات نشر تلقائية دون توقف مع التراجع الفوري عند الحاجة",
-              "لوحات مراقبة وتنبيهات على مدار الساعة لضمان أعلى استقرار",
-              "حماية الحافة وجدار الحماية WAF ومقاومة هجمات DDoS",
-              "خطط تعافٍ موثّقة وامتثال لمتطلبات استضافة البيانات بالمنطقة",
-            ],
-          },
-          features: [
-            { title: L("Zero-Downtime Releases", "تحديثات دون أي توقّف"), description: L("Blue-green and canary deployments keep customers online during every release.", "نشر تدريجي آمن يضمن استمرار الخدمة دون انقطاع للمستخدمين."), icon: "Cloud" },
-            { title: L("Full-Stack Observability", "رؤية لحظية شاملة للأداء"), description: L("Structured logs, traces and latency alerts pinpoint bottlenecks before users notice.", "تتبّع دقيق للسجلات وزمن الاستجابة قبل تأثر أي عميل."), icon: "Server" },
-            { title: L("Regional Cloud Residency", "امتثال لاستضافة البيانات"), description: L("Deploy cleanly across Riyadh, Dubai, Bahrain, Frankfurt and Cloudflare edge.", "نشر مرن في مناطق الرياض ودبي والبحرين وأوروبا."), icon: "Globe" },
-            { title: L("Cost & Security Hardening", "تحسين التكلفة وتحصين الأمان"), description: L("Right-sized autoscaling, encrypted secrets and automated daily backups.", "توسّع تلقائي متوازن ونسخ احتياطي يومي مشفّر."), icon: "ShieldCheck" },
-          ],
-        },
-      };
-
-      for (const [slug, enrich] of Object.entries(serviceEnrichments)) {
-        const svc = svcBySlug.get(slug);
-        if (!svc) continue;
-        await tx
-          .update(services)
-          .set({
-            coverMediaId: mediaMap.get(enrich.coverKey) ?? svc.coverMediaId,
-            deliverables: enrich.deliverables,
-            features: enrich.features,
-          })
-          .where(eq(services.id, svc.id));
       }
 
       // 4. Insert 12 rich bilingual projects (2 linked to EVERY SINGLE ONE of the 6 services!)
@@ -997,7 +817,7 @@ async function seedDemo() {
           .values({
             id: pid,
             slug: p.slug,
-            status: "published",
+            status: "draft",
             sortOrder: i,
             featured: p.featured,
             categoryId,
@@ -1015,23 +835,10 @@ async function seedDemo() {
             metrics: p.metrics,
             coverMediaId,
             accent: "lava",
-            publishedAt: new Date(Date.UTC(p.year, 2, 15 - (i % 10))),
           })
-          .onConflictDoUpdate({
-            target: projects.slug,
-            set: {
-              status: "published",
-              featured: p.featured,
-              categoryId,
-              coverMediaId,
-              title: p.title,
-              summary: p.summary,
-              metrics: p.metrics,
-              features: p.features,
-            },
-          });
+          .onConflictDoNothing();
 
-        const [saved] = await tx.select({ id: projects.id }).from(projects).where(eq(projects.slug, p.slug));
+        const [saved] = await tx.select({ id: projects.id }).from(projects).where(eq(projects.id, pid));
         if (!saved) continue;
         projectIdsBySlug.set(p.slug, saved.id);
 
@@ -1218,7 +1025,7 @@ async function seedDemo() {
           .insert(testimonials)
           .values({
             id: demoId("30", i),
-            status: "published",
+            status: "draft",
             sortOrder: i,
             featured: rev.featured,
             source: rev.source,
@@ -1232,12 +1039,11 @@ async function seedDemo() {
             quoteLocale: rev.quoteLocale,
             projectId: projectIdsBySlug.get(rev.projectSlug) ?? null,
             reviewDate: new Date(Date.UTC(2026, 1, 20 - i)),
-            publishedAt: new Date(Date.UTC(2026, 1, 20 - i)),
           })
           .onConflictDoUpdate({
             target: testimonials.id,
             set: {
-              status: "published",
+              status: "draft",
               source: rev.source,
               rating: rev.rating,
               quote: rev.quote,
@@ -1275,7 +1081,7 @@ async function seedDemo() {
             name: client.name,
             logoMediaId: logoMedia.id,
             country: client.country,
-            visible: true,
+            visible: false,
             sortOrder: i,
           })
           .onConflictDoNothing();
@@ -1300,7 +1106,7 @@ async function seedDemo() {
             label: st.label,
             description: st.description,
             icon: st.icon,
-            visible: true,
+            visible: false,
             sortOrder: i,
           })
           .onConflictDoNothing();
@@ -1351,11 +1157,11 @@ async function seedDemo() {
             role: m.role,
             bio: m.bio,
             socials: m.socials,
-            visible: true,
+            visible: false,
             sortOrder: i,
           })
           .onConflictDoNothing();
-        const [found] = await tx.select({ id: teamMembers.id }).from(teamMembers).where(eq(teamMembers.slug, m.slug));
+        const [found] = await tx.select({ id: teamMembers.id }).from(teamMembers).where(eq(teamMembers.id, tid));
         if (found) teamIds.push(found.id);
       }
 
@@ -1427,7 +1233,7 @@ async function seedDemo() {
           .values({
             id: demoId("70", i),
             slug: a.slug,
-            status: "published",
+            status: "draft",
             featured: a.featured,
             title: a.title,
             excerpt: a.excerpt,
@@ -1436,68 +1242,10 @@ async function seedDemo() {
             authorId: teamIds[i % Math.max(1, teamIds.length)] ?? null,
             tags: a.tags,
             readingMinutes: a.readingMinutes,
-            publishedAt: new Date(Date.UTC(2026, 2, 22 - i * 4)),
           })
           .onConflictDoNothing();
       }
 
-      // 10. Populate demo contact & social settings only if currently blank
-      const existingSettings = await tx.select().from(siteSettings);
-      const settingsMap = new Map(existingSettings.map((s) => [s.key, s.value as Record<string, unknown>]));
-      const currentContact = settingsMap.get("contact") ?? {};
-      if (!currentContact.email) {
-        await tx
-          .insert(siteSettings)
-          .values({
-            key: "contact",
-            value: {
-              email: "hello@codelava.dev",
-              phone: "+966 50 000 0000",
-              whatsapp: "+966500000000",
-              address: L("Riyadh · Cairo · Remote Worldwide", "الرياض · القاهرة · نعمل عن بُعد حول العالم"),
-              hours: L("Sun – Thu, 9:00 AM – 6:00 PM (AST)", "الأحد – الخميس، ٩:٠٠ ص – ٦:٠٠ م (بتوقيت الرياض)"),
-              mapUrl: "",
-            },
-          })
-          .onConflictDoUpdate({
-            target: siteSettings.key,
-            set: {
-              value: {
-                email: "hello@codelava.dev",
-                phone: "+966 50 000 0000",
-                whatsapp: "+966500000000",
-                address: L("Riyadh · Cairo · Remote Worldwide", "الرياض · القاهرة · نعمل عن بُعد حول العالم"),
-                hours: L("Sun – Thu, 9:00 AM – 6:00 PM (AST)", "الأحد – الخميس، ٩:٠٠ ص – ٦:٠٠ م (بتوقيت الرياض)"),
-                mapUrl: "",
-              },
-            },
-          });
-      }
-      const currentSocials = settingsMap.get("socials") ?? {};
-      if (Object.keys(currentSocials).length === 0) {
-        await tx
-          .insert(siteSettings)
-          .values({
-            key: "socials",
-            value: {
-              upwork: "https://www.upwork.com/",
-              mostaql: "https://mostaql.com/",
-              github: "https://github.com/C0derM0hamed",
-              linkedin: "https://www.linkedin.com/",
-            },
-          })
-          .onConflictDoUpdate({
-            target: siteSettings.key,
-            set: {
-              value: {
-                upwork: "https://www.upwork.com/",
-                mostaql: "https://mostaql.com/",
-                github: "https://github.com/C0derM0hamed",
-                linkedin: "https://www.linkedin.com/",
-              },
-            },
-          });
-      }
     });
 
     console.log("CodeLava demo portfolio (12 projects across all 6 services), 9 freelance platform reviews, 6 clients, 4 achievements, 4 team members & 3 articles seeded.");
@@ -1506,7 +1254,13 @@ async function seedDemo() {
   }
 }
 
-void seedDemo().catch((error: unknown) => {
-  console.error("Demo seed failed", error);
+async function main() {
+  const target = readFixtureTarget(process.argv.slice(2));
+  if (target.clean) await clearFixtures(target.databaseUrl, target.storage);
+  else await seedDemo(target.databaseUrl);
+}
+
+void main().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : "Developer fixtures failed.");
   process.exitCode = 1;
 });

@@ -22,6 +22,7 @@ export function PageBuilder({ page, sections, initial, version, canWrite, canPub
   const toast = useToast();
   const router = useRouter();
   const edited = JSON.stringify(layout) !== JSON.stringify(initial);
+  const canEditLayout = canWrite && page === "home";
   const hasCopyDraft = sections.some(({ draft }) => draft);
   const byKey = new Map(sections.map((section) => [section.key, section]));
   const byLayoutKey = new Map(layout.map((item) => [item.key, item]));
@@ -35,10 +36,10 @@ export function PageBuilder({ page, sections, initial, version, canWrite, canPub
         router.refresh();
       } else {
         toast(result.error, true);
-        setPending(false);
       }
     } catch {
       toast("The request could not be completed. Try again.", true);
+    } finally {
       setPending(false);
     }
   }
@@ -56,7 +57,7 @@ export function PageBuilder({ page, sections, initial, version, canWrite, canPub
           {visible !== liveVisible && <Badge>{visible ? "Show on publish" : "Hide on publish"}</Badge>}
         </div>
       </div>
-      {canWrite && <label className="flex min-h-10 items-center gap-2 text-xs font-medium text-muted">
+      {canEditLayout && <label className="flex min-h-10 items-center gap-2 text-xs font-medium text-muted">
         <input type="checkbox" aria-label={`Show ${label}`} className="size-4 accent-accent" disabled={pending} checked={visible}
           onChange={(event) => setLayout((items) => items.map((item) => item.key === id ? { ...item, visible: event.target.checked } : item))} />
         Show
@@ -67,10 +68,10 @@ export function PageBuilder({ page, sections, initial, version, canWrite, canPub
   return <div className="grid gap-4">
     <section aria-label="Page layout" className={paneClass}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-xl font-semibold">Section order</h2>
+        <h2 className="font-display text-xl font-semibold">{page === "home" ? "Section order" : "Page copy"}</h2>
         {hasLayoutDraft && <Badge>Layout draft</Badge>}
       </div>
-      {canWrite
+      {canEditLayout
         ? <SortableList items={layout.map(({ key }) => ({ id: key, label: byKey.get(key)!.label }))} disabled={pending}
           onChange={(ids) => setLayout(ids.map((id) => byLayoutKey.get(id)!))}>
           {({ id }) => renderItem(id)}
@@ -80,7 +81,7 @@ export function PageBuilder({ page, sections, initial, version, canWrite, canPub
     <div className="flex flex-wrap items-center gap-2" aria-busy={pending}>
       {canPublish && <button className={primaryClass} type="button" disabled={pending || (!edited && !hasLayoutDraft && !hasCopyDraft)}
         onClick={() => void save(true)}>Publish page</button>}
-      {canWrite && <button className={buttonClass} type="button" disabled={pending || !edited}
+      {canEditLayout && <button className={buttonClass} type="button" disabled={pending || !edited}
         onClick={() => void save(false)}>Save layout draft</button>}
       {edited || pending ? <span className="text-sm text-muted" role="status">Save the layout draft to preview these changes.</span> : previews}
     </div>
@@ -105,10 +106,10 @@ export function PageCopyEditor({ page, section, version, fields, initial, canWri
         router.refresh();
       } else {
         toast(result.error, true);
-        setPending(false);
       }
     } catch {
       toast("The request could not be completed. Try again.", true);
+    } finally {
       setPending(false);
     }
   }

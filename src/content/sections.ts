@@ -65,7 +65,7 @@ export const sectionRegistry = {
       copy("From the first product decision to the systems behind it, we build around the work your team needs to get done.",
         "من أول قرار في المنتج إلى الأنظمة التي تدعمه، نبني حول احتياجات فريقك الفعلية."),
     )),
-    work: section("Work", block(
+    work: section("Work and achievements", block(
       copy("Selected work", "مختارات من أعمالنا"), copy("Decisions behind the build.", "القرارات وراء كل مشروع."),
       copy("Explore the challenges, trade-offs and engineering choices behind our work.",
         "تعرّف على التحديات والمفاضلات والخيارات الهندسية التي شكّلت أعمالنا."),
@@ -80,7 +80,7 @@ export const sectionRegistry = {
       copy("We choose a stack your team can operate, maintain and extend as the product evolves.",
         "نختار تقنيات يسهل على فريقك تشغيلها وصيانتها وتوسيعها مع تطوّر المنتج."),
     )),
-    proof: section("Testimonials, clients and achievements", block(
+    proof: section("Testimonials", block(
       copy("Working together", "العمل المشترك"), copy("From the people we build with.", "من شركائنا في العمل."),
       copy("Client perspectives and milestones from our work together.", "آراء عملائنا ومحطات من أعمالنا المشتركة."),
     )),

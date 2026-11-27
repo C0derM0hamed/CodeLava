@@ -1,12 +1,13 @@
 import "server-only";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
+import { fixtureContentAllowed } from "@/lib/developer-fixtures";
 import { t, countryName } from "@/lib/i18n-content";
 import { renderMarkdown } from "@/lib/markdown";
 import type { AppLocale } from "@/i18n/routing";
 import type { testimonials } from "@/db/schema";
 import { publicQuery } from "./cache";
-import { mediaView, published } from "./shared";
+import { excludeFixtures, mediaView, published } from "./shared";
 
 export type TestimonialFilters = {
   featured?: boolean;
@@ -19,11 +20,11 @@ export const getTestimonials = publicQuery("public-testimonials-v2", ["testimoni
 ) => {
   const rows = await db.query.testimonials.findMany({
     where: (table) => and(
-      published(table.status, draft),
+      published(table, draft),
       filters.featured === undefined ? undefined : eq(table.featured, filters.featured),
       filters.source ? eq(table.source, filters.source) : undefined,
     ),
-    with: { avatar: true, project: { columns: { slug: true, title: true, status: true } } },
+    with: { avatar: true, project: { columns: { id: true, slug: true, title: true, status: true } } },
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
     limit: filters.limit,
   });
@@ -33,20 +34,28 @@ export const getTestimonials = publicQuery("public-testimonials-v2", ["testimoni
 export function testimonialView(
   row: typeof testimonials.$inferSelect & {
     avatar: Parameters<typeof mediaView>[0];
-    project?: { slug: string; title: { en: string; ar: string }; status: string } | null;
+    project?: { id: string; slug: string; title: { en: string; ar: string }; status: string } | null;
   },
   locale: AppLocale,
   draft = false,
 ) {
   const linkedProject =
-    row.project && (row.project.status === "published" || (draft && row.project.status === "draft"))
+    row.project && fixtureContentAllowed(row.project.id, draft) &&
+    (row.project.status === "published" || (draft && row.project.status === "draft"))
       ? { slug: row.project.slug, title: t(row.project.title, locale) ?? "" }
       : null;
+  const quoteLocale = row.quote[locale]?.trim() ? locale : locale === "en" ? "ar" : "en";
+  const rawSource = row.sourceUrl?.trim() ?? "";
+  const source = URL.canParse(rawSource) ? new URL(rawSource) : null;
+  const sourceUrl = source && ["https:", "http:"].includes(source.protocol) && !source.username && !source.password
+    ? source.href : null;
+  const rating = row.rating !== null && Number.isFinite(row.rating) && row.rating >= 0 && row.rating <= 5
+    ? row.rating : null;
   return {
-    id: row.id, featured: row.featured, source: row.source, sourceUrl: row.sourceUrl, authorName: row.authorName,
+    id: row.id, featured: row.featured, source: row.source, sourceUrl, authorName: row.authorName,
     authorRole: t(row.authorRole, locale) || null, company: row.company, country: row.country,
-    countryName: row.country ? countryName(row.country, locale) : null, rating: row.rating,
-    quote: t(row.quote, locale) ?? "", quoteLocale: row.quoteLocale, avatar: mediaView(row.avatar, locale),
+    countryName: row.country ? countryName(row.country, locale) : null, rating,
+    quote: t(row.quote, locale) ?? "", quoteLocale, avatar: mediaView(row.avatar, locale),
     reviewDate: row.reviewDate?.toISOString() ?? null,
     project: linkedProject,
   };
@@ -56,7 +65,7 @@ export const getClientLogos = publicQuery("public-client-logos", ["client-logos"
   draft, locale: AppLocale = "en",
 ) => {
   const rows = await db.query.clientLogos.findMany({
-    where: (table) => draft ? undefined : eq(table.visible, true),
+    where: (table) => and(excludeFixtures(table.id, draft), draft ? undefined : eq(table.visible, true)),
     with: { logo: true },
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
   });
@@ -67,7 +76,7 @@ export const getAchievements = publicQuery("public-achievements", ["achievements
   draft, locale: AppLocale = "en",
 ) => {
   const rows = await db.query.achievements.findMany({
-    where: (table) => draft ? undefined : eq(table.visible, true),
+    where: (table) => and(excludeFixtures(table.id, draft), draft ? undefined : eq(table.visible, true)),
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
   });
   return rows.map(({ id, value, prefix, suffix, label, description, icon }) => ({
@@ -79,7 +88,7 @@ export const getTeam = publicQuery("public-team", ["team", "media"], async (
   draft, locale: AppLocale = "en",
 ) => {
   const rows = await db.query.teamMembers.findMany({
-    where: (table) => draft ? undefined : eq(table.visible, true),
+    where: (table) => and(excludeFixtures(table.id, draft), draft ? undefined : eq(table.visible, true)),
     with: { photo: true },
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
   });
@@ -106,7 +115,7 @@ export const getFaqs = publicQuery("public-faqs", ["faqs"], async (
   draft, { category }: { category?: string } = {}, locale: AppLocale = "en",
 ) => {
   const rows = await db.query.faqs.findMany({
-    where: (table) => and(published(table.status, draft), category ? eq(table.category, category) : undefined),
+    where: (table) => and(published(table, draft), category ? eq(table.category, category) : undefined),
     orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.id)],
   });
   return rows.map((row) => ({

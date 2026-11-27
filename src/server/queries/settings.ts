@@ -33,8 +33,8 @@ const readSections = publicQuery("public-page-sections-v2", ["page-sections"], a
     visible: pageSections.visible, sortOrder: pageSections.sortOrder, content: pageSections.content,
     ...(draft ? { draftContent: pageSections.draftContent } : {}),
   }).from(pageSections).where(inArray(pageSections.pageKey, keys));
-  const [saved] = draft
-    ? await db.select({ value: siteSettings.value }).from(siteSettings).where(eq(siteSettings.key, layoutDraftKey(pageKey === "portfolio" ? "work" : pageKey)))
+  const [saved] = draft && pageKey === "home"
+    ? await db.select({ value: siteSettings.value }).from(siteSettings).where(eq(siteSettings.key, layoutDraftKey(pageKey)))
     : [];
   return { rows, layout: layoutSchema.safeParse(saved?.value).data ?? null };
 }, { rows: [], layout: null });

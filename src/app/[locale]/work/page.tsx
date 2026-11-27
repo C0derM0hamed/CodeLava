@@ -75,16 +75,14 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
     getPageSections("work", locale),
   ]);
 
-  const filteredBase =
-    activeCategory || activeService
-      ? await getProjects(
-          {
-            category: activeCategory || undefined,
-            serviceSlug: activeService || undefined,
-          },
-          locale,
-        )
-      : allProjects;
+  const hasFilter = Boolean(activeCategory || activeService);
+  const selectedCategory = categories.find(({ slug }) => slug === activeCategory);
+  const selectedService = services.find(({ slug }) => slug === activeService);
+  const unknownFilter = (activeCategory && !selectedCategory) || (activeService && !selectedService);
+  const filteredBase = !hasFilter ? allProjects : unknownFilter ? [] : await getProjects({
+    category: selectedCategory?.slug,
+    serviceSlug: selectedService?.slug,
+  }, locale);
 
   const details = await Promise.all(
     filteredBase.slice(0, 24).map((project) => getProjectBySlug(project.slug, locale)),
@@ -107,48 +105,35 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
   const introContent = sections.find((s) => s.sectionKey === "intro")?.content;
   const ctaContent = sections.find((s) => s.sectionKey === "cta")?.content ?? {};
 
-  const servicesWithProjects = services.filter((svc) => svc.projectCount > 0 || svc.slug === activeService);
-  const visibleCategories = categories.filter((cat) => cat.count > 0 || cat.slug === activeCategory);
+  function filterHref(category: string, service: string) {
+    const search = new URLSearchParams();
+    if (category) search.set("category", category);
+    if (service) search.set("service", service);
+    return search.size ? `/work?${search}` : "/work";
+  }
 
-  const useServicePills = servicesWithProjects.length > 0 && !activeCategory;
-  const activeFilterValue = useServicePills ? activeService : activeCategory;
-  const filterOptions: FilterPillOption[] = useServicePills
-    ? [
-        {
-          value: "",
-          label: tWork("allServices"),
-          count: formatNumber(allProjects.length, locale, { useGrouping: false }),
-          href: "/work",
-        },
-        ...servicesWithProjects.map((svc) => ({
-          value: svc.slug,
-          label: svc.title,
-          count: formatNumber(svc.projectCount, locale, { useGrouping: false }),
-          href: `/work?service=${encodeURIComponent(svc.slug)}`,
-        })),
-      ]
-    : [
-        {
-          value: "",
-          label: tWork("allCategories"),
-          count: formatNumber(allProjects.length, locale, { useGrouping: false }),
-          href: "/work",
-        },
-        ...visibleCategories.map((cat) => ({
-          value: cat.slug,
-          label: cat.name,
-          count: formatNumber(cat.count, locale, { useGrouping: false }),
-          href: `/work?category=${encodeURIComponent(cat.slug)}`,
-        })),
-      ];
+  const categoryOptions: FilterPillOption[] = [
+    { value: "", label: tWork("allCategories"), href: filterHref("", selectedService?.slug ?? "") },
+    ...categories.filter(({ count, slug }) => count > 0 || slug === activeCategory).map(({ slug, name, count }) => ({
+      value: slug, label: name, href: filterHref(slug, selectedService?.slug ?? ""),
+      count: activeService ? undefined : formatNumber(count, locale),
+    })),
+  ];
+  const serviceOptions: FilterPillOption[] = [
+    { value: "", label: tWork("allServices"), href: filterHref(selectedCategory?.slug ?? "", "") },
+    ...services.filter(({ projectCount, slug }) => projectCount > 0 || slug === activeService).map(({ slug, title, projectCount }) => ({
+      value: slug, label: title, href: filterHref(selectedCategory?.slug ?? "", slug),
+      count: activeCategory ? undefined : formatNumber(projectCount, locale),
+    })),
+  ];
+  const showCategories = categoryOptions.length > 1 || Boolean(activeCategory);
+  const showServices = serviceOptions.length > 1 || Boolean(activeService);
 
-  const hasFilter = Boolean(activeCategory || activeService);
   const featuredFlagships = !hasFilter ? enrichedProjects.filter((p) => p.featured).slice(0, 2) : [];
   const featuredIds = new Set(featuredFlagships.map((p) => p.id));
   const ledgerProjects = enrichedProjects.filter((p) => !featuredIds.has(p.id));
 
-  const activeServiceLabel = servicesWithProjects.find((s) => s.slug === activeService)?.title;
-  const activeCategoryLabel = visibleCategories.find((c) => c.slug === activeCategory)?.name;
+  const activeFilterLabel = [selectedService?.title, selectedCategory?.name].filter(Boolean).join(" · ");
   const isRtl = locale === "ar";
   const showingText = isRtl
     ? `عرض ${formatNumber(enrichedProjects.length, locale, { useGrouping: false })} من ${formatNumber(allProjects.length, locale, { useGrouping: false })}`
@@ -180,14 +165,13 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
         </section>
       ) : (
         <>
-          {filterOptions.length > 1 ? (
+          {showCategories || showServices ? (
             <section className="pb-4 sm:pb-6">
               <div className="container-lava flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <FilterPills
-                  options={filterOptions}
-                  value={activeFilterValue}
-                  ariaLabel={useServicePills ? tWork("filterByService") : tWork("filterByCategory")}
-                />
+                <div className="space-y-3">
+                  {showCategories && <FilterPills options={categoryOptions} value={activeCategory} ariaLabel={tWork("filterByCategory")} />}
+                  {showServices && <FilterPills options={serviceOptions} value={activeService} ariaLabel={tWork("filterByService")} />}
+                </div>
                 <p role="status" className="shrink-0 text-sm text-faint tabular-nums">
                   {showingText}
                 </p>
@@ -220,13 +204,12 @@ export default async function WorkPage({ params, searchParams }: WorkPageParams)
                 locale={locale}
                 projects={ledgerProjects}
                 headingKicker={
-                  activeServiceLabel ||
-                  activeCategoryLabel ||
+                  activeFilterLabel ||
                   (isRtl ? "جميع المشاريع" : "All projects")
                 }
                 headingTitle={
                   hasFilter
-                    ? activeServiceLabel || activeCategoryLabel || tWork("title")
+                    ? activeFilterLabel || tWork("title")
                     : featuredFlagships.length > 0
                       ? isRtl
                         ? "المزيد من أعمالنا."

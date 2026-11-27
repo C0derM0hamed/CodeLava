@@ -8,7 +8,7 @@ import { permits } from "@/server/auth/permissions";
 import { requireUser } from "@/server/auth/session";
 import { invalidate, recordChange, type ActionResult } from "@/server/changes";
 import {
-  layoutDraftKey, layoutSchema, mergePublishedCopy, pageCopySchema, pageKeySchema, readPageBuilder, sectionKeySchema,
+  editableCopy, layoutDraftKey, layoutSchema, mergePublishedCopy, pageCopySchema, pageKeySchema, readPageBuilder, sectionKeySchema,
 } from "./page-builder";
 
 const versionSchema = z.string().regex(/^[a-f0-9]{64}$/);
@@ -36,6 +36,10 @@ export async function savePageCopy(input: unknown): Promise<ActionResult> {
       const state = await readPageBuilder(page, tx);
       const item = state.sections.find(({ key }) => key === section);
       if (state.version !== version || !item) return changed();
+      const fields = editableCopy(item.defaults, item.row?.content, item.row?.draftContent ?? undefined);
+      if (!Object.keys(copy).length || Object.keys(copy).some((key) => !Object.hasOwn(fields, key))) {
+        return fail("Check the section copy fields and try again.");
+      }
       const draftContent = mergePublishedCopy(item.row?.draftContent ?? {}, copy);
       const [row] = item.row
         ? await tx.update(pageSections).set({ draftContent }).where(eq(pageSections.id, item.row.id)).returning()
@@ -69,6 +73,9 @@ export async function savePageLayout(input: unknown): Promise<ActionResult> {
       const byKey = new Map(state.sections.map((item) => [item.key, item]));
       if (state.version !== version || layout.length !== byKey.size || layout.some(({ key }) => !byKey.has(key))) return changed();
 
+      const layoutChanged = JSON.stringify(state.live) !== JSON.stringify(layout);
+      if (page !== "home" && (!publish || layoutChanged)) return fail("Layout editing is available for the homepage.");
+
       if (!publish) {
         await tx.insert(siteSettings).values({ key: layoutDraftKey(page), value: layout })
           .onConflictDoUpdate({ target: siteSettings.key, set: { value: layout } });
@@ -77,7 +84,6 @@ export async function savePageLayout(input: unknown): Promise<ActionResult> {
         return { ok: true };
       }
 
-      const layoutChanged = JSON.stringify(state.live) !== JSON.stringify(layout);
       for (const [sortOrder, { key, visible }] of layout.entries()) {
         const item = byKey.get(key)!;
         const order = layoutChanged ? sortOrder : item.sortOrder;

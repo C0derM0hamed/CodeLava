@@ -27,6 +27,7 @@ export async function readPageBuilder(page: SectionPageKey, database: Pick<typeo
   const definitions = sectionRegistry[page] as Record<string, { label: string }>;
   const byKey = new Map<string, SectionRow>();
   for (const row of rows) {
+    if (!Object.hasOwn(definitions, row.sectionKey)) continue;
     if (row.pageKey === page || !byKey.has(row.sectionKey)) byKey.set(row.sectionKey, row);
   }
   const fallback = new Map(defaults.filter((row) => row.pageKey === page).map((row) => [row.sectionKey, row]));
@@ -41,7 +42,7 @@ export async function readPageBuilder(page: SectionPageKey, database: Pick<typeo
   }).sort((a, b) => a.sortOrder - b.sortOrder || a.key.localeCompare(b.key));
 
   const live = sections.map(({ key, visible }) => ({ key, visible }));
-  const saved = layoutSchema.safeParse(draft?.value).data;
+  const saved = page === "home" ? layoutSchema.safeParse(draft?.value).data : undefined;
   const savedKeys = new Set(saved?.map(({ key }) => key));
   const liveKeys = new Set(live.map(({ key }) => key));
   const layout = saved

@@ -140,7 +140,7 @@ export default async function AboutPage({ params }: AboutParams) {
       {testimonials.length > 0 ? (
         <HomeTestimonials
           locale={locale}
-          eyebrow={tHome("verifiedPlatforms")}
+          eyebrow={tHome("clientReviews")}
           title={t("testimonials")}
           testimonials={testimonials}
           labels={{
@@ -150,11 +150,8 @@ export default async function AboutPage({ params }: AboutParams) {
             viewSource: tHome.raw("viewReview") as string,
             region: tHome("testimonialsRegion"),
             allPlatforms: tHome("allPlatforms"),
-            verifiedPlatforms: tHome("verifiedPlatforms"),
-            averageRating: tHome("averageRating"),
-            verifiedOn: tHome.raw("verifiedOn") as string,
             deliveredProject: tHome("deliveredProject"),
-            reviewsCountLabel: tHome("reviewsCount", { count: testimonials.length }),
+            ratedReviewsLabel: tHome.raw("ratedReviews") as string,
             sources: {
               upwork: tHome("sources.upwork"),
               mostaql: tHome("sources.mostaql"),

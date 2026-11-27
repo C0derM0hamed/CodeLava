@@ -18,7 +18,8 @@ export default async function PageBuilderRoute({ params }: { params: Promise<{ p
 
   return <>
     <PageHeading title={page === "home" ? "Homepage builder" : `${page[0].toUpperCase()}${page.slice(1)} page builder`}
-      detail="Arrange sections, choose what visitors see, and review drafts before publishing." />
+      detail={page === "home" ? "Arrange sections, choose what visitors see, and review drafts before publishing."
+        : "Edit bilingual copy and review drafts before publishing."} />
     <nav aria-label="Page builders" className="mb-4 flex flex-wrap gap-2">
       {Object.keys(sectionRegistry).map((key) => <Link key={key} href={`/admin/pages/${key}`} aria-current={page === key ? "page" : undefined}
         className={`${buttonClass} capitalize ${page === key ? "border-accent-text! bg-accent-soft! font-semibold text-accent-text!" : ""}`}>{key === "home" ? "Homepage" : key}</Link>)}

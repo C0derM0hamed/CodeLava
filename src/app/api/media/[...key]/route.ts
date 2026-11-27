@@ -1,3 +1,4 @@
+import { fixtureIdPrefix, usesFixtureDatabase } from "@/lib/developer-fixtures";
 import { storage, validStorageKey } from "@/server/storage";
 import { publicTypes } from "@/server/storage/media";
 
@@ -5,12 +6,14 @@ async function serve(request: Request, context: { params: Promise<{ key: string[
   const { key: segments } = await context.params;
   const key = segments[0];
   if (segments.length !== 1 || !validStorageKey(key)) return new Response(null, { status: 404 });
+  const fixture = key.startsWith(fixtureIdPrefix);
+  if (fixture && !usesFixtureDatabase()) return new Response(null, { status: 404 });
   const mime = publicTypes[key.split(".").at(-1) ?? ""];
   if (!mime) return new Response(null, { status: 404 });
   try {
     const size = await storage.size("public", key);
     const headers = new Headers({
-      "Content-Type": mime, "Content-Length": String(size), "Cache-Control": "public, max-age=31536000, immutable",
+      "Content-Type": mime, "Content-Length": String(size), "Cache-Control": fixture ? "private, no-store" : "public, max-age=31536000, immutable",
       "X-Content-Type-Options": "nosniff", "Accept-Ranges": "bytes",
     });
     if (mime === "application/pdf") headers.set("Content-Disposition", "attachment");

@@ -113,6 +113,7 @@ export async function deleteContent(entityName: string, inputId: string): Promis
   try {
     const result = await db.transaction(async (tx) => {
       await tx.execute(sql`select pg_advisory_xact_lock(420233)`);
+      if (entity === "page_sections" && !permits(user.permissions, "page_sections:publish")) return denied();
       const [deleted] = await tx.delete(catalog[entity].table).where(eq(keyColumn(entity), id)).returning();
       if (!deleted) return fail("This record no longer exists.");
       await recordChange(tx, { userId: user.id, entity, id, action: "delete", type: "content.deleted" });
@@ -165,7 +166,7 @@ function requiresPublish(entity: Entity, existing: Record<string, unknown> | und
     return existing
       ? values.visible !== existing.visible || values.pageKey !== existing.pageKey || values.sectionKey !== existing.sectionKey ||
         sqlComparable(values.content) !== sqlComparable(existing.content)
-      : values.visible === true || Object.keys(values.content as object).length > 0;
+      : true;
   }
   return entity === "page_meta" || entity === "ui_translations" || values.status === "published" || existing?.status === "published"
     || values.visible === true || existing?.visible === true;

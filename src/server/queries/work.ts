@@ -3,17 +3,19 @@ import { and, asc, count, eq, inArray, ne, or } from "drizzle-orm";
 import { db } from "@/db";
 import { media, projectCategories, projects, projectServices, services } from "@/db/schema";
 import type { AppLocale } from "@/i18n/routing";
+import { fixtureContentAllowed } from "@/lib/developer-fixtures";
 import { countryName, t } from "@/lib/i18n-content";
 import { renderMarkdown } from "@/lib/markdown";
 import { publicQuery } from "./cache";
 import { testimonialView } from "./company";
-import { mediaView, published, seoView } from "./shared";
+import { excludeFixtures, mediaView, published, seoView } from "./shared";
 
 type MediaRow = typeof media.$inferSelect | null;
 type CategoryRow = typeof projectCategories.$inferSelect | null;
 
 function categoryView(row: CategoryRow, locale: AppLocale, draft: boolean) {
-  if (!row || (!draft && !row.visible)) return null;
+  if (!row || (!draft && !row.visible) ||
+    !fixtureContentAllowed(row.id, draft)) return null;
   return { id: row.id, slug: row.slug, name: t(row.name, locale) ?? "" };
 }
 
@@ -69,6 +71,7 @@ async function readProjects(draft: boolean, filters: ProjectFilters, locale: App
         .where(
           and(
             eq(projectCategories.slug, filters.category),
+            excludeFixtures(projectCategories.id, draft),
             draft ? undefined : eq(projectCategories.visible, true),
           ),
         )
@@ -78,12 +81,12 @@ async function readProjects(draft: boolean, filters: ProjectFilters, locale: App
         .select({ id: projectServices.projectId })
         .from(projectServices)
         .innerJoin(services, eq(services.id, projectServices.serviceId))
-        .where(and(eq(services.slug, filters.serviceSlug), published(services.status, draft)))
+        .where(and(eq(services.slug, filters.serviceSlug), published(services, draft)))
     : undefined;
   const rows = await db.query.projects.findMany({
     where: (table) =>
       and(
-        published(table.status, draft),
+        published(table, draft),
         category ? inArray(table.categoryId, category) : undefined,
         service ? inArray(table.id, service) : undefined,
         filters.featured === undefined ? undefined : eq(table.featured, filters.featured),
@@ -108,14 +111,14 @@ export const getServices = publicQuery(
   async (draft, locale: AppLocale = "en") => {
     const [rows, counts] = await Promise.all([
       db.query.services.findMany({
-        where: (table) => published(table.status, draft),
+        where: (table) => published(table, draft),
         with: { cover: true },
         orderBy: (table, { asc }) => [asc(table.sortOrder), asc(table.slug)],
       }),
       db
         .select({ serviceId: projectServices.serviceId, count: count(projects.id) })
         .from(projectServices)
-        .innerJoin(projects, and(eq(projects.id, projectServices.projectId), published(projects.status, draft)))
+        .innerJoin(projects, and(eq(projects.id, projectServices.projectId), published(projects, draft)))
         .groupBy(projectServices.serviceId),
     ]);
     const countMap = new Map(counts.map((c) => [c.serviceId, Number(c.count)]));
@@ -135,16 +138,20 @@ export const getServiceBySlug = publicQuery(
   ["services", "projects", "project-categories", "media"],
   async (draft, slug: string, locale: AppLocale = "en") => {
     const row = await db.query.services.findFirst({
-      where: (table) => and(eq(table.slug, slug), published(table.status, draft)),
+      where: (table) => and(eq(table.slug, slug), published(table, draft)),
       with: { cover: true },
     });
     if (!row) return null;
-    const [image, relatedProjects] = await Promise.all([
+    const [image, relatedProjects, [linked]] = await Promise.all([
       findSeoImage(row.seo.ogImageId, locale),
       readProjects(draft, { serviceSlug: slug, limit: 12 }, locale),
+      db.select({ total: count() })
+        .from(projectServices)
+        .innerJoin(projects, and(eq(projects.id, projectServices.projectId), published(projects, draft)))
+        .where(eq(projectServices.serviceId, row.id)),
     ]);
     return {
-      ...serviceView(row, locale, relatedProjects.length),
+      ...serviceView(row, locale, linked.total),
       bodyHtml: renderMarkdown(t(row.body, locale) ?? "").html,
       features: row.features.map(({ title, description, icon }) => ({
         title: t(title, locale) ?? "",
@@ -171,8 +178,8 @@ export const getProjectCategories = publicQuery(
         count: count(projects.id),
       })
       .from(projectCategories)
-      .leftJoin(projects, and(eq(projects.categoryId, projectCategories.id), published(projects.status, draft)))
-      .where(draft ? undefined : eq(projectCategories.visible, true))
+      .leftJoin(projects, and(eq(projects.categoryId, projectCategories.id), published(projects, draft)))
+      .where(and(excludeFixtures(projectCategories.id, draft), draft ? undefined : eq(projectCategories.visible, true)))
       .groupBy(projectCategories.id)
       .orderBy(asc(projectCategories.sortOrder), asc(projectCategories.slug));
     return rows.map((row) => ({ ...row, name: t(row.name, locale) ?? "" }));
@@ -185,7 +192,7 @@ export const getProjectBySlug = publicQuery(
   ["projects", "project-categories", "services", "technologies", "testimonials", "media"],
   async (draft, slug: string, locale: AppLocale = "en") => {
     const row = await db.query.projects.findFirst({
-      where: (table) => and(eq(table.slug, slug), published(table.status, draft)),
+      where: (table) => and(eq(table.slug, slug), published(table, draft)),
       with: {
         category: true,
         cover: true,
@@ -197,7 +204,7 @@ export const getProjectBySlug = publicQuery(
         technologies: { with: { technology: { with: { icon: true } } } },
         services: { with: { service: { with: { cover: true } } } },
         testimonials: {
-          where: (table) => published(table.status, draft),
+          where: (table) => published(table, draft),
           with: { avatar: true },
           orderBy: (table, { asc, desc }) => [desc(table.featured), asc(table.sortOrder), asc(table.id)],
           limit: 1,
@@ -211,7 +218,7 @@ export const getProjectBySlug = publicQuery(
         where: (table, { gt, lt }) => {
           const compare = direction === "prev" ? lt : gt;
           return and(
-            published(table.status, draft),
+            published(table, draft),
             or(
               compare(table.sortOrder, row.sortOrder),
               and(eq(table.sortOrder, row.sortOrder), compare(table.slug, row.slug)),
@@ -229,9 +236,9 @@ export const getProjectBySlug = publicQuery(
       db.query.projects.findMany({
         where: (table) =>
           and(
-            published(table.status, draft),
+            published(table, draft),
             ne(table.id, row.id),
-            row.categoryId && (draft || row.category?.visible)
+            row.categoryId && categoryView(row.category, locale, draft)
               ? eq(table.categoryId, row.categoryId)
               : undefined,
           ),

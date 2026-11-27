@@ -12,6 +12,7 @@ export interface CtaBannerLink {
 }
 
 export interface CtaBannerProps {
+  eyebrow?: string;
   /** Headline override. Defaults to `footer.ctaTitle` (rich: wrap the hot word in <hl>…</hl>). */
   title?: ReactNode;
   /** Supporting line override. Defaults to `footer.ctaLead`. */
@@ -32,6 +33,7 @@ export interface CtaBannerProps {
  * their own closing CTA band. Can also be placed standalone.
  */
 export function CtaBanner({
+  eyebrow,
   title,
   lead,
   primary,
@@ -100,6 +102,7 @@ export function CtaBanner({
 
       <div className="relative flex flex-col gap-8 px-6 pt-9 pb-44 sm:px-10 md:flex-row md:items-center md:justify-between md:gap-10 md:py-12 lg:px-14 lg:py-14">
         <div className="max-w-xl space-y-3">
+          {eyebrow && <p className="kicker-rule">{eyebrow}</p>}
           <Heading id={headingId} className="text-display-md text-text">{titleNode}</Heading>
           <p className="max-w-[44ch] text-body text-muted">{lead ?? t("ctaLead")}</p>
         </div>

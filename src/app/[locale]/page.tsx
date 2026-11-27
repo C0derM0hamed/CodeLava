@@ -128,6 +128,7 @@ export default async function HomePage({ params }: HomeParams) {
   const visibleSections = sections.filter((s) => isHomeSectionKey(s.sectionKey));
   const hasHero = visibleSections.some((s) => s.sectionKey === "hero");
   const startsWithHero = visibleSections[0]?.sectionKey === "hero";
+  const workDefaults = sectionRegistry.home.work.defaults;
   const ctaDefaults = sectionRegistry.home.cta.defaults;
 
   const renderers: Record<HomeSectionKey, (copy: SectionCopy) => ReactNode> = {
@@ -162,6 +163,8 @@ export default async function HomePage({ params }: HomeParams) {
       <HomeFeaturedProject
         locale={locale}
         eyebrow={copy.eyebrow || t("selectedWork")}
+        title={copy.title !== workDefaults.title[locale] ? copy.title : undefined}
+        description={copy.description !== workDefaults.description[locale] ? copy.description : undefined}
         achievementsTitle={t("achievementsTitle")}
         achievementsLabel={t("achievements")}
         caseStudyLabel={t("viewCaseStudy")}
@@ -199,7 +202,7 @@ export default async function HomePage({ params }: HomeParams) {
       testimonials.length > 0 ? (
         <HomeTestimonials
           locale={locale}
-          eyebrow={copy.eyebrow || t("verifiedPlatforms")}
+          eyebrow={copy.eyebrow || t("clientReviews")}
           title={copy.title || t("clientPerspectives")}
           description={copy.description}
           testimonials={testimonials}
@@ -210,11 +213,8 @@ export default async function HomePage({ params }: HomeParams) {
             viewSource: t.raw("viewReview") as string,
             region: t("testimonialsRegion"),
             allPlatforms: t("allPlatforms"),
-            verifiedPlatforms: t("verifiedPlatforms"),
-            averageRating: t("averageRating"),
-            verifiedOn: t.raw("verifiedOn") as string,
             deliveredProject: t("deliveredProject"),
-            reviewsCountLabel: t("reviewsCount", { count: testimonials.length }),
+            ratedReviewsLabel: t.raw("ratedReviews") as string,
             sources: {
               upwork: t("sources.upwork"),
               mostaql: t("sources.mostaql"),
@@ -274,7 +274,7 @@ export default async function HomePage({ params }: HomeParams) {
           : undefined;
       return (
         <div className="container-lava relative z-10 py-[clamp(2rem,4vw,3.5rem)]">
-          <CtaBanner title={customTitle} lead={customLead} primary={customPrimary} />
+          <CtaBanner eyebrow={copy.eyebrow !== ctaDefaults.eyebrow[locale] ? copy.eyebrow : undefined} title={customTitle} lead={customLead} primary={customPrimary} />
         </div>
       );
     },

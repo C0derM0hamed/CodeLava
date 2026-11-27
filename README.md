@@ -35,3 +35,9 @@ pnpm dev                      # http://localhost:3000  ·  admin at /admin
 | `pnpm db:generate` / `pnpm db:migrate` / `pnpm db:studio` | Drizzle schema tools |
 
 Uploaded files are stored under `storage/`, which git ignores. Lead attachments are private and served only to authenticated admins.
+
+### Developer content fixtures
+
+The optional fixture command requires `NODE_ENV=development` and a separate loopback PostgreSQL database named `codelava_dev_fixtures`. Apply migrations and the standard seed to that database before running `NODE_ENV=development pnpm db:fixtures`. To view fixtures, run the local app against that same database with `STORAGE_LOCAL_PUBLIC_DIR=./storage/dev-fixtures/public` and open an authenticated draft preview.
+
+Run `NODE_ENV=development pnpm db:fixtures --clean` to remove the fixtures and their files from the configured local database and storage. Cleanup also recognizes data written by the previous demo command.

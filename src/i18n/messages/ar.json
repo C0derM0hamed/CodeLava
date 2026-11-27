@@ -107,12 +107,10 @@
     "moreTechnologies": "+ {count} أخرى",
     "testimonialsRegion": "تقييمات العملاء على منصات العمل الحر",
     "rating": "التقييم {value} من 5",
-    "viewReview": "اقرأ التقييم الموثّق على {source}",
+    "viewReview": "افتح رابط المصدر: {source}",
     "allPlatforms": "جميع المنصات",
-    "verifiedPlatforms": "تقييمات موثّقة من منصات العمل الحر",
-    "averageRating": "متوسط التقييم",
-    "reviewsCount": "{count, plural, one {تقييم واحد موثّق} two {تقييمان موثّقان} few {# تقييمات موثّقة} many {# تقييمًا موثّقًا} other {# تقييم موثّق}}",
-    "verifiedOn": "موثّق على {source}",
+    "clientReviews": "تقييمات العملاء",
+    "ratedReviews": "متوسط التقييم من {count} تقييمات رقمية",
     "deliveredProject": "المشروع",
     "sources": {
       "upwork": "Upwork",
@@ -123,7 +121,7 @@
       "freelancer": "Freelancer",
       "clutch": "Clutch",
       "direct": "عميل مباشر",
-      "other": "تقييم موثّق"
+      "other": "مصدر آخر"
     },
     "allArticles": "تصفّح جميع المقالات",
     "allQuestions": "تصفّح جميع الأسئلة",
@@ -474,5 +472,14 @@
       "title": "دون أي التزام",
       "body": "طلب عرض السعر بداية للحوار فقط، ولا يُلزمك بأي شيء."
     }
+  },
+  "heroSound": {
+    "soundOn": "الصوت مفعّل",
+    "soundOff": "الصوت متوقف",
+    "loading": "جارٍ تحميل الصوت…",
+    "enableAria": "تفعيل المؤثرات الصوتية للبركان",
+    "disableAria": "كتم المؤثرات الصوتية للبركان",
+    "statusOn": "تم تفعيل الصوت في مشهد البركان",
+    "statusOff": "تم كتم الصوت في مشهد البركان"
   }
 }

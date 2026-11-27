@@ -3,6 +3,7 @@ import { and, count, desc, eq, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { articles, media, teamMembers } from "@/db/schema";
 import type { AppLocale } from "@/i18n/routing";
+import { fixtureContentAllowed } from "@/lib/developer-fixtures";
 import { t } from "@/lib/i18n-content";
 import { renderMarkdown } from "@/lib/markdown";
 import { publicQuery } from "./cache";
@@ -14,7 +15,7 @@ type ArticleRow = typeof articles.$inferSelect & {
 };
 
 function articleView(row: ArticleRow, locale: AppLocale, draft: boolean) {
-  const author = row.author && (draft || row.author.visible) ? row.author : null;
+  const author = row.author && fixtureContentAllowed(row.author.id, draft) && (draft || row.author.visible) ? row.author : null;
   return {
     id: row.id, slug: row.slug, title: t(row.title, locale) ?? "", excerpt: t(row.excerpt, locale) ?? "",
     author: author ? { slug: author.slug, name: t(author.name, locale) ?? "", role: t(author.role, locale) ?? "" } : null,
@@ -28,7 +29,7 @@ export type ArticleFilters = { page?: number; pageSize?: number; tag?: string };
 const readArticles = publicQuery("public-articles", ["articles", "team", "media"], async (
   draft, page: number, pageSize: number, tag: string | undefined, locale: AppLocale,
 ) => {
-  const filter = and(published(articles.status, draft),
+  const filter = and(published(articles, draft),
     tag ? sql`${articles.tags} @> ${JSON.stringify([tag])}::jsonb` : undefined);
   const [rows, totals] = await Promise.all([
     db.query.articles.findMany({
@@ -52,13 +53,13 @@ export const getArticleBySlug = publicQuery("public-article", ["articles", "team
   draft, slug: string, locale: AppLocale = "en",
 ) => {
   const row = await db.query.articles.findFirst({
-    where: (table) => and(eq(table.slug, slug), published(table.status, draft)),
+    where: (table) => and(eq(table.slug, slug), published(table, draft)),
     with: { cover: true, author: true },
   });
   if (!row) return null;
   const [related, seoImage] = await Promise.all([
     db.query.articles.findMany({
-      where: (table) => and(ne(table.id, row.id), published(table.status, draft)),
+      where: (table) => and(ne(table.id, row.id), published(table, draft)),
       with: { cover: true, author: true },
       orderBy: (table, { asc }) => [
         ...(row.tags.length ? [desc(sql`${table.tags} ?| array[${sql.join(row.tags.map((tag) => sql`${tag}`), sql`, `)}]::text[]`)] : []),

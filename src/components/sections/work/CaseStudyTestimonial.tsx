@@ -22,8 +22,8 @@ export function CaseStudyTestimonial({
 
   const isRtl = locale === "ar";
   const sourceLabels: Record<string, string> = isRtl
-    ? { upwork: "Upwork", mostaql: "مستقل", khamsat: "خمسات", fiverr: "Fiverr", bahr: "بحر", freelancer: "Freelancer", clutch: "Clutch", direct: "عميل مباشر", other: "تقييم موثّق" }
-    : { upwork: "Upwork", mostaql: "Mostaql", khamsat: "Khamsat", fiverr: "Fiverr", bahr: "Bahr", freelancer: "Freelancer", clutch: "Clutch", direct: "Direct client", other: "Verified review" };
+    ? { upwork: "Upwork", mostaql: "مستقل", khamsat: "خمسات", fiverr: "Fiverr", bahr: "بحر", freelancer: "Freelancer", clutch: "Clutch", direct: "عميل مباشر", other: "مصدر آخر" }
+    : { upwork: "Upwork", mostaql: "Mostaql", khamsat: "Khamsat", fiverr: "Fiverr", bahr: "Bahr", freelancer: "Freelancer", clutch: "Clutch", direct: "Direct client", other: "Other source" };
   const sourceName = sourceLabels[testimonial.source] ?? testimonial.source;
   const ratingText =
     typeof testimonial.rating === "number"
@@ -34,7 +34,7 @@ export function CaseStudyTestimonial({
     <section id="testimonial" className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-12 sm:py-16">
       <div className="container-lava space-y-10">
         <div className="flex flex-col items-start gap-4">
-          <Kicker>{isRtl ? "شهادة موثقة" : "Client voice"}</Kicker>
+          <Kicker>{isRtl ? "رأي العميل" : "Client voice"}</Kicker>
           <h2 className="text-display-md text-text">{headingTitle}</h2>
         </div>
 
@@ -44,7 +44,7 @@ export function CaseStudyTestimonial({
               <span aria-hidden="true" className="block font-display text-6xl leading-none text-accent select-none">
                 “
               </span>
-              <p lang={testimonial.quoteLocale} className="text-display-sm leading-relaxed text-text">
+              <p lang={testimonial.quoteLocale} dir="auto" className="text-display-sm leading-relaxed text-text">
                 {testimonial.quote}
               </p>
             </blockquote>

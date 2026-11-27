@@ -105,7 +105,7 @@ export default async function ServicePage({ params }: Props) {
               </ActionLink>
               {projects.length > 0 ? (
                 <Tag tone="lava" size="md">
-                  {t("projectsBadge", { count: projects.length })}
+                  {t("projectsBadge", { count: service.projectCount })}
                 </Tag>
               ) : null}
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
+import { useMemo, useState, type CSSProperties, type MouseEvent } from "react";
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "@/components/ui/Icons";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/components/ui/cn";
@@ -21,11 +21,8 @@ export interface HomeTestimonialsLabels {
   viewSource: string;
   region: string;
   allPlatforms: string;
-  verifiedPlatforms: string;
-  averageRating: string;
-  verifiedOn: string;
   deliveredProject: string;
-  reviewsCountLabel: string;
+  ratedReviewsLabel: string;
 }
 
 const PLATFORM_META: Record<
@@ -61,42 +58,32 @@ function PlatformIcon({ source, size = 20 }: { source: SourceKey; size?: number 
   );
 }
 
-function VerifiedCheck({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={cn("size-4 shrink-0", className)}>
-      <path
-        d="M10 1.8l2.1 1.6 2.6-.2.9 2.5 2.2 1.4-.5 2.6 1.2 2.4-1.7 2 .1 2.6-2.5.9-1.4 2.2-2.6-.5-2.4 1.2-2-1.7-2.6.1-.9-2.5-2.2-1.4.5-2.6-1.2-2.4 1.7-2-.1-2.6 2.5-.9 1.4-2.2 2.6.5L10 1.8z"
-        fill="currentColor"
-        fillOpacity="0.18"
-      />
-      <path
-        d="M6.8 10.2l2.1 2.1 4.4-4.6"
-        stroke="currentColor"
-        strokeWidth="1.9"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function Stars({ rating, label, size = "sm" }: { rating: number; label: string; size?: "sm" | "md" }) {
   const rounded = Math.round(Math.min(5, Math.max(0, rating)) * 2) / 2;
   return (
     <span role="img" aria-label={label} className="inline-flex items-center gap-0.5 text-ember">
-      {Array.from({ length: 5 }, (_, i) => (
-        <svg
-          key={i}
-          viewBox="0 0 20 20"
-          className={cn(size === "md" ? "size-4.5" : "size-3.5", i + 0.5 > rounded && "opacity-25")}
-          aria-hidden="true"
-        >
-          <path
-            fill="currentColor"
-            d="M10 1.8l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.43 5.06 17l.94-5.5-4-3.9 5.53-.8L10 1.8z"
-          />
-        </svg>
-      ))}
+      {Array.from({ length: 5 }, (_, i) => {
+        const fill = Math.max(0, Math.min(1, rounded - i));
+        return (
+          <svg
+            key={i}
+            viewBox="0 0 20 20"
+            className={size === "md" ? "size-4.5" : "size-3.5"}
+            aria-hidden="true"
+          >
+            <path
+              fill="currentColor"
+              opacity={0.25}
+              d="M10 1.8l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.43 5.06 17l.94-5.5-4-3.9 5.53-.8L10 1.8z"
+            />
+            <path
+              fill="currentColor"
+              style={{ clipPath: `inset(0 ${(1 - fill) * 100}% 0 0)` }}
+              d="M10 1.8l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.43 5.06 17l.94-5.5-4-3.9 5.53-.8L10 1.8z"
+            />
+          </svg>
+        );
+      })}
     </span>
   );
 }
@@ -104,28 +91,20 @@ function Stars({ rating, label, size = "sm" }: { rating: number; label: string; 
 function SourcePill({
   testimonial,
   labels,
-  onDark = false,
 }: {
   testimonial: Testimonial;
   labels: HomeTestimonialsLabels;
-  onDark?: boolean;
 }) {
   const name = labels.sources[testimonial.source];
-  const meta = PLATFORM_META[testimonial.source] ?? PLATFORM_META.other;
   const body = (
     <>
       <PlatformIcon source={testimonial.source} size={18} />
-      <span>{onDark ? labels.verifiedOn.replace("{source}", name) : name}</span>
+      <span>{name}</span>
       {isSafeHttpUrl(testimonial.sourceUrl) ? <ArrowUpRightIcon size={12} className="opacity-70" /> : null}
     </>
   );
 
-  const cls = cn(
-    "inline-flex h-8 items-center gap-2 rounded-[var(--radius-pill)] border ps-1.5 pe-3 text-xs font-semibold transition-all duration-200",
-    onDark
-      ? "border-white/15 bg-white/8 text-ash-50 backdrop-blur-sm hover:border-white/30 hover:bg-white/14"
-      : "border-line bg-surface-2 text-text hover:border-line-lava hover:bg-surface",
-  );
+  const cls = "inline-flex h-8 items-center gap-2 rounded-[var(--radius-pill)] border border-white/15 bg-white/8 ps-1.5 pe-3 text-xs font-semibold text-ash-50 backdrop-blur-sm";
 
   return isSafeHttpUrl(testimonial.sourceUrl) ? (
     <a
@@ -135,12 +114,11 @@ function SourcePill({
       aria-label={labels.viewSource.replace("{source}", name)}
       data-cursor="pointer"
       className={cls}
-      style={!onDark ? { borderColor: `${meta.accent}35` } : undefined}
     >
       {body}
     </a>
   ) : (
-    <span className={cls} style={!onDark ? { borderColor: `${meta.accent}35` } : undefined}>
+    <span className={cls}>
       {body}
     </span>
   );
@@ -171,6 +149,7 @@ function StreamCard({
       onMouseMove={handleMove}
       onClick={onSelect}
       role="button"
+      aria-pressed={active}
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -194,7 +173,7 @@ function StreamCard({
           <PlatformIcon source={testimonial.source} size={16} />
           <span>{labels.sources[testimonial.source]}</span>
         </span>
-        {testimonial.rating ? (
+        {testimonial.rating !== null ? (
           <div className="inline-flex items-center gap-1.5">
             <Stars rating={testimonial.rating} label={labels.rating.replace("{value}", String(testimonial.rating))} />
             <span dir="ltr" className="font-mono text-xs font-semibold text-text tabular-nums">
@@ -205,7 +184,7 @@ function StreamCard({
       </div>
 
       <blockquote
-        lang={testimonial.quoteLocale ?? undefined}
+        lang={testimonial.quoteLocale} dir="auto"
         className="line-clamp-4 text-[0.9375rem] leading-relaxed text-text/92"
       >
         “{testimonial.quote}”
@@ -261,15 +240,13 @@ export function HomeTestimonials({
 }) {
   const [selectedPlatform, setSelectedPlatform] = useState<SourceKey | "all">("all");
   const [activeId, setActiveId] = useState<string>(testimonials[0]?.id ?? "");
-  const [paused, setPaused] = useState(false);
-  const timerRef = useRef<number | null>(null);
 
   const platformStats = useMemo(() => {
     const grouped = new Map<SourceKey, { source: SourceKey; count: number; sum: number; rated: number }>();
     for (const item of testimonials) {
       const current = grouped.get(item.source) ?? { source: item.source, count: 0, sum: 0, rated: 0 };
       current.count += 1;
-      if (typeof item.rating === "number" && item.rating > 0) {
+      if (item.rating !== null) {
         current.sum += item.rating;
         current.rated += 1;
       }
@@ -278,12 +255,13 @@ export function HomeTestimonials({
     return Array.from(grouped.values()).sort((a, b) => b.count - a.count);
   }, [testimonials]);
 
-  const aggregateRating = useMemo(() => {
-    const rated = testimonials.filter((t) => typeof t.rating === "number" && t.rating > 0);
-    if (rated.length === 0) return 5.0;
-    const sum = rated.reduce((acc, t) => acc + (t.rating ?? 5), 0);
-    return sum / rated.length;
-  }, [testimonials]);
+  const ratedCount = platformStats.reduce((total, stat) => total + stat.rated, 0);
+  const aggregateRating = ratedCount
+    ? platformStats.reduce((total, stat) => total + stat.sum, 0) / ratedCount
+    : null;
+  const displayRating = (rating: number) => formatNumber(rating, locale, {
+    minimumFractionDigits: 1, maximumFractionDigits: 1,
+  });
 
   const filtered = useMemo(
     () => (selectedPlatform === "all" ? testimonials : testimonials.filter((t) => t.source === selectedPlatform)),
@@ -295,27 +273,9 @@ export function HomeTestimonials({
     return idx >= 0 ? idx : 0;
   }, [activeId, filtered]);
 
-  const activeItem = filtered[activeIndex] ?? testimonials[0];
+  const activeItem = filtered[activeIndex];
 
-  useEffect(() => {
-    if (filtered.length <= 1 || paused) return;
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    timerRef.current = window.setInterval(() => {
-      setActiveId((prevId) => {
-        const idx = filtered.findIndex((item) => item.id === prevId);
-        const next = filtered[(idx + 1) % filtered.length];
-        return next?.id ?? prevId;
-      });
-    }, 6500);
-
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-    };
-  }, [filtered, paused]);
-
-  if (testimonials.length === 0 || !activeItem) return null;
+  if (!activeItem) return null;
 
   const stepSpotlight = (dir: 1 | -1) => {
     if (filtered.length <= 1) return;
@@ -325,63 +285,60 @@ export function HomeTestimonials({
 
   const activeMeta = PLATFORM_META[activeItem.source] ?? PLATFORM_META.other;
   const activeRole = [activeItem.authorRole, activeItem.company].filter(Boolean).join(" · ");
-  const marqueeItems = testimonials.length >= 3 ? [...testimonials, ...testimonials] : testimonials;
-  const marqueeDuration = `${Math.max(26, testimonials.length * 6.5)}s`;
 
   return (
     <section
       aria-labelledby="home-testimonials-title"
       className="section-y relative overflow-x-clip"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
     >
       <div className="container-lava space-y-8 sm:space-y-10">
-        {/* Top Row: Editorial Heading + Aggregate Verified Freelance Rating Card */}
+        {/* Heading and rating across the displayed reviews */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
             layout="intro"
             size="md"
-            kicker={eyebrow || labels.verifiedPlatforms}
+            kicker={eyebrow}
             title={title}
             lead={description}
             titleId="home-testimonials-title"
             className="max-w-2xl"
           />
 
-          <div className="inline-flex flex-wrap items-center gap-4 self-start rounded-[var(--radius-lg)] border border-line bg-surface px-5 py-3.5 shadow-card lg:self-end">
-            <div className="flex items-baseline gap-1.5">
-              <span dir="ltr" className="font-display text-3xl font-bold leading-none text-text tabular-nums">
-                {aggregateRating.toFixed(1)}
-              </span>
-              <span dir="ltr" className="text-sm font-medium text-faint">
-                / 5
-              </span>
+          {aggregateRating !== null && (
+            <div className="inline-flex flex-wrap items-center gap-4 self-start rounded-[var(--radius-lg)] border border-line bg-surface px-5 py-3.5 shadow-card lg:self-end">
+              <div className="flex items-baseline gap-1.5">
+                <span dir="ltr" className="font-display text-3xl font-bold leading-none text-text tabular-nums">
+                  {displayRating(aggregateRating)}
+                </span>
+                <span dir="ltr" className="text-sm font-medium text-faint">
+                  / 5
+                </span>
+              </div>
+              <div className="h-9 w-px bg-line" aria-hidden="true" />
+              <div className="grid gap-1">
+                <Stars
+                  rating={aggregateRating}
+                  label={labels.rating.replace("{value}", displayRating(aggregateRating))}
+                  size="md"
+                />
+                <span className="text-xs font-medium text-muted">
+                  {labels.ratedReviewsLabel.replace("{count}", formatNumber(ratedCount, locale))}
+                </span>
+              </div>
             </div>
-            <div className="h-9 w-px bg-line" aria-hidden="true" />
-            <div className="grid gap-1">
-              <Stars
-                rating={aggregateRating}
-                label={labels.rating.replace("{value}", aggregateRating.toFixed(1))}
-                size="md"
-              />
-              <span className="text-xs font-medium text-muted">
-                {labels.reviewsCountLabel}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Interactive Freelance Platform Dock */}
         {platformStats.length > 1 ? (
           <div
-            role="tablist"
-            aria-label={labels.verifiedPlatforms}
+            role="group"
+            aria-label={labels.allPlatforms}
             className="flex flex-wrap items-center gap-2"
           >
             <button
               type="button"
-              role="tab"
-              aria-selected={selectedPlatform === "all"}
+              aria-pressed={selectedPlatform === "all"}
               data-cursor="pointer"
               onClick={() => setSelectedPlatform("all")}
               className={cn(
@@ -405,13 +362,12 @@ export function HomeTestimonials({
 
             {platformStats.map((stat) => {
               const active = selectedPlatform === stat.source;
-              const avg = stat.rated > 0 ? (stat.sum / stat.rated).toFixed(1) : "5.0";
+              const avg = stat.rated > 0 ? displayRating(stat.sum / stat.rated) : null;
               return (
                 <button
                   key={stat.source}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
+                  aria-pressed={active}
                   data-cursor="pointer"
                   onClick={() => {
                     setSelectedPlatform(stat.source);
@@ -427,15 +383,17 @@ export function HomeTestimonials({
                 >
                   <PlatformIcon source={stat.source} size={22} />
                   <span>{labels.sources[stat.source]}</span>
-                  <span
-                    dir="ltr"
-                    className={cn(
-                      "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-mono text-[0.72rem] tabular-nums",
-                      active ? "bg-white/15 text-ember" : "bg-surface-2 text-muted",
-                    )}
-                  >
-                    ★ {avg}
-                  </span>
+                  {avg !== null && (
+                    <span
+                      dir="ltr"
+                      className={cn(
+                        "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-mono text-[0.72rem] tabular-nums",
+                        active ? "bg-white/15 text-ember" : "bg-surface-2 text-muted",
+                      )}
+                    >
+                      ★ {avg}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -445,11 +403,7 @@ export function HomeTestimonials({
         {/* Centerpiece Interactive Dark Obsidian Spotlight */}
         <div
           className="surface-dark reviews-spotlight relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 p-6 shadow-[var(--shadow-pop)] sm:p-9 lg:p-11"
-          style={
-            {
-              "--platform-glow": activeMeta.accent,
-            } as CSSProperties
-          }
+          style={{ "--platform-glow": activeMeta.accent } as CSSProperties}
         >
           {/* Ambient glow tinted subtly by the active freelance platform + volcanic ember */}
           <div
@@ -463,11 +417,11 @@ export function HomeTestimonials({
             style={{ background: "var(--lava-500)" }}
           />
 
-          <div key={activeItem.id} className="reviews-spotlight-enter relative z-10 grid gap-7">
+          <div className="relative z-10 grid gap-7">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-3">
-                <SourcePill testimonial={activeItem} labels={labels} onDark />
-                {activeItem.rating ? (
+                <SourcePill testimonial={activeItem} labels={labels} />
+                {activeItem.rating !== null ? (
                   <div className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-white/12 bg-white/6 px-3 py-1.5">
                     <Stars
                       rating={activeItem.rating}
@@ -495,7 +449,8 @@ export function HomeTestimonials({
             </div>
 
             <blockquote
-              lang={activeItem.quoteLocale ?? undefined}
+              aria-live="polite"
+              lang={activeItem.quoteLocale} dir="auto"
               className="max-w-4xl font-display text-xl font-medium leading-[1.55] text-ash-50 sm:text-2xl lg:text-[1.75rem]"
             >
               “{activeItem.quote}”
@@ -513,7 +468,6 @@ export function HomeTestimonials({
                 <div>
                   <p className="flex items-center gap-1.5 font-display text-base font-semibold text-ash-50">
                     <span>{activeItem.authorName}</span>
-                    <VerifiedCheck className="text-lava-400" />
                   </p>
                   <p className="text-sm text-ink-200">
                     {[activeRole, activeItem.countryName].filter(Boolean).join(" · ")}
@@ -548,63 +502,26 @@ export function HomeTestimonials({
               ) : null}
             </div>
           </div>
-
-          {/* Live animated progress bar along the bottom edge */}
-          {filtered.length > 1 ? (
-            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[3px] bg-white/8">
-              <div
-                key={`${activeItem.id}-${paused ? "paused" : "run"}`}
-                className={cn("reviews-timer h-full [background-image:var(--gradient-cta)]", paused && "reviews-timer--paused")}
-              />
-            </div>
-          ) : null}
         </div>
       </div>
 
-      {/* Stage B: Kinetic Continuous Infinite Stream ("All") OR Crisp Filtered Grid (Specific Platform) */}
-      {selectedPlatform === "all" && testimonials.length >= 3 ? (
-        <div
+      <div className="container-lava mt-8 sm:mt-10">
+        <ul
           aria-label={labels.region}
-          className="reviews-marquee-wrap relative mt-8 sm:mt-10"
+          className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3"
         >
-          <div
-            className="reviews-marquee-track flex w-max gap-4 py-2 sm:gap-5"
-            style={{ "--reviews-dur": marqueeDuration } as CSSProperties}
-          >
-            {marqueeItems.map((testimonial, idx) => (
-              <div
-                key={`${testimonial.id}-${idx}`}
-                className="w-[min(84vw,22.5rem)] shrink-0 sm:w-[23.5rem]"
-              >
-                <StreamCard
-                  testimonial={testimonial}
-                  labels={labels}
-                  active={testimonial.id === activeItem.id}
-                  onSelect={() => setActiveId(testimonial.id)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="container-lava mt-8 sm:mt-10">
-          <ul
-            aria-label={labels.region}
-            className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3"
-          >
-            {filtered.map((testimonial) => (
-              <li key={testimonial.id} className="min-w-0">
-                <StreamCard
-                  testimonial={testimonial}
-                  labels={labels}
-                  active={testimonial.id === activeItem.id}
-                  onSelect={() => setActiveId(testimonial.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+          {filtered.map((testimonial) => (
+            <li key={testimonial.id} className="min-w-0">
+              <StreamCard
+                testimonial={testimonial}
+                labels={labels}
+                active={testimonial.id === activeItem.id}
+                onSelect={() => setActiveId(testimonial.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

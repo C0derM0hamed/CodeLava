@@ -13,8 +13,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env scripts/seed.ts",
-    "db:seed-demo": "tsx --env-file=.env scripts/seed-demo.ts",
-    "db:clear-demo": "tsx --env-file=.env scripts/clear-demo.ts"
+    "db:fixtures": "tsx --env-file=.env scripts/dev-fixtures/seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -107,12 +107,10 @@
     "moreTechnologies": "+ {count} more",
     "testimonialsRegion": "Client testimonials",
     "rating": "Rated {value} out of 5",
-    "viewReview": "Read the review on {source}",
+    "viewReview": "Open source link for {source}",
     "allPlatforms": "All platforms",
-    "verifiedPlatforms": "Verified on freelance platforms",
-    "averageRating": "Average rating",
-    "reviewsCount": "{count, plural, one {# verified review} other {# verified reviews}}",
-    "verifiedOn": "Verified on {source}",
+    "clientReviews": "Client reviews",
+    "ratedReviews": "Average rating from {count} rated reviews",
     "deliveredProject": "Project",
     "sources": {
       "upwork": "Upwork",
@@ -123,7 +121,7 @@
       "freelancer": "Freelancer",
       "clutch": "Clutch",
       "direct": "Direct client",
-      "other": "Verified review"
+      "other": "Other source"
     },
     "allArticles": "View all articles",
     "allQuestions": "View all questions",
@@ -474,5 +472,14 @@
       "title": "No obligation",
       "body": "A quote request starts a conversation. It doesn’t commit you to anything."
     }
+  },
+  "heroSound": {
+    "soundOn": "Sound on",
+    "soundOff": "Sound off",
+    "loading": "Loading audio…",
+    "enableAria": "Enable volcanic soundscape",
+    "disableAria": "Mute volcanic soundscape",
+    "statusOn": "Hero soundscape enabled",
+    "statusOff": "Hero soundscape muted"
   }
 }

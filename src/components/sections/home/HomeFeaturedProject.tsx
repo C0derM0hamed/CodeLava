@@ -12,6 +12,8 @@ import { AchievementsCard } from "./HomeAchievements";
 export interface HomeFeaturedProjectProps {
   locale: AppLocale;
   eyebrow?: string;
+  title?: string;
+  description?: string;
   /** Used when only achievements are available (no published project). */
   achievementsTitle: string;
   achievementsLabel: string;
@@ -31,6 +33,8 @@ export interface HomeFeaturedProjectProps {
 export function HomeFeaturedProject({
   locale,
   eyebrow,
+  title,
+  description,
   achievementsTitle,
   achievementsLabel,
   caseStudyLabel,
@@ -48,7 +52,7 @@ export function HomeFeaturedProject({
       <section aria-labelledby="home-work-title" className="section-y">
         <div className="container-lava grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-4">
-            <SectionHeading layout="intro" size="md" kicker={eyebrow} title={achievementsTitle} titleId="home-work-title" />
+            <SectionHeading layout="intro" size="md" kicker={eyebrow} title={title || achievementsTitle} lead={description} titleId="home-work-title" />
           </div>
           <Reveal mode="block" className="lg:col-span-8">
             <AchievementsCard achievements={achievements} locale={locale} layout="row" label={achievementsLabel} />
@@ -69,10 +73,11 @@ export function HomeFeaturedProject({
             layout="intro"
             size="md"
             kicker={eyebrow}
-            title={project.title}
-            lead={project.summary || undefined}
+            title={title || project.title}
+            lead={description || project.summary || undefined}
             titleId="home-work-title"
           />
+          {title && title !== project.title && <p className="font-display text-lg font-semibold">{project.title}</p>}
           {technologies.length > 0 ? (
             <ul className="flex flex-wrap gap-2" aria-label={technologiesLabel}>
               {technologies.slice(0, 6).map((tech) => (
