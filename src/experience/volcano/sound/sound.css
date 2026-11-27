@@ -1,0 +1,216 @@
+/*
+ * CodeLava Volcano Hero — Optional Soundscape Toggle
+ * Consumes design tokens from src/app/globals.css exclusively (zero raw hex values).
+ * Logical CSS properties ensure symmetrical LTR (EN) and RTL (AR) rendering.
+ */
+
+.cl-sound-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cl-sound-wrap--floating {
+  position: absolute;
+  z-index: 6;
+  inset-block-start: calc(var(--header-h, 76px) + 1rem);
+  inset-inline-end: var(--gutter, 24px);
+}
+
+.cl-sound-wrap--inline {
+  position: relative;
+  pointer-events: auto;
+}
+
+.cl-sound-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.25rem;
+  padding-block: 0.4rem;
+  padding-inline: 0.85rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in oklab, var(--ash-50) 16%, transparent);
+  background: color-mix(in oklab, var(--obsidian-950) 64%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--ash-200);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color 220ms var(--ease-out-expo),
+    border-color 220ms var(--ease-out-expo),
+    color 220ms var(--ease-out-expo),
+    box-shadow 260ms var(--ease-out-expo),
+    transform 200ms var(--ease-out-expo);
+}
+
+.cl-sound-pill:hover {
+  border-color: color-mix(in oklab, var(--ash-50) 32%, transparent);
+  background: color-mix(in oklab, var(--obsidian-900) 78%, transparent);
+  color: var(--ash-50);
+  transform: translateY(-1px);
+}
+
+.cl-sound-pill:active {
+  transform: translateY(0);
+}
+
+.cl-sound-pill:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Active (sound on) — warm restrained magma border & ember glow */
+.cl-sound-pill[data-state="on"] {
+  border-color: var(--line-lava-strong);
+  background: color-mix(in oklab, var(--obsidian-900) 82%, var(--lava-900) 18%);
+  color: var(--ash-50);
+  box-shadow: var(--lava-glow-sm);
+}
+
+.cl-sound-pill[data-state="on"] .cl-sound-icon {
+  color: var(--lava-400);
+}
+
+/* Light surface variant (for Daylight Magma pearl sections) */
+.cl-sound-pill[data-tone="light"] {
+  border-color: var(--line-strong);
+  background: var(--surface-glass);
+  color: var(--ink-600);
+  box-shadow: var(--shadow-card);
+}
+
+.cl-sound-pill[data-tone="light"]:hover {
+  border-color: color-mix(in oklab, var(--ink-900) 26%, transparent);
+  background: var(--pearl-50);
+  color: var(--ink-900);
+}
+
+.cl-sound-pill[data-tone="light"][data-state="on"] {
+  border-color: var(--line-lava-strong);
+  background: color-mix(in oklab, var(--pearl-50) 92%, var(--lava-100) 8%);
+  color: var(--ink-900);
+  box-shadow: var(--shadow-card), var(--lava-glow-sm);
+}
+
+.cl-sound-pill[data-tone="light"][data-state="on"] .cl-sound-icon {
+  color: var(--accent-text);
+}
+
+.cl-sound-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ash-400);
+  transition: color 220ms var(--ease-out-expo);
+}
+
+[dir="rtl"] .cl-sound-icon svg {
+  transform: scaleX(-1);
+}
+
+.cl-sound-pill[data-tone="light"] .cl-sound-icon {
+  color: var(--ink-500);
+}
+
+.cl-sound-wave-outer {
+  opacity: 0.72;
+}
+
+/* Micro 3-bar acoustic waveform indicator */
+.cl-sound-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  block-size: 11px;
+  inline-size: 11px;
+}
+
+.cl-sound-eq i {
+  display: block;
+  inline-size: 2px;
+  block-size: 3px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  opacity: 0.45;
+  transform-origin: bottom center;
+  transition: opacity 200ms ease, block-size 200ms ease;
+}
+
+.cl-sound-eq[data-active="true"] i {
+  opacity: 0.95;
+  background: var(--ember);
+  animation: cl-sound-eq-bar 1.15s ease-in-out infinite alternate;
+}
+
+.cl-sound-pill[data-tone="light"] .cl-sound-eq[data-active="true"] i {
+  background: var(--lava-500);
+}
+
+.cl-sound-eq[data-active="true"] i:nth-child(1) {
+  block-size: 8px;
+  animation-delay: 0ms;
+}
+
+.cl-sound-eq[data-active="true"] i:nth-child(2) {
+  block-size: 11px;
+  animation-delay: 180ms;
+}
+
+.cl-sound-eq[data-active="true"] i:nth-child(3) {
+  block-size: 6px;
+  animation-delay: 340ms;
+}
+
+@keyframes cl-sound-eq-bar {
+  0% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0.5);
+  }
+}
+
+.cl-sound-label {
+  letter-spacing: 0.01em;
+}
+
+/* Arabic typography: zero letter-spacing */
+:is(:root:lang(ar), [lang="ar"], [dir="rtl"]) .cl-sound-label {
+  letter-spacing: 0;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 640px) {
+  .cl-sound-wrap--floating {
+    inset-block-start: calc(var(--header-h, 76px) + 0.75rem);
+  }
+
+  .cl-sound-pill {
+    min-block-size: 2.25rem;
+    padding-inline: 0.75rem 0.85rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-sound-pill,
+  .cl-sound-icon,
+  .cl-sound-eq i {
+    transition: none;
+  }
+
+  .cl-sound-eq[data-active="true"] i {
+    animation: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,14 @@
+CodeLava Hero Soundscape Assets — License Notice
+================================================
+
+All audio files in this directory (`rumble-loop.*`, `lava-loop.*`,
+`eruption-hit.*`, `code-burst-1.*`, `code-burst-2.*`, `code-burst-3.*`,
+`logo-reveal.*`) are 100% original procedural digital audio syntheses generated
+locally by `src/experience/volcano/sound/generate-assets.py` using Python 3
+standard-library DSP and encoded via FFmpeg (libopus / aac).
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+No third-party samples, copyrighted recordings, or external audio libraries
+were used. Free for commercial and non-commercial use without attribution.
