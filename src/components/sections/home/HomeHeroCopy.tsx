@@ -40,10 +40,11 @@ function renderSplitWords(
 
 /**
  * Self-contained hero copy block:
- * - Precision molten-glass technical eyebrow chip with live beacon + `</>` code glyph
+ * - Precision molten-glass technical eyebrow chip with `</>` code glyph
  * - Editorial two-line headline with subtle split-word rise & incandescent magma highlight
  * - Refined subcopy with controlled measure
  * - Hero-scoped magnetic primary & frosted-glass secondary CTAs with circular sliding arrow wells
+ * - Layered scroll-reactive wrappers driven by HeroStage custom properties (zero extra scroll listeners)
  */
 export function HomeHeroCopy({
   eyebrow,
@@ -59,22 +60,19 @@ export function HomeHeroCopy({
   const dark = tone === "dark";
 
   return (
-    <div className="flex max-w-[36.5rem] flex-col items-start gap-5 sm:gap-6">
+    <div className="hero-copy-stack">
       {eyebrow ? (
-        <div
-          className="home-hero-enter hero-eyebrow"
-          data-tone={tone}
-          style={{ "--enter-delay": "20ms" } as CSSProperties}
-        >
-          <span aria-hidden="true" className="hero-eyebrow__beacon">
-            <span className="hero-eyebrow__pulse" />
-            <span className="hero-eyebrow__core" />
-          </span>
-          <span aria-hidden="true" className="hero-eyebrow__sep" />
-          <span aria-hidden="true" dir="ltr" className="hero-eyebrow__code">
-            &lt;/&gt;
-          </span>
-          <span className="hero-eyebrow__label">{eyebrow}</span>
+        <div className="hero-scroll-layer hero-scroll-layer--eyebrow">
+          <div
+            className="home-hero-enter hero-eyebrow"
+            data-tone={tone}
+            style={{ "--enter-delay": "20ms" } as CSSProperties}
+          >
+            <span aria-hidden="true" dir="ltr" className="hero-eyebrow__code">
+              &lt;/&gt;
+            </span>
+            <span className="hero-eyebrow__label">{eyebrow}</span>
+          </div>
         </div>
       ) : null}
 
@@ -83,7 +81,7 @@ export function HomeHeroCopy({
         data-tone={tone}
         className={cn("home-hero-title", dark ? "home-hero-title--dark" : "home-hero-title--light")}
       >
-        <span className="block">
+        <span className="block hero-scroll-layer hero-scroll-layer--line1">
           {renderSplitWords(
             first,
             0,
@@ -93,7 +91,7 @@ export function HomeHeroCopy({
         {second ? (
           <>
             {" "}
-            <span className="block">
+            <span className="block hero-scroll-layer hero-scroll-layer--line2">
               {renderSplitWords(
                 second,
                 firstWordsCount,
@@ -105,25 +103,29 @@ export function HomeHeroCopy({
       </h1>
 
       {description ? (
-        <p
-          data-tone={tone}
-          className="home-hero-enter hero-lead"
-          style={{ "--enter-delay": "150ms" } as CSSProperties}
-        >
-          {description}
-        </p>
+        <div className="hero-scroll-layer hero-scroll-layer--lead">
+          <p
+            data-tone={tone}
+            className="home-hero-enter hero-lead"
+            style={{ "--enter-delay": "150ms" } as CSSProperties}
+          >
+            {description}
+          </p>
+        </div>
       ) : null}
 
-      <div
-        className="home-hero-enter flex flex-wrap items-center gap-2.5 pt-1 sm:gap-4 sm:pt-2"
-        style={{ "--enter-delay": "240ms" } as CSSProperties}
-      >
-        <HeroCta href="/quote" variant="primary" tone={tone}>
-          {primaryLabel}
-        </HeroCta>
-        <HeroCta href="/work" variant="secondary" tone={tone}>
-          {secondaryLabel}
-        </HeroCta>
+      <div className="hero-scroll-layer hero-scroll-layer--cta">
+        <div
+          className="home-hero-enter hero-actions"
+          style={{ "--enter-delay": "240ms" } as CSSProperties}
+        >
+          <HeroCta href="/quote" variant="primary" tone={tone}>
+            {primaryLabel}
+          </HeroCta>
+          <HeroCta href="/work" variant="secondary" tone={tone}>
+            {secondaryLabel}
+          </HeroCta>
+        </div>
       </div>
     </div>
   );
