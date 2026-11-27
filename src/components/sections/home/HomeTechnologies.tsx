@@ -34,12 +34,12 @@ export function HomeTechnologies({ eyebrow, title, description, exploreLabel, mo
           titleId="home-tech-title"
           alignIntro="center"
         >
-          <ul className="grid grid-cols-3 gap-3 min-[460px]:grid-cols-4 sm:gap-4 lg:grid-cols-6">
+          <ul className="grid grid-cols-3 gap-[var(--space-grid)] min-[460px]:grid-cols-4 lg:grid-cols-6">
             {shown.map((tech, index) => (
               <Reveal as="li" mode="block" delay={index * 35} key={tech.id} className="min-w-0">
-                <span className="flex h-full flex-col items-center gap-2.5 rounded-[var(--radius-md)] border border-line bg-surface px-2 py-4 text-center shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift">
-                  <TechnologyLogo technology={tech} size="sm" bare className="size-9" />
-                  <span dir="ltr" className="w-full truncate text-xs font-medium text-muted">
+                <span className="flex h-full flex-col items-center gap-3 rounded-[var(--radius-md)] border border-line bg-surface px-3 py-5 text-center shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift sm:py-6">
+                  <TechnologyLogo technology={tech} size="sm" bare className="size-10" />
+                  <span dir="ltr" className="w-full truncate text-[0.8125rem] font-medium text-muted">
                     {tech.name}
                   </span>
                 </span>
@@ -50,7 +50,7 @@ export function HomeTechnologies({ eyebrow, title, description, exploreLabel, mo
                 <Link
                   href="/technologies"
                   data-cursor="pointer"
-                  className="group flex h-full min-h-[5.5rem] flex-col items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-dashed border-line-strong bg-surface/60 px-2 py-4 text-center text-sm font-semibold text-text transition-[border-color,color,background-color] duration-300 hover:border-line-lava-strong hover:bg-surface hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-focus"
+                  className="group flex h-full min-h-[6.5rem] flex-col items-center justify-center gap-2 rounded-[var(--radius-md)] border border-dashed border-line-strong bg-surface/60 px-3 py-5 text-center text-sm font-semibold text-text transition-[border-color,color,background-color] duration-300 hover:border-line-lava-strong hover:bg-surface hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-focus"
                 >
                   <PlusIcon size={16} className="text-accent-text" />
                   <span>{moreLabel(rest)}</span>

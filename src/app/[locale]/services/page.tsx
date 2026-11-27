@@ -34,7 +34,7 @@ export default async function ServicesPage({ params }: Props) {
   return (
     <main id="main-content" className="relative bg-bg text-text">
       <PageTop>
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="grid items-start gap-[var(--space-split)] lg:grid-cols-12">
           <div className="lg:col-span-4 lg:pt-3">
             <SectionHeading
               as="h1"
@@ -75,9 +75,9 @@ export default async function ServicesPage({ params }: Props) {
             link={{ href: "/process", label: process("seeStages") }}
           >
             <Reveal mode="block">
-              <ol className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              <ol className="grid gap-[var(--space-grid)] sm:grid-cols-2">
                 {visibleSteps.map(({ id, title, description, duration }, index) => (
-                  <li key={id} className="rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card">
+                  <li key={id} className="rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card">
                     <div className="flex items-center justify-between gap-3">
                       <span
                         aria-hidden="true"
@@ -88,7 +88,7 @@ export default async function ServicesPage({ params }: Props) {
                       {duration ? <span className="text-xs text-faint">{duration}</span> : null}
                     </div>
                     <h3 className="mt-5 font-display text-lg font-semibold text-text">{title}</h3>
-                    {description ? <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-muted">{description}</p> : null}
+                    {description ? <p className="mt-2.5 text-sm leading-relaxed text-muted">{description}</p> : null}
                   </li>
                 ))}
               </ol>

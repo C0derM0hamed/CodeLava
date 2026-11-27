@@ -50,7 +50,7 @@ export function HomeFeaturedProject({
   if (!project) {
     return (
       <section aria-labelledby="home-work-title" className="section-y">
-        <div className="container-lava grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="container-lava grid items-center gap-[var(--space-split)] lg:grid-cols-12">
           <div className="lg:col-span-4">
             <SectionHeading layout="intro" size="md" kicker={eyebrow} title={title || achievementsTitle} lead={description} titleId="home-work-title" />
           </div>
@@ -67,8 +67,8 @@ export function HomeFeaturedProject({
 
   return (
     <section aria-labelledby="home-work-title" className="section-y">
-      <div className="container-lava grid items-center gap-10 lg:grid-cols-12 lg:gap-10">
-        <div className={cn("flex flex-col items-start gap-5", hasStats ? "lg:col-span-4" : "lg:col-span-5")}>
+      <div className="container-lava grid items-center gap-[var(--space-grid-lg)] lg:grid-cols-12">
+        <div className={cn("flex flex-col items-start gap-[var(--space-copy)]", hasStats ? "lg:col-span-4" : "lg:col-span-5")}>
           <SectionHeading
             layout="intro"
             size="md"
@@ -79,7 +79,7 @@ export function HomeFeaturedProject({
           />
           {title && title !== project.title && <p className="font-display text-lg font-semibold">{project.title}</p>}
           {technologies.length > 0 ? (
-            <ul className="flex flex-wrap gap-2" aria-label={technologiesLabel}>
+            <ul className="flex flex-wrap gap-2.5" aria-label={technologiesLabel}>
               {technologies.slice(0, 6).map((tech) => (
                 <li key={tech.slug}>
                   <Tag tone="default" className="bg-surface shadow-[var(--shadow-xs)]" dir="ltr">
@@ -94,7 +94,7 @@ export function HomeFeaturedProject({
           ) : project.category ? (
             <Tag tone="lava">{project.category.name}</Tag>
           ) : null}
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-1">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-[var(--space-cta)]">
             <ActionLink href={href} variant="text" size="sm">
               {caseStudyLabel}
             </ActionLink>

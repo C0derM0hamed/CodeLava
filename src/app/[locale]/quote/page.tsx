@@ -48,10 +48,10 @@ export default async function QuotePage({ params, searchParams }: Props) {
 
   return (
     <main id="main-content" className="relative bg-bg text-text">
-      <PageTop className="!pb-20 sm:!pb-28">
+      <PageTop className="!pb-[var(--section-y)]">
         <SectionHeading as="h1" size="lg" layout="split" kicker={hero?.eyebrow}
           title={hero?.title || t("title")} lead={hero?.description || intro?.description} animated={false} />
-        <div className="mt-10 grid items-start gap-6 sm:mt-14 lg:grid-cols-12 lg:gap-8">
+        <div className="mt-[var(--space-heading)] grid items-start gap-[var(--space-grid-lg)] lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-8">
             <QuoteForm key={typeof query.service === "string" ? query.service : ""} locale={locale}
               preselected={services.find(({ slug }) => slug === query.service)?.id}

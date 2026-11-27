@@ -78,7 +78,7 @@ export default async function TechnologiesPage({ params }: Props) {
         preview={technologies}
       />
 
-      <section aria-label={t("title")} className="py-14 sm:py-20">
+      <section aria-label={t("title")} className="section-y">
         <div className="container-lava">
           {technologies.length === 0 ? (
             <p className="mx-auto max-w-xl rounded-[var(--radius-lg)] border border-line bg-surface p-10 text-center text-muted shadow-card">

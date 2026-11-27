@@ -159,7 +159,7 @@ function StreamCard({
       }}
       data-cursor="pointer"
       className={cn(
-        "reviews-card group relative flex h-full flex-col gap-4 overflow-hidden rounded-[var(--radius-md)] border bg-surface p-5 text-start transition-all duration-300 sm:p-6",
+        "reviews-card group relative flex h-full flex-col gap-5 overflow-hidden rounded-[var(--radius-md)] border bg-surface p-[var(--space-card)] text-start transition-all duration-300",
         active
           ? "border-lava-500/60 shadow-[0_18px_42px_-16px_color-mix(in_oklab,var(--lava-500)_35%,transparent)]"
           : "border-line shadow-card hover:-translate-y-0.5 hover:border-line-lava hover:shadow-lift",
@@ -291,7 +291,7 @@ export function HomeTestimonials({
       aria-labelledby="home-testimonials-title"
       className="section-y relative overflow-x-clip"
     >
-      <div className="container-lava space-y-8 sm:space-y-10">
+      <div className="container-lava space-y-[var(--space-heading)]">
         {/* Heading and rating across the displayed reviews */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
@@ -402,7 +402,7 @@ export function HomeTestimonials({
 
         {/* Centerpiece Interactive Dark Obsidian Spotlight */}
         <div
-          className="surface-dark reviews-spotlight relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 p-6 shadow-[var(--shadow-pop)] sm:p-9 lg:p-11"
+          className="surface-dark reviews-spotlight relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 p-6 shadow-[var(--shadow-pop)] sm:p-10 lg:p-14"
           style={{ "--platform-glow": activeMeta.accent } as CSSProperties}
         >
           {/* Ambient glow tinted subtly by the active freelance platform + volcanic ember */}
@@ -505,10 +505,10 @@ export function HomeTestimonials({
         </div>
       </div>
 
-      <div className="container-lava mt-8 sm:mt-10">
+      <div className="container-lava mt-[var(--space-grid-lg)]">
         <ul
           aria-label={labels.region}
-          className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3"
+          className="grid gap-[var(--space-grid)] sm:grid-cols-2 lg:grid-cols-3"
         >
           {filtered.map((testimonial) => (
             <li key={testimonial.id} className="min-w-0">

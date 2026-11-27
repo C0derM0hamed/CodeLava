@@ -147,6 +147,7 @@
 .work-prose pre {
   direction: ltr;
   text-align: left;
+  max-width: 100%;
   overflow-x: auto;
   border-radius: var(--radius-md);
   border: 1px solid var(--ink-700);

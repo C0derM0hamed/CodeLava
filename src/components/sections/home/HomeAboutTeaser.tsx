@@ -26,14 +26,14 @@ export interface HomeAboutTeaserProps {
 export function HomeAboutTeaser({ eyebrow, title, description, ctaLabel, imageAlt, values }: HomeAboutTeaserProps) {
   return (
     <section aria-labelledby="home-about-title" className="section-y">
-      <div className="container-lava grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+      <div className="container-lava grid items-center gap-[var(--space-split)] lg:grid-cols-12">
         <Reveal mode="block" className="lg:col-span-5">
           <div className="home-key-art aspect-[4/3]">
-            <Image src="/brand/logo-key-art.png" alt={imageAlt} fill sizes="(max-width: 1023px) 92vw, 520px" className="object-cover" />
+            <Image src="/brand/logo-key-art.png" alt={imageAlt} fill sizes="(max-width: 1023px) 92vw, 620px" className="object-cover" />
           </div>
         </Reveal>
 
-        <div className="grid gap-10 lg:col-span-7 xl:grid-cols-7 xl:gap-10">
+        <div className="grid gap-[var(--space-grid-lg)] lg:col-span-7 xl:grid-cols-7">
           <div className="xl:col-span-4">
             <SectionHeading
               layout="intro"
@@ -50,7 +50,7 @@ export function HomeAboutTeaser({ eyebrow, title, description, ctaLabel, imageAl
             />
           </div>
           {values.length > 0 ? (
-            <ul className="grid gap-6 sm:grid-cols-3 xl:col-span-3 xl:grid-cols-1 xl:border-s xl:border-line xl:ps-8">
+            <ul className="grid gap-7 sm:grid-cols-3 xl:col-span-3 xl:grid-cols-1 xl:border-s xl:border-line xl:ps-10">
               {values.map((value, index) => (
                 <Reveal as="li" mode="block" delay={index * 90} key={value.title} className="flex gap-4">
                   <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-text">

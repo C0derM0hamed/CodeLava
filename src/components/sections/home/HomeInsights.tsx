@@ -24,7 +24,7 @@ export function HomeInsights({
     <section aria-labelledby="home-insights-title" className="section-y">
       <div className="container-lava">
         <SplitIntro kicker={eyebrow} title={title} lead={description} link={{ href: "/blog", label: exploreLabel }} titleId="home-insights-title">
-          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid gap-[var(--space-grid)] sm:grid-cols-2 lg:grid-cols-3">
             {latest.map((article, index) => (
               <Reveal as="li" mode="block" delay={index * 80} key={article.id} className="flex min-w-0">
                 <ArticleCard article={article} className="w-full" />

@@ -51,7 +51,7 @@ export function TechnologyExplorer({
     categoryLabels[category] ?? category.replace(/[-_]+/g, " ").replace(/^./, (c) => c.toUpperCase());
 
   return (
-    <div className="space-y-12 sm:space-y-16">
+    <div className="space-y-[var(--space-heading)]">
       <div className="flex flex-col gap-4">
         <div role="group" aria-label={filterLabel} className="flex flex-wrap items-center gap-2.5">
           {[["", allLabel, totalCount] as const, ...groups.map(([category]) => [category, labelOf(category), counts[category]] as const)].map(
@@ -85,32 +85,32 @@ export function TechnologyExplorer({
         </p>
       </div>
 
-      <div className="space-y-12 sm:space-y-16">
+      <div className="space-y-[var(--space-heading)]">
         {visible.map(([category, items]) => (
           <Reveal key={`${active}-${category}`} mode="block">
             <section
               aria-labelledby={`tech-${category}`}
-              className="grid gap-6 lg:grid-cols-12 lg:gap-12"
+              className="grid gap-[var(--space-split)] lg:grid-cols-12"
             >
               <header className="lg:col-span-3">
                 <h2 id={`tech-${category}`} className="text-display-sm text-text">
                   {labelOf(category)}
                 </h2>
-                <p className="mt-1.5 text-sm text-faint">{countLabels[category]}</p>
+                <p className="mt-2 text-sm text-faint">{countLabels[category]}</p>
               </header>
-              <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-4 lg:col-span-9 xl:grid-cols-4">
+              <ul className="grid grid-cols-2 gap-[var(--space-grid)] sm:grid-cols-3 lg:col-span-9 xl:grid-cols-4">
                 {items.map((technology) => (
                   <li
                     key={technology.id}
-                    className="group flex flex-col gap-4 rounded-[var(--radius-md)] border border-line bg-surface p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift sm:p-5"
+                    className="group flex flex-col gap-4 rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift"
                   >
                     <TechnologyLogo technology={technology} />
-                    <div className="min-w-0 space-y-1">
+                    <div className="min-w-0 space-y-1.5">
                       <h3 dir="auto" className="truncate font-display text-base font-semibold text-text">
                         {technology.name}
                       </h3>
                       {technology.description ? (
-                        <p className="line-clamp-3 text-[0.8125rem] leading-relaxed text-muted">
+                        <p className="text-[0.8125rem] leading-relaxed text-muted">
                           {technology.description}
                         </p>
                       ) : null}

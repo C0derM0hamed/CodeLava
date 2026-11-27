@@ -127,16 +127,16 @@ export function SectionHeading({
   if (layout === "split") {
     return (
       <header
-        className={cn("grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-12", className)}
+        className={cn("grid grid-cols-1 gap-[var(--space-grid)] lg:grid-cols-12 lg:items-end lg:gap-[var(--space-split)]", className)}
       >
-        <div className="space-y-4 lg:col-span-7">
+        <div className="space-y-[var(--space-copy)] lg:col-span-7">
           {kickerNode}
           {titleNode}
         </div>
         {lead || action ? (
-          <div className="flex flex-col items-start gap-5 lg:col-span-5 lg:pb-1.5">
-            {lead ? <p className="text-lead max-w-[46ch]">{lead}</p> : null}
-            {action ? <div>{action}</div> : null}
+          <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-5 lg:pb-1.5">
+            {lead ? <p className="text-lead max-w-[48ch]">{lead}</p> : null}
+            {action ? <div className="pt-[var(--space-cta)]">{action}</div> : null}
           </div>
         ) : null}
       </header>
@@ -148,8 +148,7 @@ export function SectionHeading({
   return (
     <header
       className={cn(
-        "flex flex-col",
-        isIntro ? "gap-4" : "gap-5",
+        "flex flex-col gap-[var(--space-copy)]",
         centered ? "items-center text-center" : "items-start",
         className,
       )}
@@ -161,14 +160,14 @@ export function SectionHeading({
       {lead ? (
         <p
           className={cn(
-            isIntro ? "max-w-[42ch] text-body text-muted" : "text-lead max-w-[54ch]",
+            isIntro ? "max-w-[44ch] text-body text-muted" : "text-lead max-w-[56ch]",
             centered && "mx-auto",
           )}
         >
           {lead}
         </p>
       ) : null}
-      {action ? <div className={cn(isIntro ? "pt-1" : "pt-2")}>{action}</div> : null}
+      {action ? <div className="pt-[var(--space-cta)]">{action}</div> : null}
     </header>
   );
 }

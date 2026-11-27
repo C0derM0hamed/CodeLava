@@ -21,9 +21,9 @@ export function AboutHero({
   return (
     <section
       aria-labelledby="about-hero-title"
-      className="page-wash relative overflow-hidden pt-[calc(var(--header-h)+3rem)] pb-12 sm:pt-[calc(var(--header-h)+4.5rem)] lg:pb-20"
+      className="page-wash relative overflow-hidden pt-[calc(var(--header-h)+var(--hero-top))] pb-[var(--hero-bottom)]"
     >
-      <div className="container-lava grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
+      <div className="container-lava grid items-center gap-[var(--space-split)] lg:grid-cols-12">
         <div className="lg:col-span-6">
           <HomeHeroCopy
             eyebrow={eyebrow}

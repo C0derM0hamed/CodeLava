@@ -12,7 +12,7 @@ export function PageTop({ children, className }: { children: ReactNode; classNam
   return (
     <section
       className={cn(
-        "page-wash relative pt-[calc(var(--header-h)+2.25rem)] pb-14 sm:pt-[calc(var(--header-h)+3.5rem)] sm:pb-20",
+        "page-wash relative pt-[calc(var(--header-h)+var(--hero-top))] pb-[var(--hero-bottom)]",
         className,
       )}
     >
@@ -21,7 +21,7 @@ export function PageTop({ children, className }: { children: ReactNode; classNam
   );
 }
 
-/** Plain content section below the opener (same rhythm as the reference: 64 → 112 px). */
+/** Plain content section below the opener (centralized fluid vertical rhythm). */
 export function PageSection({
   children,
   className,
@@ -32,7 +32,7 @@ export function PageSection({
   labelledBy?: string;
 }) {
   return (
-    <section aria-labelledby={labelledBy} className={cn("py-10 sm:py-14 lg:py-[4.5rem]", className)}>
+    <section aria-labelledby={labelledBy} className={cn("section-y", className)}>
       <div className="container-lava">{children}</div>
     </section>
   );
@@ -52,7 +52,7 @@ export function Panel({
   return (
     <Tag
       className={cn(
-        "rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card sm:p-9",
+        "rounded-[var(--radius-lg)] border border-line bg-surface p-[var(--space-card)] shadow-card",
         className,
       )}
       {...rest}

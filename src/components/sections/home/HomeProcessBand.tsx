@@ -8,8 +8,8 @@ import { formatNumber } from "@/lib/i18n-content";
 import type { AppLocale } from "@/i18n/routing";
 import type { ProcessStep } from "@/server/queries/types";
 
-const TILE = 56; // px — matches .home-step__tile
-const DROP = 30; // px — vertical offset of every other step (the reference's gentle zigzag)
+const TILE = 60; // px — matches .home-step__tile
+const DROP = 34; // px — vertical offset of every other step (the reference's gentle zigzag)
 
 /** Smooth path through the tile centres; x in a 0–1000 viewBox, y in px. */
 function lavaPath(count: number) {
@@ -53,11 +53,11 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
     <WaveBand
       aria-labelledby="home-process-title"
       rim="top"
-      className="my-6 sm:my-10"
-      contentClassName="container-lava py-14 sm:py-16 lg:py-20"
+      className="my-8 sm:my-12"
+      contentClassName="container-lava band-y"
     >
-      <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-4">
+      <div className="grid items-center gap-[var(--space-split)] xl:grid-cols-[minmax(17.5rem,21.5rem)_minmax(0,1fr)]">
+        <div className="min-w-0">
           <SectionHeading
             layout="intro"
             size="md"
@@ -73,7 +73,7 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
           />
         </div>
 
-        <div className="relative lg:col-span-8">
+        <div className="relative min-w-0">
           <svg
             aria-hidden="true"
             focusable="false"
@@ -97,11 +97,11 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
 
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-7 start-7 top-7 w-0.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-lava-500/0 via-lava-500 to-lava-500/0 shadow-[0_0_14px_var(--lava-500)] lg:hidden rtl:translate-x-1/2"
+            className="pointer-events-none absolute bottom-7 start-[1.875rem] top-7 w-0.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-lava-500/0 via-lava-500 to-lava-500/0 shadow-[0_0_14px_var(--lava-500)] lg:hidden rtl:translate-x-1/2"
           />
 
           <ol
-            className="relative grid gap-8 lg:grid-cols-[repeat(var(--steps),minmax(0,1fr))] lg:gap-4"
+            className="relative grid gap-9 lg:grid-cols-[repeat(var(--steps),minmax(0,1fr))] lg:gap-[var(--space-grid)]"
             style={{ "--steps": visible.length } as CSSProperties}
           >
             {visible.map((step, index) => (
@@ -110,18 +110,18 @@ export function HomeProcessBand({ locale, eyebrow, title, description, ctaLabel,
                 mode="block"
                 key={step.id}
                 delay={index * 90}
-                className={`flex gap-5 lg:flex-col lg:items-center lg:text-center ${index % 2 === 1 ? "lg:pt-[30px]" : ""}`}
+                className={`flex gap-5 lg:flex-col lg:items-center lg:gap-4 lg:text-center ${index % 2 === 1 ? "lg:pt-[34px]" : ""}`}
               >
                 <span aria-hidden="true" className="home-step__tile shrink-0">
                   <StepIcon icon={step.icon} className="size-6" />
                 </span>
-                <span className="grid gap-1.5 pt-1 lg:max-w-[11rem] lg:pt-2">
+                <span className="grid gap-2 pt-1 lg:max-w-[26ch] lg:pt-2">
                   <span dir="ltr" className="font-mono text-xs text-faint lg:hidden">
                     {formatNumber(index + 1, locale, { minimumIntegerDigits: 2, useGrouping: false })}
                   </span>
-                  <span className="font-display text-[1.0625rem] font-semibold leading-snug text-text">{step.title}</span>
+                  <span className="font-display text-[1.125rem] font-semibold leading-snug text-text">{step.title}</span>
                   {step.description ? (
-                    <span className="line-clamp-3 text-sm leading-relaxed text-muted">{step.description}</span>
+                    <span className="text-[0.9375rem] leading-relaxed text-muted">{step.description}</span>
                   ) : null}
                 </span>
               </Reveal>

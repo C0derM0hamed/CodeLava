@@ -94,8 +94,8 @@ export default async function ServicePage({ params }: Props) {
       />
 
       <PageTop>
-        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
-          <div className="flex flex-col items-start gap-6 lg:col-span-7">
+        <div className="grid items-center gap-[var(--space-split)] lg:grid-cols-12">
+          <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-7">
             <div className="flex flex-wrap items-center gap-3">
               <ActionLink href="/services" variant="text" size="sm" arrow="none">
                 <span className="inline-flex items-center gap-2">
@@ -121,7 +121,7 @@ export default async function ServicePage({ params }: Props) {
             {service.tagline && service.summary ? (
               <p className="max-w-[54ch] text-body text-muted">{service.summary}</p>
             ) : null}
-            <div className="mt-1 flex flex-wrap items-center gap-3">
+            <div className="pt-[var(--space-cta)] flex flex-wrap items-center gap-3.5">
               <ActionLink href={quoteHref} size="lg">
                 {common("requestQuote")}
               </ActionLink>
@@ -153,7 +153,7 @@ export default async function ServicePage({ params }: Props) {
       {/* Projects built under this service — prominently surfaced at the top of the section */}
       {projects.length ? (
         <PageSection labelledBy="service-projects" className="!pt-0 sm:!pt-0 lg:!pt-0">
-          <div className="space-y-8">
+          <div className="space-y-[var(--space-heading)]">
             <SectionHeading
               as="h2"
               size="md"
@@ -169,7 +169,7 @@ export default async function ServicePage({ params }: Props) {
                 </ActionLink>
               }
             />
-            <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-[var(--space-grid)] sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((project, index) => {
                 const yearText = project.year
                   ? formatNumber(project.year, locale, { useGrouping: false })
@@ -239,7 +239,7 @@ export default async function ServicePage({ params }: Props) {
       {hasBody || hasDeliverables ? (
         <PageSection className={projects.length ? undefined : "!pt-0 sm:!pt-0 lg:!pt-0"}>
           <Reveal mode="block">
-            <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
+            <div className="grid gap-[var(--space-grid)] lg:grid-cols-12">
               {hasBody ? (
                 <Panel as="article" className={hasDeliverables ? "lg:col-span-7" : "lg:col-span-12"}>
                   <div
@@ -277,9 +277,9 @@ export default async function ServicePage({ params }: Props) {
         <PageSection labelledBy="service-features">
           <SplitIntro titleId="service-features" animated={false} kicker={service.title} title={t("features")}>
             <Reveal mode="block">
-              <ul className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              <ul className="grid gap-[var(--space-grid)] sm:grid-cols-2">
                 {service.features.map(({ title, description, icon }, index) => (
-                  <li key={index} className="rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card sm:p-7">
+                  <li key={index} className="rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card">
                     <span aria-hidden="true" className="grid size-12 place-items-center rounded-[14px] bg-accent-soft text-accent-text">
                       <ServiceIcon name={icon} size={23} />
                     </span>
@@ -304,9 +304,9 @@ export default async function ServicePage({ params }: Props) {
             link={{ href: "/process", label: processCopy("seeStages") }}
           >
             <Reveal mode="block">
-              <ol className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              <ol className="grid gap-[var(--space-grid)] sm:grid-cols-2">
                 {visibleSteps.map(({ id, title, description, duration }, index) => (
-                  <li key={id} className="rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card">
+                  <li key={id} className="rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card">
                     <div className="flex items-center justify-between gap-3">
                       <span
                         aria-hidden="true"
@@ -383,7 +383,7 @@ export default async function ServicePage({ params }: Props) {
             services={related}
             actionLabel={t("viewService")}
             projectsBadge={(count) => t("projectsBadge", { count })}
-            className="mt-10"
+            className="mt-[var(--space-heading)]"
           />
         </PageSection>
       ) : null}

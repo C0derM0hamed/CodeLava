@@ -60,23 +60,23 @@ export function WorkFeaturedSpotlight({
   if (projects.length === 0) return null;
 
   return (
-    <section ref={rootRef} className="py-12 sm:py-16">
-      <div className="container-lava space-y-12 sm:space-y-14">
-        <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-12">
-          <div className="flex flex-col items-start gap-4 lg:col-span-7">
+    <section ref={rootRef} className="section-y">
+      <div className="container-lava space-y-[var(--space-heading)]">
+        <div className="grid gap-[var(--space-grid)] lg:grid-cols-12 lg:items-end lg:gap-[var(--space-split)]">
+          <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-7">
             <Kicker>{isRtl ? "دراسات مميزة" : "Featured projects"}</Kicker>
             <h2 className="text-display-md text-text">
               {isRtl ? "مشاريع محورية بأثر ملموس." : "Flagship work, in depth."}
             </h2>
           </div>
-          <p className="text-body text-muted lg:col-span-5">
+          <p className="text-lead text-muted lg:col-span-5">
             {isRtl
               ? "منصات وحلول ذكاء اصطناعي ومنتجات ثنائية اللغة بُنيت لتدوم."
               : "Platforms, AI systems and bilingual products built to last."}
           </p>
         </div>
 
-        <ul className="space-y-8 sm:space-y-10">
+        <ul className="space-y-[var(--space-grid-lg)]">
           {projects.map((project, idx) => {
             const isFlipped = idx % 2 === 1;
             const yearText = project.year ? formatNumber(project.year, locale, { useGrouping: false }) : null;
@@ -89,7 +89,7 @@ export function WorkFeaturedSpotlight({
                   <Link
                     href={`/work/${project.slug}`}
                     data-cursor="view"
-                    className="grid grid-cols-1 gap-7 rounded-[var(--radius-xl)] border border-line bg-surface p-3 shadow-card transition-shadow duration-300 hover:shadow-lift sm:p-4 lg:grid-cols-12 lg:items-center lg:gap-12"
+                    className="grid grid-cols-1 gap-[var(--space-grid-lg)] rounded-[var(--radius-xl)] border border-line bg-surface p-4 shadow-card transition-shadow duration-300 hover:shadow-lift sm:p-5 lg:grid-cols-12 lg:items-center"
                   >
                     <div
                       className={cn(

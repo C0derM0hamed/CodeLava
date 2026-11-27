@@ -38,9 +38,9 @@ export function HomeClientStrip({
   if (items.length === 0) return null;
 
   return (
-    <section aria-label={label} className={cn("relative border-b border-line/70 bg-bg-elevated/80 py-7 lg:py-9", className)}>
+    <section aria-label={label} className={cn("relative border-b border-line/70 bg-bg-elevated/80 py-8 lg:py-11", className)}>
       <Reveal mode="block" className="container-lava">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-[var(--space-split)]">
           <p className="max-w-[15rem] shrink-0 text-[0.8125rem] font-medium leading-snug text-muted">
             {label}
           </p>

@@ -14,14 +14,14 @@ export interface TechnologiesHeroProps {
 export function TechnologiesHero({ eyebrow, title, description, ctaLabel, preview }: TechnologiesHeroProps) {
   return (
     <PageHero>
-      <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
-        <div className="flex flex-col items-start gap-6 lg:col-span-7">
+      <div className="grid items-center gap-[var(--space-split)] lg:grid-cols-12">
+        <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-7">
           {eyebrow ? <Kicker>{eyebrow}</Kicker> : null}
           <h1 className="text-display-xl max-w-[16ch] text-text">
             <HighlightTitle text={title} />
           </h1>
-          {description ? <p className="text-lead max-w-[52ch]">{description}</p> : null}
-          <div className="mt-2">
+          {description ? <p className="text-lead max-w-[54ch]">{description}</p> : null}
+          <div className="pt-[var(--space-cta)]">
             <PillLink href="/quote" size="lg">
               {ctaLabel}
             </PillLink>

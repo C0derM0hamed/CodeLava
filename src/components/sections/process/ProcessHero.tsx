@@ -25,14 +25,14 @@ export function ProcessHero({
 }: ProcessHeroProps) {
   return (
     <PageHero>
-      <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
-        <div className="flex flex-col items-start gap-6 lg:col-span-7">
+      <div className="grid items-center gap-[var(--space-split)] lg:grid-cols-12">
+        <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-7">
           {eyebrow ? <Kicker>{eyebrow}</Kicker> : null}
           <h1 className="text-display-xl max-w-[16ch] text-text">
             <HighlightTitle text={title} />
           </h1>
-          {description ? <p className="text-lead max-w-[52ch]">{description}</p> : null}
-          <div className="mt-2 flex flex-wrap items-center gap-3">
+          {description ? <p className="text-lead max-w-[54ch]">{description}</p> : null}
+          <div className="flex flex-wrap items-center gap-3.5 pt-[var(--space-cta)]">
             <PillLink href="/quote" size="lg">
               {ctaLabel}
             </PillLink>
@@ -51,7 +51,7 @@ export function ProcessHero({
 
         {steps.length > 0 ? (
           <Reveal mode="block" className="lg:col-span-5">
-            <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-card sm:p-8">
+            <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-[var(--space-card)] shadow-card">
               <h2 className="text-sm font-semibold text-text">{glanceLabel}</h2>
               <ol className="mt-5 divide-y divide-line">
                 {steps.map((step) => (

@@ -43,7 +43,7 @@ export default async function FaqPage({ params }: Props) {
     <main id="main-content" className="relative bg-bg text-text">
       {questions.length ? <JsonLd data={faqPageJsonLd(questions)} /> : null}
       <PageTop>
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="grid items-start gap-[var(--space-split)] lg:grid-cols-12">
           <div className="flex flex-col gap-8 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-4">
             <SectionHeading as="h1" size="md" layout="intro" title={hero?.title || t("title")} kicker={hero?.eyebrow}
               lead={hero?.description} animated={false} />

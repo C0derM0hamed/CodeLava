@@ -16,7 +16,7 @@ export function ArticleBody({ html, toc, tocLabel, share, updatedLabel }: Articl
     <section className="py-12 sm:py-16">
       <div className="container-lava">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-          <aside className="order-last lg:order-none lg:col-span-3">
+          <aside className="order-last min-w-0 lg:order-none lg:col-span-3">
             <div className="space-y-8 lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
               {outline.length >= 2 ? <div className="hidden lg:block"><ArticleToc items={outline} label={tocLabel} /></div> : null}
               <div className="rounded-[var(--radius-md)] border border-line bg-surface p-5 shadow-card">
@@ -25,7 +25,7 @@ export function ArticleBody({ html, toc, tocLabel, share, updatedLabel }: Articl
             </div>
           </aside>
 
-          <div className="lg:col-span-8 xl:col-span-7">
+          <div className="min-w-0 lg:col-span-8 xl:col-span-7">
             {outline.length >= 2 ? (
               <details className="mb-8 rounded-[var(--radius-md)] border border-line bg-surface p-4 shadow-card lg:hidden">
                 <summary className="cursor-pointer text-sm font-semibold text-text">{tocLabel}</summary>

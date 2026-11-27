@@ -35,9 +35,9 @@ export function AboutTeam({
 
   return (
     <section aria-labelledby="about-team-title" className="section-y">
-      <div className="container-lava grid gap-10">
+      <div className="container-lava grid gap-[var(--space-heading)]">
         <SectionHeading layout="split" size="md" kicker={eyebrow} title={title} lead={lead} titleId="about-team-title" />
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="grid gap-[var(--space-grid)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {members.map((member, index) => {
             const links = Object.entries(member.socials ?? {}).filter((entry): entry is [string, string] => isSafeHttpUrl(entry[1]));
             return (
@@ -67,10 +67,10 @@ export function AboutTeam({
                     )}
                   </div>
                 </div>
-                <div className="flex flex-1 flex-col gap-2 p-5">
+                <div className="flex flex-1 flex-col gap-2.5 p-[var(--space-card)]">
                   <h3 className="font-display text-lg font-semibold text-text">{member.name}</h3>
                   {member.role ? <p className="text-sm font-medium text-accent-text">{member.role}</p> : null}
-                  {member.bio ? <p className="line-clamp-4 text-sm leading-relaxed text-muted">{member.bio}</p> : null}
+                  {member.bio ? <p className="text-sm leading-relaxed text-muted">{member.bio}</p> : null}
                   {links.length > 0 ? (
                     <ul className="mt-auto flex flex-wrap gap-2 pt-3">
                       {links.map(([key, href]) => {

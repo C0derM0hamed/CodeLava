@@ -81,7 +81,7 @@ export function SiteHeader({
       const darkHero = document.querySelector<HTMLElement>('[data-hero-dark="true"]');
       if (darkHero && !forceElevated) {
         const rect = darkHero.getBoundingClientRect();
-        setOverDarkHero(rect.bottom > 76 && rect.top <= 76);
+        setOverDarkHero(rect.bottom > 80 && rect.top <= 80);
       } else {
         setOverDarkHero(false);
       }
@@ -134,7 +134,7 @@ export function SiteHeader({
           className,
         )}
       >
-        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-6">
+        <div className="container-lava flex h-[var(--header-h)] items-center justify-between gap-6 xl:gap-10">
           <Link
             href="/"
             aria-label={t("homeAria")}
@@ -146,7 +146,7 @@ export function SiteHeader({
           </Link>
 
           <nav aria-label={t("mainLabel")} className="hidden lg:block">
-            <ul className="flex items-center gap-0.5 xl:gap-1.5">
+            <ul className="flex items-center gap-1 xl:gap-2 2xl:gap-3">
               {navItems.map((item) => {
                 const active = isNavActive(pathname, item.href);
                 return (
@@ -157,7 +157,7 @@ export function SiteHeader({
                       data-cursor="pointer"
                       onClick={() => onNavigate?.(item.href)}
                       className={cn(
-                        "group relative inline-flex h-11 items-center rounded-md px-2.5 text-[0.9rem] font-medium transition-colors duration-200 xl:px-3",
+                        "group relative inline-flex h-11 items-center rounded-md px-3 text-[0.9375rem] font-medium transition-colors duration-200 xl:px-3.5 2xl:px-4",
                         darkChrome
                           ? active
                             ? "text-lava-300"
@@ -171,7 +171,7 @@ export function SiteHeader({
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "pointer-events-none absolute inset-x-2.5 bottom-1 h-[2px] origin-center rounded-full transition-transform duration-300 ease-[var(--ease-out-expo)] xl:inset-x-3",
+                          "pointer-events-none absolute inset-x-3 bottom-1 h-[2px] origin-center rounded-full transition-transform duration-300 ease-[var(--ease-out-expo)] xl:inset-x-3.5 2xl:inset-x-4",
                           active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-60",
                         )}
                         style={{ background: "var(--gradient-cta)" }}
@@ -183,7 +183,7 @@ export function SiteHeader({
             </ul>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             <div className="hidden sm:block">
               <LocaleSwitch
                 onLocaleChange={onLocaleChange}

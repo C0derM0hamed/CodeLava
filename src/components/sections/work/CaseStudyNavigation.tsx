@@ -25,14 +25,14 @@ export function CaseStudyNavigation({ locale, related, prev, next, labels }: Cas
   return (
     <>
       {related.length > 0 ? (
-        <section id="related" className="scroll-mt-[calc(var(--header-h)+2.5rem)] py-12 sm:py-16">
-          <div className="container-lava space-y-10">
-            <div className="flex flex-col items-start gap-4">
+        <section id="related" className="section-y scroll-mt-[calc(var(--header-h)+2.5rem)]">
+          <div className="container-lava space-y-[var(--space-heading)]">
+            <div className="flex flex-col items-start gap-[var(--space-copy)]">
               <Kicker>{isRtl ? "أعمال مشابهة" : "Continue exploring"}</Kicker>
               <h2 className="text-display-md text-text">{labels.relatedTitle}</h2>
             </div>
 
-            <ul className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-[var(--space-grid)] md:grid-cols-3">
               {related.map((item) => {
                 const yearText = item.year ? formatNumber(item.year, locale, { useGrouping: false }) : null;
                 return (

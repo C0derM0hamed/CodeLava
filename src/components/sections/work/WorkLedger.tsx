@@ -208,7 +208,7 @@ export function WorkLedger({
   const activeProject = projects.find((item) => item.slug === hoveredSlug) ?? null;
 
   return (
-    <section ref={rootRef} className="py-12 sm:py-16">
+    <section ref={rootRef} className="section-y">
       {/* Subtle SVG turbulence filter for lava-tinted heat shimmer on floating preview */}
       <svg aria-hidden="true" className="pointer-events-none fixed h-0 w-0 overflow-hidden">
         <defs>
@@ -233,9 +233,9 @@ export function WorkLedger({
         </defs>
       </svg>
 
-      <div className="container-lava space-y-10">
+      <div className="container-lava space-y-[var(--space-heading)]">
         {headingTitle ? (
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start gap-[var(--space-copy)]">
             {headingKicker ? <Kicker>{headingKicker}</Kicker> : null}
             <h2 className="text-display-md text-text">{headingTitle}</h2>
           </div>
@@ -261,7 +261,7 @@ export function WorkLedger({
                   onPointerEnter={(e) => handleRowPointerEnter(project.slug, e)}
                   onPointerMove={handleRowPointerMove}
                   className={cn(
-                    "group relative grid grid-cols-1 gap-6 px-4 py-7 transition-colors duration-300 sm:px-6 sm:py-9 lg:grid-cols-12 lg:items-center lg:gap-8",
+                    "group relative grid grid-cols-1 gap-6 px-5 py-8 transition-colors duration-300 sm:px-8 sm:py-10 lg:grid-cols-12 lg:items-center lg:gap-10",
                     "hover:bg-[color-mix(in_oklab,var(--lava-100)_22%,white)] focus-visible:bg-[color-mix(in_oklab,var(--lava-100)_30%,white)]",
                   )}
                 >
@@ -340,7 +340,7 @@ export function WorkLedger({
                       </div>
 
                       {project.summary ? (
-                        <p className="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted">
+                        <p className="max-w-2xl text-sm leading-relaxed text-muted">
                           {project.summary}
                         </p>
                       ) : null}

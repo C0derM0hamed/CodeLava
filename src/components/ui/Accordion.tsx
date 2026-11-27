@@ -71,7 +71,7 @@ export function Accordion({
   return (
     <div
       className={cn(
-        isCards ? "flex flex-col gap-3" : "divide-y divide-line-strong border-y border-line-strong",
+        isCards ? "flex flex-col gap-4" : "divide-y divide-line-strong border-y border-line-strong",
         className,
       )}
     >
@@ -88,7 +88,7 @@ export function Accordion({
               "relative transition-[box-shadow,border-color,background-color] duration-300",
               isCards &&
                 cn(
-                  "rounded-[var(--radius-md)] border bg-surface px-5 sm:px-6",
+                  "rounded-[var(--radius-md)] border bg-surface px-6 sm:px-7",
                   isOpen
                     ? "border-line-lava shadow-[var(--shadow-card)]"
                     : "border-line shadow-[var(--shadow-xs)] hover:border-line-strong",

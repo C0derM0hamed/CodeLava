@@ -4,9 +4,9 @@ import { BracketOrnament } from "./ArticleCover";
 
 export function BlogHero({ eyebrow, title, description }: { eyebrow?: string; title: string; description?: string }) {
   return (
-    <PageHero className="pb-10 sm:pb-12">
-      <div className="grid items-center gap-10 lg:grid-cols-12">
-        <div className="flex flex-col items-start gap-6 lg:col-span-8">
+    <PageHero className="pb-12 sm:pb-16">
+      <div className="grid items-center gap-[var(--space-split)] lg:grid-cols-12">
+        <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-8">
           {eyebrow ? <Kicker>{eyebrow}</Kicker> : null}
           <h1 className="text-display-xl max-w-[18ch] text-text">
             <HighlightTitle text={title} />

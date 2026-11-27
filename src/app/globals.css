@@ -162,11 +162,21 @@
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-lava: cubic-bezier(0.65, 0.05, 0.36, 1);
 
-  /* Layout & z-index layers */
-  --gutter: clamp(16px, 4vw, 56px);
-  --container: 1240px;
-  --header-h: 76px;
-  --section-y: clamp(4rem, 2.6rem + 5vw, 7.5rem);   /* 64px → 120px vertical rhythm */
+  /* Layout, fluid spacing tokens & z-index layers */
+  --gutter: clamp(1.25rem, 0.65rem + 2.8vw, 4rem);             /* 20px @ 390px → ~51px @ 1440px → 64px @ 1920px */
+  --container: 1520px;                                          /* balanced 1520px content rail on wide viewports */
+  --header-h: 80px;
+  --section-y: clamp(4.75rem, 3rem + 5.2vw, 8.75rem);          /* 76px → 140px vertical section rhythm */
+  --band-y: clamp(4.5rem, 2.8rem + 4.4vw, 7.5rem);              /* 72px → 120px inside dark WaveBands */
+  --hero-top: clamp(2.75rem, 1.8rem + 3vw, 5rem);               /* inner-page hero top breathing room below header */
+  --hero-bottom: clamp(3.5rem, 2.2rem + 3.8vw, 6.25rem);        /* inner-page hero bottom breathing room */
+  --space-heading: clamp(2.5rem, 1.8rem + 2.2vw, 4.25rem);      /* heading block → content gap (40px → 68px) */
+  --space-split: clamp(2.5rem, 1.5rem + 3vw, 5rem);             /* split-intro / 2-column major gap (40px → 80px) */
+  --space-grid: clamp(1.25rem, 0.95rem + 1.1vw, 2rem);          /* standard card / tile grid gap (20px → 32px) */
+  --space-grid-lg: clamp(1.5rem, 1.1rem + 1.5vw, 2.75rem);      /* wide feature / media grid gap (24px → 44px) */
+  --space-card: clamp(1.5rem, 1.15rem + 1.1vw, 2.25rem);        /* card / panel internal padding (24px → 36px) */
+  --space-copy: clamp(1.125rem, 0.95rem + 0.5vw, 1.5rem);       /* kicker / title / lead stack gap (18px → 24px) */
+  --space-cta: clamp(0.75rem, 0.5rem + 0.7vw, 1.375rem);        /* extra paragraph → CTA separation (12px → 22px) */
 
   --z-base: 0;
   --z-sticky: 20;
@@ -506,9 +516,13 @@ body {
   background: var(--gradient-lava);
 }
 
-/* Section vertical rhythm helper (reference: ~96–128px desktop, 64–80px mobile) */
+/* Section vertical rhythm helpers */
 .section-y {
   padding-block: var(--section-y);
+}
+
+.band-y {
+  padding-block: var(--band-y);
 }
 
 /* Atmospheric page wash (very soft warm/cool light, replaces heavy dark haze) */

@@ -4,10 +4,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.25rem;
   block-size: 100%;
-  min-block-size: 15.5rem;
-  padding: clamp(1.25rem, 2.4vw, 1.75rem);
+  min-block-size: 16.5rem;
+  padding: var(--space-card);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);

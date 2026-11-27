@@ -31,7 +31,7 @@ export function ServiceTiles({
   return (
     <ul
       className={cn(
-        "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5",
+        "grid grid-cols-1 gap-[var(--space-grid)] sm:grid-cols-2",
         columns === 3 && "lg:grid-cols-3",
         className,
       )}
@@ -68,7 +68,7 @@ export function ServiceTiles({
                   {service.title}
                 </span>
                 {service.tagline || service.summary ? (
-                  <span className="line-clamp-3 text-sm leading-relaxed text-muted">
+                  <span className="text-sm leading-relaxed text-muted">
                     {service.tagline || service.summary}
                   </span>
                 ) : null}

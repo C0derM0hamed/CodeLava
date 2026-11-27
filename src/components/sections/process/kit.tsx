@@ -165,11 +165,11 @@ export function SectionIntro({
   titleClassName,
 }: SectionIntroProps) {
   return (
-    <div className={cn("flex flex-col items-start gap-4", className)}>
+    <div className={cn("flex flex-col items-start gap-[var(--space-copy)]", className)}>
       {kicker ? <Kicker>{kicker}</Kicker> : null}
       <Tag className={cn("text-display-md text-text", titleClassName)}>{title}</Tag>
       {lead ? <p className="text-body max-w-[46ch] text-muted">{lead}</p> : null}
-      {action ? <div className="pt-1">{action}</div> : null}
+      {action ? <div className="pt-[var(--space-cta)]">{action}</div> : null}
     </div>
   );
 }
@@ -257,7 +257,7 @@ export function PageHero({ children, className }: { children: ReactNode; classNa
   return (
     <section
       className={cn(
-        "page-wash relative overflow-hidden pt-[calc(var(--header-h)+3rem)] pb-14 sm:pt-[calc(var(--header-h)+4.5rem)] sm:pb-20",
+        "page-wash relative overflow-hidden pt-[calc(var(--header-h)+var(--hero-top))] pb-[var(--hero-bottom)]",
         className,
       )}
     >

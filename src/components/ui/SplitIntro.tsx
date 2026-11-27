@@ -62,7 +62,7 @@ export function SplitIntro({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14",
+        "grid grid-cols-1 gap-[var(--space-split)] lg:grid-cols-12",
         alignIntro === "center" && "lg:items-center",
         alignIntro === "end" && "lg:items-end",
         className,

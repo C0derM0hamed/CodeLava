@@ -47,7 +47,7 @@ export function HomeServices({
           titleId="home-services-title"
           alignIntro="center"
         >
-          <ul className="grid grid-cols-1 gap-3.5 min-[420px]:grid-cols-2 sm:gap-4 md:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-[var(--space-grid)] min-[420px]:grid-cols-2 md:grid-cols-3">
             {tiles.map((service, index) => {
               const featured = index === 0;
               return (
@@ -74,12 +74,12 @@ export function HomeServices({
                         </span>
                       ) : null}
                     </div>
-                    <span className="grid gap-1.5">
-                      <span className="font-display text-[1.0625rem] font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-accent-text">
+                    <span className="grid gap-2">
+                      <span className="font-display text-[1.125rem] font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-accent-text">
                         {service.title}
                       </span>
                       {service.tagline ? (
-                        <span className="line-clamp-2 text-sm leading-relaxed text-muted">{service.tagline}</span>
+                        <span className="text-sm leading-relaxed text-muted">{service.tagline}</span>
                       ) : null}
                     </span>
                     <span aria-hidden="true" className="home-service__arrow mt-auto self-end">

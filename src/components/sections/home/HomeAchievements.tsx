@@ -72,8 +72,8 @@ export function AchievementsCard({
           <div
             key={item.id}
             className={cn(
-              "flex flex-col gap-3 bg-surface",
-              row ? "p-6 sm:p-8" : "p-5 sm:p-6",
+              "flex flex-col gap-3.5 bg-surface",
+              row ? "p-[var(--space-card)]" : "p-6 sm:p-7",
               // An odd last item spans the row so the card never shows an empty cell.
               !row && items.length === 3 && index === 2 && "col-span-2",
             )}

@@ -49,7 +49,7 @@ export function ProcessStory({ kicker, title, lead, ctaLabel, steps, durationLab
   if (steps.length === 0) return <section className="py-16 sm:py-24">{empty}</section>;
 
   return (
-    <section id="stages" className="surface-dark relative mt-8 scroll-mt-24 py-20 sm:mt-14 sm:py-28">
+    <section id="stages" className="surface-dark section-y relative mt-8 scroll-mt-24 sm:mt-14">
       <BandEdge />
       <BandEdge flip />
       {/* soft lava bloom behind the story, contained inside the band */}
@@ -61,7 +61,7 @@ export function ProcessStory({ kicker, title, lead, ctaLabel, steps, durationLab
         <div className="absolute -bottom-32 end-[4%] h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--lava-600)_16%,transparent),transparent)]" />
       </div>
 
-      <div className="container-lava relative z-20 grid gap-14 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
+      <div className="container-lava relative z-20 grid gap-[var(--space-split)] lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
         <div className="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)] lg:self-start">
           <Reveal mode="block">
             <SectionIntro

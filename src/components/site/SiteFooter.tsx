@@ -148,7 +148,7 @@ export function SiteFooter({
   return (
     <footer className={cn("relative [--cta-overlap:clamp(5rem,7vw,6.5rem)]", className)}>
       {showCta ? (
-        <div className="container-lava relative z-10 pt-[clamp(2rem,4vw,3.5rem)]">
+        <div className="container-lava relative z-10 pt-[clamp(2.5rem,4.5vw,4.5rem)]">
           <CtaBanner {...cta} />
         </div>
       ) : null}
@@ -157,8 +157,8 @@ export function SiteFooter({
         className={cn(
           "surface-dark relative overflow-hidden",
           showCta
-            ? "-mt-[var(--cta-overlap)] pt-[calc(var(--cta-overlap)+clamp(3.5rem,6vw,5rem))]"
-            : "pt-[clamp(4rem,7vw,6rem)]",
+            ? "-mt-[var(--cta-overlap)] pt-[calc(var(--cta-overlap)+clamp(4rem,6.5vw,6rem))]"
+            : "pt-[clamp(4.5rem,7vw,6.5rem)]",
         )}
       >
         {/* faint volcanic warmth along the bottom horizon */}
@@ -168,7 +168,7 @@ export function SiteFooter({
         />
 
         <div className="container-lava relative">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12 pb-14 md:grid-cols-3 lg:grid-cols-[1.45fr_0.8fr_1fr_1.25fr_1.4fr] lg:gap-x-10">
+          <div className="grid grid-cols-2 gap-x-[var(--space-grid-lg)] gap-y-12 pb-16 md:grid-cols-3 lg:grid-cols-[1.45fr_0.8fr_1fr_1.25fr_1.4fr]">
             {/* Brand */}
             <div className="col-span-2 space-y-5 md:col-span-3 lg:col-span-1">
               <Link href="/" aria-label={tn("homeAria")} className="inline-block rounded-md" data-cursor="pointer">

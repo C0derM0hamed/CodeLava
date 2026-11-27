@@ -11,11 +11,11 @@ export interface TechnologiesWhyProps {
 /** "Why this stack" — copy comes from the editable `technologies.intro` page section. */
 export function TechnologiesWhy({ kicker, title, description, ctaLabel }: TechnologiesWhyProps) {
   return (
-    <section className="pb-20 sm:pb-28">
+    <section className="pb-[var(--section-y)]">
       <div className="container-lava">
         <Reveal mode="block">
           <div className="page-wash relative overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface px-6 py-12 shadow-card sm:px-12 sm:py-16 lg:px-16">
-            <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-14">
+            <div className="grid items-center gap-[var(--space-split)] lg:grid-cols-12">
               <div className="lg:col-span-7">
                 <SectionIntro kicker={kicker} title={title} lead={description} />
               </div>

@@ -26,9 +26,9 @@ export function WorkHero({ locale, hero, intro, ctaLabel, totalCount, fallbackTi
     : `${formatNumber(totalCount, locale)} published ${totalCount === 1 ? "case study" : "case studies"}`;
 
   return (
-    <PageHero className="pb-10 sm:pb-14">
-      <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-14">
-        <div className="flex flex-col items-start gap-6 lg:col-span-8">
+    <PageHero className="pb-12 sm:pb-16">
+      <div className="grid items-end gap-[var(--space-split)] lg:grid-cols-12">
+        <div className="flex flex-col items-start gap-[var(--space-copy)] lg:col-span-8">
           <div className="flex flex-wrap items-center gap-4">
             <Kicker>{hero.eyebrow || fallbackTitle}</Kicker>
             {totalCount > 0 ? <Chip tone="accent">{countLabel}</Chip> : null}
@@ -39,7 +39,7 @@ export function WorkHero({ locale, hero, intro, ctaLabel, totalCount, fallbackTi
         </div>
 
         <Reveal mode="block" className="lg:col-span-4 lg:pb-3">
-          <div className="flex flex-col items-start gap-6">
+          <div className="flex flex-col items-start gap-[var(--space-copy)]">
             {hero.description ? <p className="text-lead">{hero.description}</p> : null}
             {intro?.title || intro?.description ? (
               <div className="space-y-1.5 border-s-2 border-line-lava ps-4">
@@ -47,9 +47,11 @@ export function WorkHero({ locale, hero, intro, ctaLabel, totalCount, fallbackTi
                 {intro.description ? <p className="text-sm leading-relaxed text-muted">{intro.description}</p> : null}
               </div>
             ) : null}
-            <PillLink href="/quote" size="md">
-              {ctaLabel}
-            </PillLink>
+            <div className="pt-[var(--space-cta)]">
+              <PillLink href="/quote" size="md">
+                {ctaLabel}
+              </PillLink>
+            </div>
           </div>
         </Reveal>
       </div>

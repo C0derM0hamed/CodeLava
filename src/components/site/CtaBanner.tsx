@@ -70,7 +70,7 @@ export function CtaBanner({
             src={imageSrc}
             alt=""
             fill
-            sizes="(min-width: 1280px) 1240px, 100vw"
+            sizes="(min-width: 1280px) 1520px, 100vw"
             className="object-cover object-[50%_42%] opacity-95 rtl:-scale-x-100 max-md:object-[55%_62%]"
           />
         </div>
@@ -100,13 +100,13 @@ export function CtaBanner({
         className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[color-mix(in_oklab,var(--ash-50)_9%,transparent)]"
       />
 
-      <div className="relative flex flex-col gap-8 px-6 pt-9 pb-44 sm:px-10 md:flex-row md:items-center md:justify-between md:gap-10 md:py-12 lg:px-14 lg:py-14">
-        <div className="max-w-xl space-y-3">
+      <div className="relative flex flex-col gap-8 px-6 pt-10 pb-44 sm:px-10 md:flex-row md:items-center md:justify-between md:gap-12 md:py-14 lg:px-16 lg:py-16">
+        <div className="max-w-xl space-y-4">
           {eyebrow && <p className="kicker-rule">{eyebrow}</p>}
           <Heading id={headingId} className="text-display-md text-text">{titleNode}</Heading>
-          <p className="max-w-[44ch] text-body text-muted">{lead ?? t("ctaLead")}</p>
+          <p className="max-w-[46ch] text-body text-muted">{lead ?? t("ctaLead")}</p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-3">
+        <div className="flex shrink-0 flex-wrap items-center gap-3.5">
           <ActionLink href={primaryLink.href} variant="inverse" size="md">
             {primaryLink.label}
           </ActionLink>

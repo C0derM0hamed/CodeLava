@@ -16,16 +16,16 @@ export function AboutValues({
 }) {
   return (
     <section aria-labelledby="about-values-title" className="section-y pt-0">
-      <div className="container-lava grid gap-10">
+      <div className="container-lava grid gap-[var(--space-heading)]">
         <SectionHeading layout="split" size="md" kicker={eyebrow} title={title} lead={lead} titleId="about-values-title" />
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
+        <ul className="grid gap-[var(--space-grid)] sm:grid-cols-2 xl:grid-cols-4">
           {values.map((value, index) => (
             <Reveal
               as="li"
               mode="block"
               delay={index * 80}
               key={value.title}
-              className="flex flex-col gap-5 rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift sm:p-7"
+              className="flex flex-col gap-5 rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 hover:shadow-lift"
             >
               <span aria-hidden="true" className="grid size-12 place-items-center rounded-[14px] bg-accent-soft text-accent-text">
                 <StepIcon icon={value.icon} className="size-6" />

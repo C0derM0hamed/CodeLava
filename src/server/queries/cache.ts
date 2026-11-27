@@ -21,6 +21,9 @@ export function publishedQuery<Args extends unknown[], Result>(
   read: (...args: Args) => Promise<Result>,
   fallback: Result,
 ) {
+  if (process.env.NODE_ENV === "development") {
+    return (...args: Args) => whenTableExists(() => read(...args), fallback);
+  }
   // Retire cached results that could contain legacy fixture content or settings.
   const cached = unstable_cache(read, ["public-content-v3", name], { tags });
   return (...args: Args) => whenTableExists(() => cached(...args), fallback);

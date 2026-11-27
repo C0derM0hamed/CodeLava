@@ -15,8 +15,8 @@ export interface ProcessFaqProps {
 export function ProcessFaq({ kicker, title, lead, allLabel, items }: ProcessFaqProps) {
   if (items.length === 0) return null;
   return (
-    <section className="py-20 sm:py-28">
-      <div className="container-lava grid gap-12 lg:grid-cols-12 lg:gap-16">
+    <section className="section-y">
+      <div className="container-lava grid gap-[var(--space-split)] lg:grid-cols-12">
         <div className="lg:col-span-4">
           <Reveal mode="block">
             <SectionIntro

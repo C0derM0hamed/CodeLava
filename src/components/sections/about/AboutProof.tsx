@@ -30,7 +30,7 @@ export function AboutProof({
     <>
       {achievements.length > 0 ? (
         <section aria-labelledby="about-achievements-title" className="section-y">
-          <div className="container-lava grid gap-10">
+          <div className="container-lava grid gap-[var(--space-heading)]">
             <SectionHeading layout="split" size="md" kicker={achievementsKicker} title={achievementsTitle} titleId="about-achievements-title" />
             <Reveal mode="block">
               <AchievementsCard achievements={achievements} locale={locale} layout="row" />
@@ -41,9 +41,9 @@ export function AboutProof({
 
       {clients.length > 0 ? (
         <section aria-labelledby="about-clients-title" className="section-y">
-          <div className="container-lava grid gap-10">
+          <div className="container-lava grid gap-[var(--space-heading)]">
             <SectionHeading layout="split" size="md" kicker={clientsKicker} title={clientsTitle} titleId="about-clients-title" />
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-[var(--space-grid)] sm:grid-cols-3 lg:grid-cols-4">
               {clients.map((client) => {
                 const content = client.logo ? (
                   <Image

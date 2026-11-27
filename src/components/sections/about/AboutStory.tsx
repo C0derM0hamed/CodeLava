@@ -17,21 +17,21 @@ export function AboutStory({
 }) {
   return (
     <section aria-labelledby="about-story-title" className="section-y">
-      <div className="container-lava grid gap-10 lg:grid-cols-12 lg:gap-14">
+      <div className="container-lava grid gap-[var(--space-split)] lg:grid-cols-12">
         <div className="lg:col-span-5">
           <SectionHeading layout="intro" size="md" kicker={eyebrow} title={title} lead={lead} titleId="about-story-title" />
         </div>
-        <div className="grid gap-8 lg:col-span-7 lg:pt-10">
+        <div className="grid gap-[var(--space-grid-lg)] lg:col-span-7 lg:pt-10">
           <Reveal as="p" mode="block" className="text-lead max-w-[60ch] text-text">
             {story}
           </Reveal>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-[var(--space-grid)] sm:grid-cols-2">
             {statements.map((item, index) => (
               <Reveal
                 mode="block"
                 delay={index * 90}
                 key={item.label}
-                className="rounded-[var(--radius-md)] border border-line bg-surface p-6 shadow-card sm:p-7"
+                className="rounded-[var(--radius-md)] border border-line bg-surface p-[var(--space-card)] shadow-card"
               >
                 <p className="kicker-rule">{item.label}</p>
                 <p className="mt-4 font-display text-lg font-semibold leading-snug text-text">{item.body}</p>

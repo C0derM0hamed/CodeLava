@@ -90,8 +90,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
       <BlogHero eyebrow={hero?.eyebrow} title={hero?.title || t("title")} description={hero?.description} />
 
-      <section className="pb-20 sm:pb-28">
-        <div className="container-lava space-y-10 sm:space-y-12">
+      <section className="pb-[var(--section-y)]">
+        <div className="container-lava space-y-[var(--space-heading)]">
           {!hasArticles ? (
             <BlogEmpty
               title={t("empty")}
@@ -126,7 +126,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 <>
                   {lead ? <FeaturedArticle article={lead} /> : null}
                   {grid.length > 0 ? (
-                    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+                    <ul className="grid gap-[var(--space-grid-lg)] sm:grid-cols-2 lg:grid-cols-3">
                       {grid.map((article) => (
                         <li key={article.id} className="flex">
                           <ArticleCard article={article} className="w-full" />

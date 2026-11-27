@@ -89,15 +89,15 @@ export default async function ContactPage({ params, searchParams }: Props) {
 
   return (
     <main id="main-content" className="relative bg-bg text-text">
-      <PageTop className="!pb-20 sm:!pb-28">
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+      <PageTop className="!pb-[var(--section-y)]">
+        <div className="grid items-start gap-[var(--space-split)] lg:grid-cols-12">
           <div className="flex flex-col gap-8 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:col-span-5">
             <SectionHeading as="h1" size="md" layout="intro" kicker={hero?.eyebrow} title={hero?.title || t("title")}
               lead={hero?.description} animated={false} />
 
             {methods.length ? (
               <section aria-label={formCopy(locale, "contactChannels")}>
-                <ul className="grid gap-3.5">
+                <ul className="grid gap-4">
                   {methods.map((method) => <li key={method.key}><MethodCard {...method} /></li>)}
                 </ul>
               </section>
@@ -131,7 +131,7 @@ export default async function ContactPage({ params, searchParams }: Props) {
             </div>
           </div>
 
-          <Panel as="section" aria-labelledby="contact-form-title" className="min-w-0 lg:col-span-7 sm:!p-10">
+          <Panel as="section" aria-labelledby="contact-form-title" className="min-w-0 lg:col-span-7 sm:!p-[clamp(2rem,3vw,3rem)]">
             <h2 id="contact-form-title" className="text-display-sm">{intro?.title || t("formTitle")}</h2>
             {intro?.description ? <p className="mt-2 text-muted">{intro.description}</p> : null}
             <div className="mt-7">

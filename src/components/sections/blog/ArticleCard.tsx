@@ -46,18 +46,18 @@ export function ArticleCard({ article, className }: { article: Article; classNam
           className="rounded-[calc(var(--radius-md)-4px)]"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+      <div className="flex flex-1 flex-col gap-3.5 p-[var(--space-card)]">
         {category ? <p className="text-sm font-semibold text-accent-text">{category}</p> : null}
         <h3 className="font-display text-xl leading-snug font-bold text-text">
           <Link
             href={`/blog/${article.slug}`}
             data-cursor="view"
-            className="line-clamp-2 transition-colors group-hover:text-accent-text after:absolute after:inset-0 after:content-['']"
+            className="transition-colors group-hover:text-accent-text after:absolute after:inset-0 after:content-['']"
           >
             {article.title}
           </Link>
         </h3>
-        {article.excerpt ? <p className="line-clamp-2 text-sm leading-relaxed text-muted">{article.excerpt}</p> : null}
+        {article.excerpt ? <p className="line-clamp-3 text-sm leading-relaxed text-muted">{article.excerpt}</p> : null}
         <ArticleMeta article={article} className="mt-auto border-t border-line pt-4" />
       </div>
     </article>
@@ -69,17 +69,17 @@ export function FeaturedArticle({ article }: { article: Article }) {
   const t = useTranslations("blog");
   const category = article.tags[0];
   return (
-    <article className="group relative grid gap-6 overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface p-3 shadow-card transition-shadow duration-300 hover:shadow-lift sm:p-4 lg:grid-cols-12 lg:items-center lg:gap-10">
+    <article className="group relative grid gap-[var(--space-grid-lg)] overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface p-4 shadow-card transition-shadow duration-300 hover:shadow-lift sm:p-5 lg:grid-cols-12 lg:items-center">
       <div className="lg:col-span-7">
         <ArticleCover
           cover={article.cover}
           title={article.title}
-          sizes="(max-width: 1024px) 92vw, 720px"
+          sizes="(max-width: 1024px) 92vw, 820px"
           priority
           className="rounded-[calc(var(--radius-lg)-6px)]"
         />
       </div>
-      <div className="flex flex-col items-start gap-4 px-2 pb-4 sm:px-4 lg:col-span-5 lg:py-6 lg:pe-8">
+      <div className="flex flex-col items-start gap-[var(--space-copy)] px-2 pb-4 sm:px-4 lg:col-span-5 lg:py-6 lg:pe-8">
         <p className="kicker-rule">{category ?? t("featured")}</p>
         <h2 className="text-display-md text-text">
           <Link
@@ -90,9 +90,9 @@ export function FeaturedArticle({ article }: { article: Article }) {
             {article.title}
           </Link>
         </h2>
-        {article.excerpt ? <p className="line-clamp-4 text-body text-muted">{article.excerpt}</p> : null}
+        {article.excerpt ? <p className="text-body text-muted">{article.excerpt}</p> : null}
         <ArticleMeta article={article} />
-        <span className="mt-1 inline-flex items-center gap-2 text-[0.95rem] font-semibold text-accent-text transition-[gap] duration-300 group-hover:gap-3">
+        <span className="pt-[var(--space-cta)] inline-flex items-center gap-2 text-[0.95rem] font-semibold text-accent-text transition-[gap] duration-300 group-hover:gap-3">
           {t("readArticle")}
           <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="rtl-flip size-4">
             <path d="M2.5 8h11m0 0L8.75 3.25M13.5 8l-4.75 4.75" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />

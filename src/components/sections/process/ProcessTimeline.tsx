@@ -80,7 +80,7 @@ export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) 
             id={`step-${step.id}`}
             data-step
             data-active="false"
-            className="group/step relative scroll-mt-[calc(var(--header-h)+2rem)] ps-[4.5rem] pb-10 last:pb-0 sm:ps-[5.5rem] sm:pb-14"
+            className="group/step relative scroll-mt-[calc(var(--header-h)+2rem)] ps-[4.75rem] pb-12 last:pb-0 sm:ps-[5.75rem] sm:pb-16"
           >
             {/* node */}
             <span
@@ -105,7 +105,7 @@ export function ProcessTimeline({ steps, durationLabel }: ProcessTimelineProps) 
             ) : null}
 
             {/* card */}
-            <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-white/10 bg-white/[0.045] p-6 transition-[border-color,background-color] duration-500 group-data-[active=true]/step:border-white/20 group-data-[active=true]/step:bg-white/[0.07] sm:p-8">
+            <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-white/10 bg-white/[0.045] p-[var(--space-card)] transition-[border-color,background-color] duration-500 group-data-[active=true]/step:border-white/20 group-data-[active=true]/step:bg-white/[0.07]">
               <span
                 aria-hidden="true"
                 dir="ltr"
